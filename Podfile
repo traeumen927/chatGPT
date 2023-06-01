@@ -6,6 +6,9 @@ target 'chatGPT' do
   use_frameworks!
 
   # Pods for chatGPT
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'SnapKit'
 
   target 'chatGPTTests' do
     inherit! :search_paths
