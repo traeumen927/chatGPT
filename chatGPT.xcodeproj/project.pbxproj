@@ -13,7 +13,6 @@
 		F102D65C2A287FA7000DDC45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D65B2A287FA7000DDC45 /* AppDelegate.swift */; };
 		F102D65E2A287FA7000DDC45 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D65D2A287FA7000DDC45 /* SceneDelegate.swift */; };
 		F102D6602A287FA7000DDC45 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D65F2A287FA7000DDC45 /* ViewController.swift */; };
-		F102D6632A287FA7000DDC45 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F102D6612A287FA7000DDC45 /* Main.storyboard */; };
 		F102D6652A287FA8000DDC45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F102D6642A287FA8000DDC45 /* Assets.xcassets */; };
 		F102D6682A287FA8000DDC45 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F102D6662A287FA8000DDC45 /* LaunchScreen.storyboard */; };
 		F102D6732A287FA8000DDC45 /* chatGPTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D6722A287FA8000DDC45 /* chatGPTTests.swift */; };
@@ -52,7 +51,6 @@
 		F102D65B2A287FA7000DDC45 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F102D65D2A287FA7000DDC45 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		F102D65F2A287FA7000DDC45 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		F102D6622A287FA7000DDC45 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F102D6642A287FA8000DDC45 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F102D6672A287FA8000DDC45 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F102D6692A287FA8000DDC45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -101,7 +99,6 @@
 				E5C851B64F8A113FBB2EAE3C /* Pods-chatGPTTests.debug.xcconfig */,
 				17404528B9797E7E36ACB589 /* Pods-chatGPTTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -143,7 +140,6 @@
 				F102D65B2A287FA7000DDC45 /* AppDelegate.swift */,
 				F102D65D2A287FA7000DDC45 /* SceneDelegate.swift */,
 				F102D65F2A287FA7000DDC45 /* ViewController.swift */,
-				F102D6612A287FA7000DDC45 /* Main.storyboard */,
 				F102D6642A287FA8000DDC45 /* Assets.xcassets */,
 				F102D6662A287FA8000DDC45 /* LaunchScreen.storyboard */,
 				F102D6692A287FA8000DDC45 /* Info.plist */,
@@ -277,7 +273,6 @@
 			files = (
 				F102D6682A287FA8000DDC45 /* LaunchScreen.storyboard in Resources */,
 				F102D6652A287FA8000DDC45 /* Assets.xcassets in Resources */,
-				F102D6632A287FA7000DDC45 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,14 +405,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		F102D6612A287FA7000DDC45 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F102D6622A287FA7000DDC45 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		F102D6662A287FA8000DDC45 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -556,7 +543,6 @@
 				INFOPLIST_FILE = chatGPT/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -585,7 +571,6 @@
 				INFOPLIST_FILE = chatGPT/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
