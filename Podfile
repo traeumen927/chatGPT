@@ -9,6 +9,7 @@ target 'chatGPT' do
   pod 'RxSwift'
   pod 'RxCocoa'
   pod 'SnapKit'
+  pod 'Alamofire'
 
   target 'chatGPTTests' do
     inherit! :search_paths
