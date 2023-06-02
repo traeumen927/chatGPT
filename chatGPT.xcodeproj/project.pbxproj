@@ -18,6 +18,9 @@
 		F102D6732A287FA8000DDC45 /* chatGPTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D6722A287FA8000DDC45 /* chatGPTTests.swift */; };
 		F102D67D2A287FA8000DDC45 /* chatGPTUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D67C2A287FA8000DDC45 /* chatGPTUITests.swift */; };
 		F102D67F2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D67E2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift */; };
+		F1A718072A29A7E400321A13 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A718062A29A7E400321A13 /* APIKey.swift */; };
+		F1A7180A2A29A96B00321A13 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A718092A29A96B00321A13 /* Chat.swift */; };
+		F1A7180C2A29BBD500321A13 /* OpenAICompletionBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A7180B2A29BBD500321A13 /* OpenAICompletionBody.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +62,9 @@
 		F102D6782A287FA8000DDC45 /* chatGPTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F102D67C2A287FA8000DDC45 /* chatGPTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITests.swift; sourceTree = "<group>"; };
 		F102D67E2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F1A718062A29A7E400321A13 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
+		F1A718092A29A96B00321A13 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		F1A7180B2A29BBD500321A13 /* OpenAICompletionBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICompletionBody.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,9 +143,11 @@
 		F102D65A2A287FA7000DDC45 /* chatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				F1A718082A29A95100321A13 /* Model */,
 				F102D65B2A287FA7000DDC45 /* AppDelegate.swift */,
 				F102D65D2A287FA7000DDC45 /* SceneDelegate.swift */,
 				F102D65F2A287FA7000DDC45 /* ViewController.swift */,
+				F1A718062A29A7E400321A13 /* APIKey.swift */,
 				F102D6642A287FA8000DDC45 /* Assets.xcassets */,
 				F102D6662A287FA8000DDC45 /* LaunchScreen.storyboard */,
 				F102D6692A287FA8000DDC45 /* Info.plist */,
@@ -162,6 +170,15 @@
 				F102D67E2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift */,
 			);
 			path = chatGPTUITests;
+			sourceTree = "<group>";
+		};
+		F1A718082A29A95100321A13 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F1A718092A29A96B00321A13 /* Chat.swift */,
+				F1A7180B2A29BBD500321A13 /* OpenAICompletionBody.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -404,6 +421,9 @@
 			files = (
 				F102D6602A287FA7000DDC45 /* ViewController.swift in Sources */,
 				F102D65C2A287FA7000DDC45 /* AppDelegate.swift in Sources */,
+				F1A718072A29A7E400321A13 /* APIKey.swift in Sources */,
+				F1A7180C2A29BBD500321A13 /* OpenAICompletionBody.swift in Sources */,
+				F1A7180A2A29A96B00321A13 /* Chat.swift in Sources */,
 				F102D65E2A287FA7000DDC45 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
