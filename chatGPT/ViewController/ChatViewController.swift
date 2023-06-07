@@ -22,6 +22,7 @@ class ChatViewController: UIViewController {
         view.delegate = self
         view.dataSource = self
         view.register(chatCell.self, forCellReuseIdentifier: chatCell.cellId)
+        view.separatorStyle = .none
         
         return view
     }()
@@ -113,7 +114,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: chatCell.cellId, for: indexPath) as! chatCell
-        cell.bind(content: self.messageList[indexPath.row].content)
+        cell.bind(data: self.messageList[indexPath.row])
+        cell.selectionStyle = .none
         return cell
     }
 }

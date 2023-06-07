@@ -8,9 +8,16 @@
 import UIKit
 import SnapKit
 
-class chatCell: UITableViewCell {
+class chatCell: UITableViewCell, DataCellType {
+    
     
     static let cellId = "chatCell"
+    
+    private let bubbleView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 12
+        return view
+    }()
     
     private let contentLabel: UILabel = {
         let view = UILabel()
@@ -27,18 +34,44 @@ class chatCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func layout() {
-        self.addSubview(contentLabel)
+    func layout() {
+        self.addSubview(bubbleView)
+        bubbleView.addSubview(contentLabel)
+        
+        bubbleView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(12)
+            make.bottom.equalToSuperview().offset(-12)
+            make.trailing.equalToSuperview().offset(-18)
+            make.leading.equalToSuperview().offset(18)
+        }
+        
         
         contentLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(12)
-            make.leading.equalToSuperview().offset(18)
-            make.trailing.equalToSuperview().offset(18)
-            make.bottom.equalToSuperview().offset(-12)
+            make.top.equalToSuperview().offset(8)
+            make.leading.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().offset(-8)
+            make.bottom.equalToSuperview().offset(-8)
+            make.width.lessThanOrEqualTo(self.bounds.size.width * 0.8)
         }
     }
     
-    func bind(content:String) {
-        self.contentLabel.text = content
+    
+    func bind<T>(data: T) where T : Decodable, T : Encodable {
+        guard let message = data as? Message else {return}
+        
+        
+        self.contentLabel.text = message.content
+        self.bubbleView.backgroundColor = message.role == .user ? .systemBlue : .systemGray6
+        self.contentLabel.textColor = message.role == .user ? .white : .black
+        
+        bubbleView.snp.remakeConstraints({ make in
+            make.top.equalToSuperview().offset(12)
+            make.bottom.equalToSuperview().offset(-12)
+            if message.role == .user {
+                make.trailing.equalToSuperview().offset(-18)
+            } else {
+                make.leading.equalToSuperview().offset(18)
+            }
+        })
     }
 }
