@@ -74,7 +74,7 @@ struct Choice: Decodable {
 }
 
 struct Message: Codable {
-    let role: String
+    let role: roleType
     let content: String
     
     enum CodingKeys: String, CodingKey {
@@ -84,12 +84,17 @@ struct Message: Codable {
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        role = try values.decode(String.self, forKey: .role)
+        role = try values.decode(roleType.self, forKey: .role)
         content = try values.decode(String.self, forKey: .content)
     }
     
-    init(role: String, content: String) {
+    init(role: roleType, content: String) {
         self.role = role
         self.content = content
     }
+}
+
+enum roleType: String, Codable {
+    case user
+    case assistant
 }

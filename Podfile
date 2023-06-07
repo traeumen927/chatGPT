@@ -8,6 +8,7 @@ target 'chatGPT' do
   # Pods for chatGPT
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxGesture'
   pod 'SnapKit'
   pod 'Alamofire'
 
