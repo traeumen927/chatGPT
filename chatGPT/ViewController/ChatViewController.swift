@@ -44,6 +44,7 @@ class ChatViewController: UIViewController {
     }
     
     private func layout() {
+        self.title = "chatGPT"
         self.view.backgroundColor = .systemBackground
         
         let inputView = InputView()
@@ -74,7 +75,13 @@ class ChatViewController: UIViewController {
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                self.tableView.scrollToBottom(isAnimated: true)
             }
+        }).disposed(by: dispostBag)
+        
+        self.viewModel.loadingSubject.subscribe(onNext: { [weak self] isLoading in
+            guard let self = self else {return}
+            isLoading ? self.showLoading() : self.hideLoading()
         }).disposed(by: dispostBag)
     }
     

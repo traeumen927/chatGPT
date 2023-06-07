@@ -17,10 +17,12 @@ class ChatViewModel {
     
     let questionSubject: PublishSubject<String> = PublishSubject<String>()
     let messageSubject: PublishSubject<Message> = PublishSubject<Message>()
+    let loadingSubject: BehaviorSubject<Bool> = BehaviorSubject(value: false)
     
     
     func askQuestion(question:String) {
         self.messageSubject.onNext(Message(role: .user, content: question))
+        self.loadingSubject.onNext(true)
         
         guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {return}
         
@@ -38,9 +40,11 @@ class ChatViewModel {
                 data.choices.forEach { choice in
                     self.messageSubject.onNext(choice.message)
                 }
+                self.loadingSubject.onNext(false)
                 
             case .failure(let error):
                 print(error.localizedDescription)
+                self.loadingSubject.onNext(false)
             }
         }
     }

@@ -28,6 +28,7 @@
 		F1CB51C02A2DAEF100DABE63 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CB51BF2A2DAEF100DABE63 /* InputView.swift */; };
 		F1F0B0D32A3049EA00AD8102 /* DataCellType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F0B0D22A3049EA00AD8102 /* DataCellType.swift */; };
 		F1F0B0D62A304DAF00AD8102 /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F0B0D52A304DAF00AD8102 /* UITableView.swift */; };
+		F1F0B0D82A3070EE00AD8102 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F0B0D72A3070EE00AD8102 /* UIViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		F1CB51BF2A2DAEF100DABE63 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		F1F0B0D22A3049EA00AD8102 /* DataCellType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCellType.swift; sourceTree = "<group>"; };
 		F1F0B0D52A304DAF00AD8102 /* UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableView.swift; sourceTree = "<group>"; };
+		F1F0B0D72A3070EE00AD8102 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				F1F0B0D52A304DAF00AD8102 /* UITableView.swift */,
+				F1F0B0D72A3070EE00AD8102 /* UIViewController.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -488,6 +491,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1F0B0D82A3070EE00AD8102 /* UIViewController.swift in Sources */,
 				F17314432A2DCAB00096A25B /* chatCell.swift in Sources */,
 				F102D65C2A287FA7000DDC45 /* AppDelegate.swift in Sources */,
 				F1CB51BA2A2DAB4A00DABE63 /* ChatViewController.swift in Sources */,
