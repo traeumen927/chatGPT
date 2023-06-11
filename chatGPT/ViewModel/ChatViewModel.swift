@@ -31,7 +31,7 @@ class ChatViewModel {
             "Authorization":"Bearer \(APIKey.openAI)"
         ]
                 
-        let body = OpenAICompletionBody(model: "gpt-3.5-turbo", messages: [Message(role: .user, content: question)], temperature: 0.7)
+        let body = OpenAICompletionBody(model: Setting.shared.model, messages: [Message(role: .user, content: question)], temperature: 0.7)
         
         AF.request(url, method: .post, parameters: body, encoder: .json, headers: header).responseDecodable(of: Chat.self) { response in
             switch response.result {

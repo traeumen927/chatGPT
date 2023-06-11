@@ -27,6 +27,13 @@ class ChatViewController: UIViewController {
         return view
     }()
     
+    private let settingButton: UIBarButtonItem = {
+        let view = UIBarButtonItem()
+        view.image = UIImage(systemName: "gearshape.fill")
+        view.tintColor = .label
+        return view
+    }()
+    
     init(viewModel: ChatViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -46,6 +53,8 @@ class ChatViewController: UIViewController {
     private func layout() {
         self.title = "chatGPT"
         self.view.backgroundColor = .systemBackground
+        
+        self.navigationItem.rightBarButtonItem = settingButton
         
         let inputView = InputView()
         [tableView, inputView].forEach(self.view.addSubview(_:))
@@ -82,6 +91,12 @@ class ChatViewController: UIViewController {
         self.viewModel.loadingSubject.subscribe(onNext: { [weak self] isLoading in
             guard let self = self else {return}
             isLoading ? self.showLoading() : self.hideLoading()
+        }).disposed(by: dispostBag)
+        
+        self.settingButton.rx.tap.bind(onNext: { [weak self] in
+            guard let self = self else {return}
+            let nc = UINavigationController(rootViewController: SettingViewController(viewModel: SettingViewModel()))
+            self.present(nc, animated: true)
         }).disposed(by: dispostBag)
     }
     
