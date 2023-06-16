@@ -11,7 +11,7 @@ class Setting {
     
     private let defaults = UserDefaults.standard
     private let modelKey = "modelKey"
-    private let hapticKey = "haptic"
+    private let hapticKey = "hapticKey"
     private let streamKey = "streamKey"
     
     class var shared: Setting {

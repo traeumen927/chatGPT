@@ -57,7 +57,7 @@ class chatCell: UITableViewCell, DataCellType {
     
     
     func bind<T>(data: T) where T : Decodable, T : Encodable {
-        guard let message = data as? Message else {return}
+        guard let message = data as? Bubble else {return}
         
         
         self.contentLabel.text = message.content

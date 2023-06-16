@@ -15,7 +15,10 @@ class ChatViewController: UIViewController {
     let viewModel: ChatViewModel!
     let dispostBag = DisposeBag()
     
-    private var messageList: [Message] = [Message]()
+    // MARK: Feedback Haptic
+    var feedBackGenerator: UINotificationFeedbackGenerator?
+    
+    private var bubbleList: [Bubble] = [Bubble]()
     
     private lazy var tableView: UITableView = {
         let view = UITableView()
@@ -72,27 +75,52 @@ class ChatViewController: UIViewController {
         }
         
         
+        // MARK: setup Feedback Haptic
+        self.feedBackGenerator = UINotificationFeedbackGenerator()
+        self.feedBackGenerator?.prepare()
         
+        // MARK: Keyboard add Observer by Hide/Show
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     private func bind() {
-        self.viewModel.messageSubject.subscribe(onNext: { [weak self] message in
+        
+        // MARK: 채팅(말풍선) 구독
+        self.viewModel.bubbleRelay.subscribe(onNext: { [weak self] bubble in
             guard let self = self else {return}
-            self.messageList.append(message)
+            
+            // MARK: Success Haptic Feedback
+            if Setting.shared.haptic {
+                self.feedBackGenerator?.notificationOccurred(.success)
+            }
+            
+            self.bubbleList = bubble
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                self.tableView.scrollToBottom(isAnimated: true)
+                
             }
+            
+            
         }).disposed(by: dispostBag)
         
+        // MARK: 채팅(말풍선) 완료 구독
+        self.viewModel.completeSubject.subscribe(onNext: { [weak self] _ in
+            guard let self = self else {return}
+            self.tableView.scrollToBottom(isAnimated: true)
+        }).disposed(by: dispostBag)
+        
+        
+        // MARK: 로딩 여부 구독
         self.viewModel.loadingSubject.subscribe(onNext: { [weak self] isLoading in
             guard let self = self else {return}
             isLoading ? self.showLoading() : self.hideLoading()
         }).disposed(by: dispostBag)
         
+        
+        
+        // MARK: Setting 버튼이 눌림
         self.settingButton.rx.tap.bind(onNext: { [weak self] in
             guard let self = self else {return}
             let nc = UINavigationController(rootViewController: SettingViewController(viewModel: SettingViewModel()))
@@ -124,19 +152,19 @@ extension ChatViewController: InputViewProtocol {
         
     }
     
-    func enterPressed(question: String) {
-        self.viewModel.askQuestion(question: question)
+    func enterPressed(chat: String) {
+        self.viewModel.chatEntered(chat: chat)
     }
 }
 
 extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messageList.count
+        return bubbleList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: chatCell.cellId, for: indexPath) as! chatCell
-        cell.bind(data: self.messageList[indexPath.row])
+        cell.bind(data: self.bubbleList[indexPath.row])
         cell.selectionStyle = .none
         return cell
     }
