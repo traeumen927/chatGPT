@@ -98,3 +98,80 @@ enum roleType: String, Codable {
     case user
     case assistant
 }
+
+struct ErrorResponse: Decodable {
+    let messgae: String
+    let type: String?
+}
+
+struct ErrorRootResponse: Decodable {
+    let error: ErrorResponse
+}
+
+struct StreamData: Decodable {
+    let data: StreamChat
+    
+    enum CodingKeys: String, CodingKey {
+        case data = "data"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        data = try values.decode(StreamChat.self, forKey: .data)
+    }
+}
+
+struct StreamChat: Codable {
+    let id: String
+    let object: String
+    let created: Int
+    let model: String
+    let choices: [StreamChoice]
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case object = "object"
+        case created = "created"
+        case model = "model"
+        case choices = "choices"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decode(String.self, forKey: .id)
+        object = try values.decode(String.self, forKey: .object)
+        created = try values.decode(Int.self, forKey: .created)
+        model = try values.decode(String.self, forKey: .model)
+        choices = try values.decode([StreamChoice].self, forKey: .choices)
+    }
+}
+
+struct StreamChoice: Codable {
+    let delta: Delta
+    let finish_reason: String?
+    let index: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case delta = "delta"
+        case finish_reason = "finish_reason"
+        case index = "index"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try! decoder.container(keyedBy: CodingKeys.self)
+        delta = try values.decode(Delta.self, forKey: .delta)
+        finish_reason = try values.decodeIfPresent(String.self, forKey: .finish_reason)
+        index = try values.decode(Int.self, forKey: .index)
+    }
+}
+
+struct Delta: Codable {
+    let role: roleType?
+    let content: String?
+}
+
+struct Bubble: Codable {
+    let id: String
+    let role: roleType
+    let content: String
+}

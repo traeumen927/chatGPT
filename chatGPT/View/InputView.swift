@@ -84,7 +84,7 @@ class InputView: UIView {
             guard let self = self,
                   let question = self.questionText.text else {return}
             self.questionText.text = nil
-            self.delegate?.enterPressed(question: question)
+            self.delegate?.enterPressed(chat: question)
         }.disposed(by: disposeBag)
     }
 }

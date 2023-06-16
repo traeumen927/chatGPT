@@ -10,5 +10,5 @@ import Foundation
 protocol InputViewProtocol {
     func beginEditing()
     func endEditing()
-    func enterPressed(question:String)
+    func enterPressed(chat:String)
 }
