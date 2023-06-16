@@ -89,26 +89,21 @@ class ChatViewController: UIViewController {
         // MARK: 채팅(말풍선) 구독
         self.viewModel.bubbleRelay.subscribe(onNext: { [weak self] bubble in
             guard let self = self else {return}
-            
-            // MARK: Success Haptic Feedback
-            if Setting.shared.haptic {
-                self.feedBackGenerator?.notificationOccurred(.success)
-            }
-            
             self.bubbleList = bubble
-            
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                
             }
-            
-            
         }).disposed(by: dispostBag)
         
         // MARK: 채팅(말풍선) 완료 구독
         self.viewModel.completeSubject.subscribe(onNext: { [weak self] _ in
             guard let self = self else {return}
             self.tableView.scrollToBottom(isAnimated: true)
+            
+            // MARK: Success Haptic Feedback
+            if Setting.shared.haptic {
+                self.feedBackGenerator?.notificationOccurred(.success)
+            }
         }).disposed(by: dispostBag)
         
         
