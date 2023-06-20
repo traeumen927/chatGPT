@@ -59,10 +59,20 @@ class chatCell: UITableViewCell, DataCellType {
     func bind<T>(data: T) where T : Decodable, T : Encodable {
         guard let message = data as? Bubble else {return}
         
+        switch message.role {
+            
+        case .user:
+            self.bubbleView.backgroundColor = .systemBlue
+            self.contentLabel.textColor = .white
+        case .assistant:
+            self.bubbleView.backgroundColor = .systemGray6
+            self.contentLabel.textColor = .black
+        case .error:
+            self.bubbleView.backgroundColor = .systemPink
+            self.contentLabel.textColor = .white
+        }
         
         self.contentLabel.text = message.content
-        self.bubbleView.backgroundColor = message.role == .user ? .systemBlue : .systemGray6
-        self.contentLabel.textColor = message.role == .user ? .white : .black
         
         bubbleView.snp.remakeConstraints({ make in
             make.top.equalToSuperview().offset(12)
