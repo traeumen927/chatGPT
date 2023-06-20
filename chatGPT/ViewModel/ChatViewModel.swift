@@ -21,6 +21,7 @@ class ChatViewModel {
     let completeSubject: PublishSubject<Void> = PublishSubject<Void>()
     
     
+    
     func chatEntered(chat: String) {
         self.bubbleRelay.accept(bubbleRelay.value + [Bubble(id: UUID().uuidString, role: .user, content: chat)])
         self.completeSubject.onNext(())
@@ -35,38 +36,50 @@ class ChatViewModel {
         service.requestStream(text: chat).responseStreamString { stream in
             switch stream.event {
                 
+            // MARK: Stream 시작
             case .stream(let result):
                 switch result {
                     
                 case .success(let data):
                     
-                    let stream = service.parse(data: data)
-                    
-                    stream.forEach { chunk in
+                    // MARK: Stream Error
+                    if let errorData = data.data(using: .utf8),
+                       let errorRoot = try? JSONDecoder().decode(ErrorRootResponse.self, from: errorData) {
+                        self.bubbleRelay.accept(self.bubbleRelay.value + [Bubble(id: UUID().uuidString, role: .error, content: "⚠️ OpenAI Error Occurred: \(errorRoot.error.message)")])
+                    } else {
+                        // MARK: Stream Success
+                        let stream = service.parse(data: data)
                         
-                        guard let choice = chunk.choices.first,
-                              let newContent = choice.delta.content else {return}
-                        
-                        if let streamIndex = self.bubbleRelay.value.lastIndex(where: {$0.id == chunk.id}) {
-                            // MARK: 기존에 동일한 id를 가진 미완성 Stream 데이터가 존재함 -> 스트림 정보 업데이트
-                            var bubbles = self.bubbleRelay.value
-                            let content = bubbles[streamIndex].content + newContent
-                            bubbles[streamIndex] = Bubble(id: chunk.id, role: .assistant, content: content)
-                            self.bubbleRelay.accept(bubbles)
-                        } else {
-                            // MARK: 기존에 동일한 id를 가진 미완성 Stream 데이터가 존재하지 않음 -> 신규생성
-                            let newBubble = Bubble(id: chunk.id, role: .assistant, content: newContent)
-                            self.bubbleRelay.accept(self.bubbleRelay.value + [newBubble])
+                        stream.forEach { chunk in
+                            
+                            guard let choice = chunk.choices.first,
+                                  let newContent = choice.delta.content else {return}
+                            
+                            if let streamIndex = self.bubbleRelay.value.lastIndex(where: {$0.id == chunk.id}) {
+                                // MARK: 기존에 동일한 id를 가진 미완성 Stream 데이터가 존재함 -> 스트림 정보 업데이트
+                                var bubbles = self.bubbleRelay.value
+                                let content = bubbles[streamIndex].content + newContent
+                                bubbles[streamIndex] = Bubble(id: chunk.id, role: .assistant, content: content)
+                                self.bubbleRelay.accept(bubbles)
+                            } else {
+                                // MARK: 기존에 동일한 id를 가진 미완성 Stream 데이터가 존재하지 않음 -> 신규생성
+                                let newBubble = Bubble(id: chunk.id, role: .assistant, content: newContent)
+                                self.bubbleRelay.accept(self.bubbleRelay.value + [newBubble])
+                            }
                         }
                     }
                 }
                 
                 
                 
+                
+            // MARK: Stream 완료
             case .complete(let data):
-                print(data)
-                self.completeSubject.onNext(())
-                break
+                if let error = data.error {
+                    self.bubbleRelay.accept(self.bubbleRelay.value + [Bubble(id: UUID().uuidString, role: .error, content: "⚠️ Alamofire Error Occurred: \(error.localizedDescription)")])
+                } else {
+                    self.completeSubject.onNext(())
+                }
             }
         }
     }
@@ -91,6 +104,8 @@ class ChatViewModel {
             case .failure(let error):
                 print(error.localizedDescription)
                 self.loadingSubject.onNext(false)
+                
+                self.bubbleRelay.accept(self.bubbleRelay.value + [Bubble(id: UUID().uuidString, role: .error, content: "⚠️ Alamofire Error Occurred: \(error.localizedDescription)")])
             }
         }
     }

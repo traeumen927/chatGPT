@@ -11,7 +11,7 @@ class ChatWithAlamofire {
     private let url = "https://api.openai.com/v1/chat/completions"
     private let header: HTTPHeaders = [
         "Content-Type":"application/json",
-        "Authorization":"Bearer \(APIKey.openAI)"
+        "Authorization":"Bearerr \(APIKey.openAI)"
     ]
     
     func request(text:String) -> DataRequest {

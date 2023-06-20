@@ -19,6 +19,9 @@
 		F102D67F2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102D67E2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift */; };
 		F17314412A2DB9D80096A25B /* InputViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17314402A2DB9D80096A25B /* InputViewProtocol.swift */; };
 		F17314432A2DCAB00096A25B /* chatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17314422A2DCAB00096A25B /* chatCell.swift */; };
+		F18D8E232A41CC190032FB6E /* Bubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D8E222A41CC190032FB6E /* Bubble.swift */; };
+		F18D8E252A41CC400032FB6E /* StreamChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D8E242A41CC400032FB6E /* StreamChat.swift */; };
+		F18D8E272A41CCAD0032FB6E /* ErrorRootResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18D8E262A41CCAD0032FB6E /* ErrorRootResponse.swift */; };
 		F1A718072A29A7E400321A13 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A718062A29A7E400321A13 /* APIKey.swift */; };
 		F1A7180A2A29A96B00321A13 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A718092A29A96B00321A13 /* Chat.swift */; };
 		F1A7180C2A29BBD500321A13 /* OpenAICompletionBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A7180B2A29BBD500321A13 /* OpenAICompletionBody.swift */; };
@@ -76,6 +79,9 @@
 		F102D67E2A287FA8000DDC45 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		F17314402A2DB9D80096A25B /* InputViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewProtocol.swift; sourceTree = "<group>"; };
 		F17314422A2DCAB00096A25B /* chatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatCell.swift; sourceTree = "<group>"; };
+		F18D8E222A41CC190032FB6E /* Bubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bubble.swift; sourceTree = "<group>"; };
+		F18D8E242A41CC400032FB6E /* StreamChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChat.swift; sourceTree = "<group>"; };
+		F18D8E262A41CCAD0032FB6E /* ErrorRootResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRootResponse.swift; sourceTree = "<group>"; };
 		F1A718062A29A7E400321A13 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		F1A718092A29A96B00321A13 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		F1A7180B2A29BBD500321A13 /* OpenAICompletionBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICompletionBody.swift; sourceTree = "<group>"; };
@@ -208,8 +214,11 @@
 			isa = PBXGroup;
 			children = (
 				F1F0B0DD2A30922F00AD8102 /* Setting.swift */,
-				F1A718092A29A96B00321A13 /* Chat.swift */,
 				F1A7180B2A29BBD500321A13 /* OpenAICompletionBody.swift */,
+				F18D8E222A41CC190032FB6E /* Bubble.swift */,
+				F1A718092A29A96B00321A13 /* Chat.swift */,
+				F18D8E242A41CC400032FB6E /* StreamChat.swift */,
+				F18D8E262A41CCAD0032FB6E /* ErrorRootResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -525,7 +534,10 @@
 				F1A7180A2A29A96B00321A13 /* Chat.swift in Sources */,
 				F102D65E2A287FA7000DDC45 /* SceneDelegate.swift in Sources */,
 				F1F0B0D32A3049EA00AD8102 /* DataCellType.swift in Sources */,
+				F18D8E232A41CC190032FB6E /* Bubble.swift in Sources */,
+				F18D8E252A41CC400032FB6E /* StreamChat.swift in Sources */,
 				F1CB51C02A2DAEF100DABE63 /* InputView.swift in Sources */,
+				F18D8E272A41CCAD0032FB6E /* ErrorRootResponse.swift in Sources */,
 				F1BB61A42A33181F005AA67F /* MenuCellType.swift in Sources */,
 				F1F0B0DC2A30747700AD8102 /* SettingViewModel.swift in Sources */,
 				F1CB51BC2A2DAB5500DABE63 /* ChatViewModel.swift in Sources */,
