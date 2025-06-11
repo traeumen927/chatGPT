@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainViewController.swift
 //  chatGPT
 //
 //  Created by 홍정연 on 6/11/25.
@@ -7,11 +7,9 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-
+final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .systemBackground
     }
 }
-

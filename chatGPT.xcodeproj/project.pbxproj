@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
 		F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */; };
-		F166CA152DF9A39B00AAB5B0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA112DF9A39B00AAB5B0 /* ViewController.swift */; };
 		F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */; };
 		F166CA182DF9A39B00AAB5B0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F166CA0F2DF9A39B00AAB5B0 /* LaunchScreen.storyboard */; };
 		F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */; };
@@ -21,6 +20,14 @@
 		F1DF3AFA2DF9AD6E00D8445A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF92DF9AD6E00D8445A /* RxSwift */; };
 		F1DF3AFD2DF9AD8200D8445A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AFC2DF9AD8200D8445A /* Alamofire */; };
 		F1DF3B002DF9AD9000D8445A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AFF2DF9AD9000D8445A /* Kingfisher */; };
+		F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */; };
+		F1DF3B072DF9AFDD00D8445A /* ApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */; };
+		F1DF3B0A2DF9B01100D8445A /* ApiKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */; };
+		F1DF3B0F2DF9B04500D8445A /* GetAPIKeyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */; };
+		F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */; };
+		F1DF3B152DF9B09200D8445A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B142DF9B09200D8445A /* AppCoordinator.swift */; };
+		F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */; };
+		F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,10 +56,17 @@
 		F166CA0D2DF9A39B00AAB5B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F166CA0E2DF9A39B00AAB5B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		F166CA112DF9A39B00AAB5B0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTTests.swift; sourceTree = "<group>"; };
 		F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITests.swift; sourceTree = "<group>"; };
 		F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
+		F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKey.swift; sourceTree = "<group>"; };
+		F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyRepository.swift; sourceTree = "<group>"; };
+		F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAPIKeyUseCase.swift; sourceTree = "<group>"; };
+		F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveAPIKeyUseCase.swift; sourceTree = "<group>"; };
+		F1DF3B142DF9B09200D8445A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyInputViewController.swift; sourceTree = "<group>"; };
+		F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,12 +123,14 @@
 		F166CA122DF9A39B00AAB5B0 /* chatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				F1DF3B012DF9AF5700D8445A /* Data */,
+				F1DF3B042DF9AF9900D8445A /* Domain */,
+				F1DF3B122DF9B07800D8445A /* Presentation */,
 				F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
 				F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */,
 				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
 				F166CA0F2DF9A39B00AAB5B0 /* LaunchScreen.storyboard */,
 				F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */,
-				F166CA112DF9A39B00AAB5B0 /* ViewController.swift */,
 			);
 			path = chatGPT;
 			sourceTree = "<group>";
@@ -134,6 +150,75 @@
 				F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */,
 			);
 			path = chatGPTUITests;
+			sourceTree = "<group>";
+		};
+		F1DF3B012DF9AF5700D8445A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		F1DF3B042DF9AF9900D8445A /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B052DF9AFC900D8445A /* Entity */,
+				F1DF3B082DF9AFE900D8445A /* Repository */,
+				F1DF3B0D2DF9B02C00D8445A /* UseCase */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		F1DF3B052DF9AFC900D8445A /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
+		F1DF3B082DF9AFE900D8445A /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		F1DF3B0D2DF9B02C00D8445A /* UseCase */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */,
+				F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */,
+			);
+			path = UseCase;
+			sourceTree = "<group>";
+		};
+		F1DF3B122DF9B07800D8445A /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B132DF9B08300D8445A /* Coordinator */,
+				F1DF3B162DF9B0C400D8445A /* Scene */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		F1DF3B132DF9B08300D8445A /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B142DF9B09200D8445A /* AppCoordinator.swift */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
+		F1DF3B162DF9B0C400D8445A /* Scene */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */,
+				F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
+			);
+			path = Scene;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -286,9 +371,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1DF3B072DF9AFDD00D8445A /* ApiKey.swift in Sources */,
+				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
+				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
+				F1DF3B0A2DF9B01100D8445A /* ApiKeyRepository.swift in Sources */,
+				F1DF3B0F2DF9B04500D8445A /* GetAPIKeyUseCase.swift in Sources */,
 				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
+				F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */,
+				F1DF3B152DF9B09200D8445A /* AppCoordinator.swift in Sources */,
 				F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */,
-				F166CA152DF9A39B00AAB5B0 /* ViewController.swift in Sources */,
+				F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
