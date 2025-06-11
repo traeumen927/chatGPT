@@ -4,6 +4,7 @@ App using openAI's chatGPT API function
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/58c8e935-884d-4e97-8e5d-c71b2bea6ab5" width="30%">
+  <img src="https://github.com/user-attachments/assets/c64204da-0c81-45d1-95ac-30b52fb99fcb" width="30%">
 </p>
 
 <p align="center">
