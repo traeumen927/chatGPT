@@ -15,6 +15,12 @@
 		F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */; };
 		F166CA1F2DF9A3A500AAB5B0 /* chatGPTUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */; };
 		F166CA202DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */; };
+		F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF12DF9AD4400D8445A /* Toast */; };
+		F1DF3AF52DF9AD5200D8445A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF42DF9AD5200D8445A /* SnapKit */; };
+		F1DF3AF82DF9AD6E00D8445A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF72DF9AD6E00D8445A /* RxCocoa */; };
+		F1DF3AFA2DF9AD6E00D8445A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF92DF9AD6E00D8445A /* RxSwift */; };
+		F1DF3AFD2DF9AD8200D8445A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AFC2DF9AD8200D8445A /* Alamofire */; };
+		F1DF3B002DF9AD9000D8445A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AFF2DF9AD9000D8445A /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +60,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1DF3B002DF9AD9000D8445A /* Kingfisher in Frameworks */,
+				F1DF3AFD2DF9AD8200D8445A /* Alamofire in Frameworks */,
+				F1DF3AF82DF9AD6E00D8445A /* RxCocoa in Frameworks */,
+				F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */,
+				F1DF3AFA2DF9AD6E00D8445A /* RxSwift in Frameworks */,
+				F1DF3AF52DF9AD5200D8445A /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +153,12 @@
 			);
 			name = chatGPT;
 			packageProductDependencies = (
+				F1DF3AF12DF9AD4400D8445A /* Toast */,
+				F1DF3AF42DF9AD5200D8445A /* SnapKit */,
+				F1DF3AF72DF9AD6E00D8445A /* RxCocoa */,
+				F1DF3AF92DF9AD6E00D8445A /* RxSwift */,
+				F1DF3AFC2DF9AD8200D8445A /* Alamofire */,
+				F1DF3AFF2DF9AD9000D8445A /* Kingfisher */,
 			);
 			productName = chatGPT;
 			productReference = F16563C82DF9A30F001CDF3B /* chatGPT.app */;
@@ -218,6 +236,13 @@
 			);
 			mainGroup = F16563BF2DF9A30F001CDF3B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F1DF3AF02DF9AD4400D8445A /* XCRemoteSwiftPackageReference "Toast-Swift" */,
+				F1DF3AF32DF9AD5200D8445A /* XCRemoteSwiftPackageReference "SnapKit" */,
+				F1DF3AF62DF9AD6E00D8445A /* XCRemoteSwiftPackageReference "RxSwift" */,
+				F1DF3AFB2DF9AD8200D8445A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F1DF3AFE2DF9AD9000D8445A /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F16563C92DF9A30F001CDF3B /* Products */;
 			projectDirPath = "";
@@ -590,6 +615,82 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F1DF3AF02DF9AD4400D8445A /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.1;
+			};
+		};
+		F1DF3AF32DF9AD5200D8445A /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		F1DF3AF62DF9AD6E00D8445A /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
+		F1DF3AFB2DF9AD8200D8445A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		F1DF3AFE2DF9AD9000D8445A /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F1DF3AF12DF9AD4400D8445A /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1DF3AF02DF9AD4400D8445A /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
+		F1DF3AF42DF9AD5200D8445A /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1DF3AF32DF9AD5200D8445A /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		F1DF3AF72DF9AD6E00D8445A /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1DF3AF62DF9AD6E00D8445A /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		F1DF3AF92DF9AD6E00D8445A /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1DF3AF62DF9AD6E00D8445A /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		F1DF3AFC2DF9AD8200D8445A /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1DF3AFB2DF9AD8200D8445A /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		F1DF3AFF2DF9AD9000D8445A /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1DF3AFE2DF9AD9000D8445A /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F16563C02DF9A30F001CDF3B /* Project object */;
 }
