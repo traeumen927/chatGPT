@@ -1,9 +1,11 @@
-# chatGPT
-App using openAI's chatGPT API function
+# chatGPT Clean Architecture Base
 
+이 저장소는 ChatGPT API를 사용한 앱 개발을 위한 클린 아키텍처 기반 구조를 제공합니다.
 
-<p align="center">
-  <img src="https://github.com/traeumen927/chatGPT/assets/18188727/71d8907e-05e9-4812-adf1-58dda4c9f369" width="30%">
-  <img src="https://github.com/traeumen927/chatGPT/assets/18188727/701d96f2-44cd-40be-8c60-939660a0b582" width="30%">
-  <img src="https://github.com/traeumen927/chatGPT/assets/18188727/9c7c6e81-7cc5-4154-b650-8d2e9040bddb" width="30%">
-</p>
+## 폴더 구조
+- `App` : 앱 실행과 관련된 파일 (AppDelegate, SceneDelegate 등)
+- `Domain` : 엔티티와 UseCase 정의
+- `Data` : 리포지토리 구현 등 데이터 계층
+- `Presentation` : ViewController와 ViewModel 등 UI 계층
+
+각 레이어는 독립적으로 관리되며, 필요에 따라 의존성을 주입하여 사용합니다.
