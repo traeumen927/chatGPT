@@ -48,15 +48,16 @@
 		F166CA0D2DF9A39B00AAB5B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F166CA0E2DF9A39B00AAB5B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-               F166CA112DF9A39B00AAB5B0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+    F166CA112DF9A39B00AAB5B0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presentation/ViewController.swift; sourceTree = "<group>"; };
 		F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTTests.swift; sourceTree = "<group>"; };
 		F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITests.swift; sourceTree = "<group>"; };
-                F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
-               FE5AF86F53254DA5A0C6042D /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities/ChatMessage.swift; sourceTree = "<group>"; };
-               4DAA55BE491A4D3A80AEA947 /* SendMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCases/SendMessageUseCase.swift; sourceTree = "<group>"; };
-               28B97B491F9140689ED00F2A /* ChatRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repositories/ChatRepository.swift; sourceTree = "<group>"; };
-               841CE45B44CA490F8A219A5C /* ChatRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repositories/ChatRepositoryImpl.swift; sourceTree = "<group>"; };
-               8E99BF1D22E04407AA4C4DDC /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/ChatViewModel.swift; sourceTree = "<group>"; };
+    F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
+    FE5AF86F53254DA5A0C6042D /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain/Entities/ChatMessage.swift; sourceTree = "<group>"; };
+    4DAA55BE491A4D3A80AEA947 /* SendMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain/UseCases/SendMessageUseCase.swift; sourceTree = "<group>"; };
+    28B97B491F9140689ED00F2A /* ChatRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data/Repositories/ChatRepository.swift; sourceTree = "<group>"; };
+    841CE45B44CA490F8A219A5C /* ChatRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data/Repositories/ChatRepositoryImpl.swift; sourceTree = "<group>"; };
+    8E99BF1D22E04407AA4C4DDC /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presentation/ViewModels/ChatViewModel.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
