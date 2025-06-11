@@ -4,8 +4,10 @@ App using openAI's chatGPT API function
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/58c8e935-884d-4e97-8e5d-c71b2bea6ab5" width="30%">
-  <img src="https://github.com/user-attachments/assets/c64204da-0c81-45d1-95ac-30b52fb99fcb" width="30%">
+  <img src="https://github.com/user-attachments/assets/7dea8a6b-dd15-43f4-a2be-866b3b5b59ee" width="30%">
+  <img src="https://github.com/user-attachments/assets/31f23c2c-32db-44cf-a06b-d303fdd95f1a" width="30%">
 </p>
+
 
 <p align="center">
   <img src="https://github.com/traeumen927/chatGPT/assets/18188727/71d8907e-05e9-4812-adf1-58dda4c9f369" width="30%">
