@@ -41,4 +41,10 @@ struct ThemeColor {
     
     ///배경2 (222, 226, 230)
     static let background3: UIColor = #colorLiteral(red: 0.8705882353, green: 0.8862745098, blue: 0.9019607843, alpha: 1)
+    
+    ///긍정 (18, 97, 196)
+    static let positive: UIColor = #colorLiteral(red: 0.07058823529, green: 0.3803921569, blue: 0.768627451, alpha: 1)
+    
+    ///부정 (200, 74, 49)
+    static let nagative: UIColor = #colorLiteral(red: 0.7843137255, green: 0.2901960784, blue: 0.1921568627, alpha: 1)
 }
