@@ -5,7 +5,7 @@ App using openAI's chatGPT API function
 <p align="center">
   <img src="https://github.com/user-attachments/assets/58c8e935-884d-4e97-8e5d-c71b2bea6ab5" width="30%">
   <img src="https://github.com/user-attachments/assets/7dea8a6b-dd15-43f4-a2be-866b3b5b59ee" width="30%">
-  <img src="https://github.com/user-attachments/assets/31f23c2c-32db-44cf-a06b-d303fdd95f1a" width="30%">
+  <img src="https://github.com/user-attachments/assets/8921f265-2591-4c36-9be3-00dcd1897de8" width="30%">
 </p>
 
 
