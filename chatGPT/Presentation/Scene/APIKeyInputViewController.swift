@@ -139,12 +139,14 @@ final class APIKeyInputViewController: UIViewController {
         
         // MARK: 저장버튼 탭 바인딩
         self.saveButton.rx.tap
+            .withLatestFrom(self.apiKeyTextField.rx.text.orEmpty)
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: {[weak self] in
-                guard let self = self, let key = self.apiKeyTextField.text else { return }
-//                try? self.saveUseCase.execute(key: key)
-//                completion()
-            }).disposed(by: disposeBag)
+            .subscribe(onNext: { [weak self] key in
+                guard let self = self else { return }
+                try? self.saveUseCase.execute(key: key)
+                self.completion()
+            })
+            .disposed(by: disposeBag)
     }
 }
 
