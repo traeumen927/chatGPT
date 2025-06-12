@@ -21,6 +21,7 @@ final class MenuViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
 
     private func bind() {
