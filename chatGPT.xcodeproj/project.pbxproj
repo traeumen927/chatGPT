@@ -14,6 +14,8 @@
 		F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */; };
 		F166CA1F2DF9A3A500AAB5B0 /* chatGPTUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */; };
 		F166CA202DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */; };
+		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
+		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
 		F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF12DF9AD4400D8445A /* Toast */; };
 		F1DF3AF52DF9AD5200D8445A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF42DF9AD5200D8445A /* SnapKit */; };
 		F1DF3AF82DF9AD6E00D8445A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF72DF9AD6E00D8445A /* RxCocoa */; };
@@ -28,6 +30,9 @@
 		F1DF3B152DF9B09200D8445A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B142DF9B09200D8445A /* AppCoordinator.swift */; };
 		F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */; };
 		F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */; };
+		F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */; };
+		F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */; };
+		F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +64,8 @@
 		F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTTests.swift; sourceTree = "<group>"; };
 		F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITests.swift; sourceTree = "<group>"; };
 		F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
+		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
 		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
 		F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKey.swift; sourceTree = "<group>"; };
 		F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyRepository.swift; sourceTree = "<group>"; };
@@ -67,6 +74,9 @@
 		F1DF3B142DF9B09200D8445A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyInputViewController.swift; sourceTree = "<group>"; };
 		F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
+		F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextField.swift; sourceTree = "<group>"; };
+		F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,13 +133,16 @@
 		F166CA122DF9A39B00AAB5B0 /* chatGPT */ = {
 			isa = PBXGroup;
 			children = (
+				F1DF3B1B2DF9B40F00D8445A /* Resource */,
+				F1B7F7612DF9E525002D12BB /* Protocol */,
+				F1DF3B1E2DF9B45B00D8445A /* Extension */,
+				F1DF3B232DF9B5B800D8445A /* Components */,
+				F1DF3B202DF9B47E00D8445A /* Service */,
 				F1DF3B012DF9AF5700D8445A /* Data */,
 				F1DF3B042DF9AF9900D8445A /* Domain */,
 				F1DF3B122DF9B07800D8445A /* Presentation */,
 				F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
-				F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */,
 				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
-				F166CA0F2DF9A39B00AAB5B0 /* LaunchScreen.storyboard */,
 				F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */,
 			);
 			path = chatGPT;
@@ -150,6 +163,14 @@
 				F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */,
 			);
 			path = chatGPTUITests;
+			sourceTree = "<group>";
+		};
+		F1B7F7612DF9E525002D12BB /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */,
+			);
+			path = Protocol;
 			sourceTree = "<group>";
 		};
 		F1DF3B012DF9AF5700D8445A /* Data */ = {
@@ -219,6 +240,40 @@
 				F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
 			);
 			path = Scene;
+			sourceTree = "<group>";
+		};
+		F1DF3B1B2DF9B40F00D8445A /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */,
+				F166CA0F2DF9A39B00AAB5B0 /* LaunchScreen.storyboard */,
+				F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		F1DF3B1E2DF9B45B00D8445A /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		F1DF3B202DF9B47E00D8445A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		F1DF3B232DF9B5B800D8445A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */,
+				F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */,
+				F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -372,11 +427,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1DF3B072DF9AFDD00D8445A /* ApiKey.swift in Sources */,
+				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
+				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
+				F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1DF3B0A2DF9B01100D8445A /* ApiKeyRepository.swift in Sources */,
 				F1DF3B0F2DF9B04500D8445A /* GetAPIKeyUseCase.swift in Sources */,
+				F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */,
 				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
+				F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */,
 				F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */,
 				F1DF3B152DF9B09200D8445A /* AppCoordinator.swift in Sources */,
 				F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */,
