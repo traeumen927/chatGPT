@@ -28,12 +28,9 @@ final class AppCoordinator {
     }
 
     private func showMain() {
-        let main = MainViewController()
-        let navigationController = UINavigationController(rootViewController: main)
-        let menu = MenuViewController()
-        let container = SideMenuContainerViewController(contentViewController: navigationController,
-                                                        menuViewController: menu)
-        window.rootViewController = container
+        let vc = MainViewController()
+        let navigationController = UINavigationController(rootViewController: vc)
+        window.rootViewController = navigationController
         window.makeKeyAndVisible()
     }
 
