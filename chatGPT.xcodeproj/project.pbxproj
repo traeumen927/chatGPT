@@ -14,6 +14,7 @@
 		F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */; };
 		F166CA1F2DF9A3A500AAB5B0 /* chatGPTUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */; };
 		F166CA202DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */; };
+		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
 		F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF12DF9AD4400D8445A /* Toast */; };
@@ -64,6 +65,7 @@
 		F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTTests.swift; sourceTree = "<group>"; };
 		F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITests.swift; sourceTree = "<group>"; };
 		F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
 		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
@@ -272,6 +274,7 @@
 				F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */,
 				F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */,
 				F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */,
+				F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -430,6 +433,7 @@
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
+				F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */,
 				F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1DF3B0A2DF9B01100D8445A /* ApiKeyRepository.swift in Sources */,
