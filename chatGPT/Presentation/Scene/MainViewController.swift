@@ -27,10 +27,10 @@ final class MainViewController: UIViewController {
         // MARK: KeyboardAdjustable 프로토콜의 키보드 옵져버 제거
         self.removeKeyboardObservers()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         self.layout()
         self.bind()
     }
@@ -53,7 +53,25 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
-            print("text: \(text)")
+            
+            print("질문: \(text)")
+            
+            let repository = KeychainAPIKeyRepository()
+            let openAIService = OpenAIService(apiKeyRepository: repository)
+            
+            openAIService.request(
+                .chat(prompt: text, model: .gpt35, stream: false)) { result in
+                    switch result {
+                    case .success(let text):
+                        print("답변: \(text)")
+                    case .failure(let error):
+                        if let openAIError = error as? OpenAIError {
+                            print("❌ OpenAI 오류: \(openAIError.errorMessage)")
+                        } else {
+                            print("❌ 일반 오류: \(error.localizedDescription)")
+                        }
+                    }
+                }
         }
     }
 }

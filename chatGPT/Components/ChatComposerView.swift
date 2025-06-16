@@ -185,6 +185,8 @@ final class ChatComposerView: UIView, UITextViewDelegate {
     }
     
     private func adjustTextViewHeight() {
+        guard textView.bounds.width > 0 else { return }
+        
         let fittingSize = CGSize(width: textView.bounds.width, height: .greatestFiniteMagnitude)
         let size = textView.sizeThatFits(fittingSize)
         
