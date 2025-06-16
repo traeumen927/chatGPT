@@ -49,6 +49,12 @@ final class MainViewController: UIViewController {
     private func bind(){
         // MARK: KeyboardAdjustable 프로토콜의 옵저버 추가
         self.addKeyboardObservers()
+        
+        // MARK: ChatComposerView 전송버튼 클로져
+        self.composerView.onSendButtonTapped = { [weak self] text in
+            guard let self = self else { return }
+            print("text: \(text)")
+        }
     }
 }
 

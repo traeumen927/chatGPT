@@ -7,26 +7,46 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ChatComposerView: UIView, UITextViewDelegate {
-
+    
+    private let disposeBag = DisposeBag()
+    
     // MARK: - UI
+    // MARK: 채팅 텍스트뷰
     private let textView = UITextView()
+    
+    // MARK: 플레이스 홀더 라벨
     private let placeholderLabel = UILabel()
-
+    
+    // MARK: 전송 버튼
+    private let sendButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "arrow.up.circle"), for: .normal)
+        button.tintColor = ThemeColor.tintDark
+        return button
+    }()
+    
+    // MARK: - Output
+    
+    // MARK: 외부 전달용 클로져
+    var onSendButtonTapped: ((String) -> Void)?
+    
     // MARK: - Constraints
     private var textViewHeightConstraint: Constraint?
-
+    
     // MARK: - Configurable Constants
     private var lineHeight: CGFloat {
         return textView.font?.lineHeight ?? UIFont.systemFont(ofSize: 14).lineHeight
     }
-
+    
     private var minTextViewHeight: CGFloat {
         let insets = textView.textContainerInset.top + textView.textContainerInset.bottom
         return lineHeight + insets
     }
-
+    
     private var maxTextViewHeight: CGFloat {
         return minTextViewHeight * 5
     }
@@ -40,7 +60,7 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             adjustTextViewHeight()
         }
     }
-
+    
     // MARK: 폰트
     var font: UIFont = .systemFont(ofSize: 14) {
         didSet {
@@ -48,12 +68,12 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             placeholderLabel.font = font
         }
     }
-
+    
     // MARK: 텍스트컬러
     var textColor: UIColor = .label {
         didSet { textView.textColor = textColor }
     }
-
+    
     // MARK: 플레이스홀더
     var placeholder: String? {
         didSet {
@@ -61,28 +81,30 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             updatePlaceholderVisibility()
         }
     }
-
+    
     // MARK: 플레이스홀더 컬러
     var placeholderColor: UIColor = .secondaryLabel {
         didSet { placeholderLabel.textColor = placeholderColor }
     }
-
+    
     // MARK: 부모뷰 배경색
     var composerColor: UIColor = .systemBackground {
         didSet { backgroundColor = composerColor }
     }
-
+    
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        layout()
+        self.layout()
+        self.bind()
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        layout()
+        self.layout()
+        self.bind()
     }
-
+    
     // MARK: - 레이아웃 설정
     private func layout() {
         
@@ -90,9 +112,11 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         self.layer.cornerRadius = 25
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
+        // MARK: 채팅과 관련된 컴포넌트가 담길 뷰
+        let toolBoxView = UIView()
+        [self.textView, self.placeholderLabel, toolBoxView].forEach(addSubview(_:))
+        [self.sendButton].forEach(toolBoxView.addSubview(_:))
         
-        [self.textView, self.placeholderLabel].forEach(addSubview(_:))
-
         // MARK: TextVeiw 설정
         textView.delegate = self
         textView.backgroundColor = .clear
@@ -101,41 +125,75 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         textView.isScrollEnabled = false
         textView.textContainerInset = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
         textView.textContainer.lineFragmentPadding = 0
-
+        
         // MARK: PlaceHolder 설정
         placeholderLabel.font = font
         placeholderLabel.textColor = placeholderColor
         placeholderLabel.numberOfLines = 1
         placeholderLabel.text = placeholder
-
+        
         textView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(6)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(self.safeAreaLayoutGuide).offset(-32)
             self.textViewHeightConstraint = make.height.equalTo(minTextViewHeight).constraint
         }
-
+        
         placeholderLabel.snp.makeConstraints { make in
             make.leading.equalTo(textView).offset(8)
             make.top.equalTo(textView).offset(8)
         }
+        
+        toolBoxView.snp.makeConstraints { make in
+            make.top.equalTo(self.textView.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(self.safeAreaLayoutGuide)
+        }
+        
+        self.sendButton.snp.makeConstraints { make in
+            make.top.trailing.bottom.equalToSuperview()
+            make.width.height.equalTo(44)
+        }
     }
-
+    
+    // MARK: - Bind
+    private func bind() {
+        self.textView.rx.text.orEmpty
+            .distinctUntilChanged()
+            .filter { !$0.isEmpty }
+            .subscribe(onNext: { [weak self] _ in
+                self?.updatePlaceholderVisibility()
+                self?.adjustTextViewHeight()
+            })
+            .disposed(by: disposeBag)
+        
+        self.sendButton.rx.tap
+            .withLatestFrom(textView.rx.text.orEmpty)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .subscribe(onNext: { [weak self] text in
+                self?.onSendButtonTapped?(text)
+                self?.textView.text = ""
+                self?.updatePlaceholderVisibility()
+                self?.adjustTextViewHeight()
+            })
+            .disposed(by: disposeBag)
+    }
+    
     // MARK: - Dynamic Resize
     private func updatePlaceholderVisibility() {
         placeholderLabel.isHidden = !(textView.text?.isEmpty ?? true)
     }
-
+    
     private func adjustTextViewHeight() {
         let fittingSize = CGSize(width: textView.bounds.width, height: .greatestFiniteMagnitude)
         let size = textView.sizeThatFits(fittingSize)
-
+        
         let targetHeight = min(max(size.height, minTextViewHeight), maxTextViewHeight)
         textView.isScrollEnabled = size.height > maxTextViewHeight
         textViewHeightConstraint?.update(offset: targetHeight)
         layoutIfNeeded()
     }
-
+    
     // MARK: - UITextViewDelegate
     func textViewDidChange(_ textView: UITextView) {
         updatePlaceholderVisibility()
