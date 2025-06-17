@@ -15,8 +15,8 @@ final class MainViewController: UIViewController {
     // MARK: 모델조회 UseCase
     private let fetchModelsUseCase: FetchAvailableModelsUseCase
     
-    // MARK: 채팅전송 UseCase
-    private let sendChatMessageUseCase: SendChatMessageUseCase
+    // MARK: 채팅관련 ViewModel
+    private let chatViewModel: ChatViewModel
     
     private let disposeBag = DisposeBag()
     
@@ -46,12 +46,25 @@ final class MainViewController: UIViewController {
         return view
     }()
     
+    // MARK: 테이블뷰
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.register(ChatMessageCell.self, forCellReuseIdentifier: "ChatMessageCell")
+        tableView.keyboardDismissMode = .interactive
+        tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
+        return tableView
+    }()
+    
     // MARK: 저장버튼 영역뷰의 하단 제약 저장 (키보드 대응)
     private var composerViewBottomConstraint: Constraint?
     
+    // MARK: 채팅 dataSource
+    private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
+    
     init(fetchModelsUseCase: FetchAvailableModelsUseCase, sendChatMessageUseCase: SendChatMessageUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
-        self.sendChatMessageUseCase = sendChatMessageUseCase
+        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -80,7 +93,13 @@ final class MainViewController: UIViewController {
         
         self.view.backgroundColor = ThemeColor.background1
         
-        [self.composerView].forEach(self.view.addSubview(_:))
+        [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
+        
+        self.tableView.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(composerView.snp.top)
+        }
         
         self.composerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -98,22 +117,18 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
-            
-            print("질문(\(self.selectedModel.displayName)): \(text)")
-            
-            self.sendChatMessageUseCase.execute(prompt: text, model: self.selectedModel) { result in
-                switch result {
-                case .success(let reply):
-                    print("답변: \(reply)")
-                case .failure(let error):
-                    if let openAIError = error as? OpenAIError {
-                        print("❌ OpenAI 오류: \(openAIError.errorMessage)")
-                    } else {
-                        print("❌ 일반 오류: \(error.localizedDescription)")
-                    }
-                }
-            }
+            self.chatViewModel.send(prompt: text, model: self.selectedModel)
         }
+        
+        // 메시지 상태 → UI 업데이트
+        self.dataSource = createDataSource()
+        self.chatViewModel.messages
+            .asDriver(onErrorJustReturn: [])
+            .drive(onNext: { [weak self] messages in
+                self?.applySnapshot(messages)
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     private func updateModelButton() {
@@ -153,6 +168,31 @@ final class MainViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: TableView Helpers
+    private func createDataSource() -> UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage> {
+        UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, message in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageCell
+            cell.configure(with: message)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
+        snapshot.appendSections([0])
+        
+        // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
+        snapshot.appendItems(messages.reversed())
+
+        dataSource.apply(snapshot, animatingDifferences: true)
+
+        if !messages.isEmpty {
+            let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
+            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        }
+    }
+
 }
 
 // MARK: - Place for extension with KeyboardAdjustable

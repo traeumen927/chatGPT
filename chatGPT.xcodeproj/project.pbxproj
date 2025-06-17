@@ -19,6 +19,8 @@
 		F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0742E0184A900D1C95F /* OpenAIRepository.swift */; };
 		F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */; };
 		F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */; };
+		F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* ChatViewModel.swift */; };
+		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
 		F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */; };
 		F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */; };
@@ -78,6 +80,8 @@
 		F117E0742E0184A900D1C95F /* OpenAIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRepository.swift; sourceTree = "<group>"; };
 		F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRepositoryImpl.swift; sourceTree = "<group>"; };
 		F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatMessageUseCase.swift; sourceTree = "<group>"; };
+		F117E07A2E0188F200D1C95F /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		F16563C82DF9A30F001CDF3B /* chatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563DE2DF9A310001CDF3B /* chatGPTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563E82DF9A310001CDF3B /* chatGPTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,6 +166,14 @@
 				F117E0702E01587F00D1C95F /* String+Truncate.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		F117E07C2E018AF400D1C95F /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		F16563BF2DF9A30F001CDF3B = {
@@ -299,6 +311,8 @@
 			children = (
 				F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */,
 				F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
+				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
+				F117E07C2E018AF400D1C95F /* Cells */,
 			);
 			path = Scene;
 			sourceTree = "<group>";
@@ -498,6 +512,7 @@
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
+				F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */,
 				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
 				F1051DF02E004CFA008D5D80 /* OpenAIModel.swift in Sources */,
 				F1051DF62E004E72008D5D80 /* OpenAIService.swift in Sources */,
@@ -509,6 +524,7 @@
 				F1DF3B0F2DF9B04500D8445A /* GetAPIKeyUseCase.swift in Sources */,
 				F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */,
 				F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */,
+				F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */,
 				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
 				F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */,
 				F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */,
