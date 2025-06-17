@@ -7,38 +7,31 @@
 
 import Foundation
 
-enum OpenAIModel: String, CaseIterable {
-    case gpt35 = "gpt-3.5-turbo"
-    case gpt4 = "gpt-4"
-    case gpt4o = "gpt-4o"
-    
-    var isStreamingSupported: Bool {
-        return true
-    }
-    
+struct OpenAIModel: Equatable, Hashable {
+    let id: String
+
     var displayName: String {
-        switch self {
-        case .gpt35: return "GPT-3.5"
-        case .gpt4: return "GPT-4"
-        case .gpt4o: return "GPT-4o"
-        }
+        return id
     }
 }
+
 
 // MARK: UserDefaults를 활용한 chatGPT model 저장
 struct ModelPreference {
     private static let key = "selectedChatModel"
-    
+
     static var current: OpenAIModel {
-        get {
-            if let raw = UserDefaults.standard.string(forKey: key),
-               let model = OpenAIModel(rawValue: raw) {
-                return model
-            }
-            return .gpt35
+        if let id = UserDefaults.standard.string(forKey: key) {
+            return OpenAIModel(id: id)
         }
-        set {
-            UserDefaults.standard.setValue(newValue.rawValue, forKey: key)
-        }
+        return OpenAIModel(id: "unknown")
+    }
+
+    static var currentId: String? {
+        UserDefaults.standard.string(forKey: key)
+    }
+
+    static func save(_ model: OpenAIModel) {
+        UserDefaults.standard.set(model.id, forKey: key)
     }
 }

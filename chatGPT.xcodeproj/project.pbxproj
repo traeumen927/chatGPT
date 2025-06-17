@@ -13,6 +13,8 @@
 		F1051DF82E004EBB008D5D80 /* OpenAIEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */; };
 		F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF92E004EC8008D5D80 /* OpenAIError.swift */; };
 		F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */; };
+		F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */; };
+		F117E0712E01587F00D1C95F /* String+Truncate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0702E01587F00D1C95F /* String+Truncate.swift */; };
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
 		F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */; };
 		F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */; };
@@ -66,6 +68,8 @@
 		F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIEndPoint.swift; sourceTree = "<group>"; };
 		F1051DF92E004EC8008D5D80 /* OpenAIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIError.swift; sourceTree = "<group>"; };
 		F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIChatRequest.swift; sourceTree = "<group>"; };
+		F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModelListResponse.swift; sourceTree = "<group>"; };
+		F117E0702E01587F00D1C95F /* String+Truncate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Truncate.swift"; sourceTree = "<group>"; };
 		F16563C82DF9A30F001CDF3B /* chatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563DE2DF9A310001CDF3B /* chatGPTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563E82DF9A310001CDF3B /* chatGPTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,8 +143,17 @@
 			children = (
 				F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
 				F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
+				F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		F117E06F2E01586400D1C95F /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				F117E0702E01587F00D1C95F /* String+Truncate.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		F16563BF2DF9A30F001CDF3B = {
@@ -254,6 +267,7 @@
 		F1DF3B122DF9B07800D8445A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				F117E06F2E01586400D1C95F /* Helpers */,
 				F1DF3B132DF9B08300D8445A /* Coordinator */,
 				F1DF3B162DF9B0C400D8445A /* Scene */,
 			);
@@ -463,8 +477,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F117E0712E01587F00D1C95F /* String+Truncate.swift in Sources */,
 				F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */,
 				F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
+				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
 				F1DF3B072DF9AFDD00D8445A /* ApiKey.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,

@@ -14,10 +14,13 @@ final class MainViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     
+    // MARK: 사용 가능한 chatGPT 모델
+    private var availableModels: [OpenAIModel] = []
+    
     // MARK: 선택된 chatGPT 모델
     private var selectedModel: OpenAIModel = ModelPreference.current {
         didSet {
-            ModelPreference.current = selectedModel
+            ModelPreference.save(selectedModel)
             self.updateModelButton()
         }
     }
@@ -74,37 +77,43 @@ final class MainViewController: UIViewController {
         // MARK: KeyboardAdjustable 프로토콜의 옵저버 추가
         self.addKeyboardObservers()
         
+        // MARK: 사용가능한 모델 fetch
+        self.fetchAvailableModels()
+        
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
             
-            print("질문: \(text)")
+            print("질문(\(self.selectedModel.displayName)): \(text)")
             
             let repository = KeychainAPIKeyRepository()
             let openAIService = OpenAIService(apiKeyRepository: repository)
             
-            openAIService.request(
-                .chat(prompt: text, model: .gpt35, stream: false)) { result in
-                    switch result {
-                    case .success(let text):
-                        print("답변: \(text)")
-                    case .failure(let error):
-                        if let openAIError = error as? OpenAIError {
-                            print("❌ OpenAI 오류: \(openAIError.errorMessage)")
-                        } else {
-                            print("❌ 일반 오류: \(error.localizedDescription)")
-                        }
+            openAIService.request(.chat(prompt: text, model: self.selectedModel, stream: false)) { (result: Result<OpenAIResponse, Error>) in
+                switch result {
+                case .success(let decoded):
+                    let reply = decoded.choices.first?.message.content ?? ""
+                    print("답변: \(reply)")
+                case .failure(let error):
+                    if let openAIError = error as? OpenAIError {
+                        print("❌ OpenAI 오류: \(openAIError.errorMessage)")
+                    } else {
+                        print("❌ 일반 오류: \(error.localizedDescription)")
                     }
                 }
+            }
         }
     }
     
-    // MARK: 드랍 메뉴 생성
-    private func createModelMenu() -> UIMenu {
-        UIMenu(
+    private func updateModelButton() {
+        
+        // MARK: 모델명이 너무 긴 경우를 대비하여 truncate
+        modelButton.title = selectedModel.displayName.truncated(limit: 13)
+        
+        modelButton.menu = UIMenu(
             title: "모델 선택",
             options: .displayInline,
-            children: OpenAIModel.allCases.map { model in
+            children: availableModels.map { model in
                 UIAction(title: model.displayName,
                          state: model == selectedModel ? .on : .off) { [weak self] _ in
                     self?.selectedModel = model
@@ -113,20 +122,33 @@ final class MainViewController: UIViewController {
         )
     }
     
-    // MARK: 모델 버튼 변경
-    private func updateModelButton() {
-        modelButton.title = selectedModel.displayName
-        modelButton.menu = UIMenu(
-            title: "모델 선택",
-            options: .displayInline,
-            children: OpenAIModel.allCases.map { model in
-                UIAction(title: model.displayName,
-                         state: model == selectedModel ? .on : .off) { [weak self] _ in
-                    self?.selectedModel = model
+    
+    // MARK: 사용 가능 모델 조회
+    private func fetchAvailableModels() {
+        let repository = KeychainAPIKeyRepository()
+        let openAIService = OpenAIService(apiKeyRepository: repository)
+        
+        openAIService.request(.models) { (result: Result<OpenAIModelListResponse, Error>) in
+            switch result {
+            case .success(let response):
+                let models = response.data
+                    .map { OpenAIModel(id: $0.id) }
+                    .filter { $0.id.hasPrefix("gpt-") && !$0.id.contains("instruct") }
+                
+                self.availableModels = models
+                
+                if !models.contains(self.selectedModel) {
+                    self.selectedModel = models.first ?? OpenAIModel(id: "unknown")
                 }
+                
+                self.updateModelButton()
+                
+            case .failure(let error):
+                print("❌ 모델 로딩 실패: \(error)")
             }
-        )
+        }
     }
+    
 }
 
 // MARK: - Place for extension with KeyboardAdjustable
