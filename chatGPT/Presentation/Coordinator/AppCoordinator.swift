@@ -12,13 +12,13 @@ final class AppCoordinator {
     private let window: UIWindow
     private let getKeyUseCase: GetAPIKeyUseCase
     private let saveKeyUseCase: SaveAPIKeyUseCase
-
+    
     init(window: UIWindow, getKeyUseCase: GetAPIKeyUseCase, saveKeyUseCase: SaveAPIKeyUseCase) {
         self.window = window
         self.getKeyUseCase = getKeyUseCase
         self.saveKeyUseCase = saveKeyUseCase
     }
-
+    
     func start() {
         if getKeyUseCase.execute() != nil {
             showMain()
@@ -26,14 +26,23 @@ final class AppCoordinator {
             showKeyInput()
         }
     }
-
+    
     private func showMain() {
-        let vc = MainViewController()
-        let navigationController = UINavigationController(rootViewController: vc)
-        window.rootViewController = navigationController
+        let service = OpenAIService(apiKeyRepository: KeychainAPIKeyRepository())
+        let repository = OpenAIRepositoryImpl(service: service)
+        let fetchModelsUseCase = FetchAvailableModelsUseCase(repository: repository)
+        let sendChatUseCase = SendChatMessageUseCase(repository: repository)
+        
+        let vc = MainViewController(
+            fetchModelsUseCase: fetchModelsUseCase,
+            sendChatMessageUseCase: sendChatUseCase
+        )
+        
+        let nav = UINavigationController(rootViewController: vc)
+        window.rootViewController = nav
         window.makeKeyAndVisible()
     }
-
+    
     private func showKeyInput() {
         let vc = APIKeyInputViewController(saveUseCase: saveKeyUseCase) { [weak self] in
             self?.showMain()

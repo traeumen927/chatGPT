@@ -12,6 +12,12 @@ import RxCocoa
 
 final class MainViewController: UIViewController {
     
+    // MARK: 모델조회 UseCase
+    private let fetchModelsUseCase: FetchAvailableModelsUseCase
+    
+    // MARK: 채팅전송 UseCase
+    private let sendChatMessageUseCase: SendChatMessageUseCase
+    
     private let disposeBag = DisposeBag()
     
     // MARK: 사용 가능한 chatGPT 모델
@@ -43,6 +49,15 @@ final class MainViewController: UIViewController {
     // MARK: 저장버튼 영역뷰의 하단 제약 저장 (키보드 대응)
     private var composerViewBottomConstraint: Constraint?
     
+    init(fetchModelsUseCase: FetchAvailableModelsUseCase, sendChatMessageUseCase: SendChatMessageUseCase) {
+        self.fetchModelsUseCase = fetchModelsUseCase
+        self.sendChatMessageUseCase = sendChatMessageUseCase
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     deinit {
         // MARK: KeyboardAdjustable 프로토콜의 키보드 옵져버 제거
@@ -86,13 +101,9 @@ final class MainViewController: UIViewController {
             
             print("질문(\(self.selectedModel.displayName)): \(text)")
             
-            let repository = KeychainAPIKeyRepository()
-            let openAIService = OpenAIService(apiKeyRepository: repository)
-            
-            openAIService.request(.chat(prompt: text, model: self.selectedModel, stream: false)) { (result: Result<OpenAIResponse, Error>) in
+            self.sendChatMessageUseCase.execute(prompt: text, model: self.selectedModel) { result in
                 switch result {
-                case .success(let decoded):
-                    let reply = decoded.choices.first?.message.content ?? ""
+                case .success(let reply):
                     print("답변: \(reply)")
                 case .failure(let error):
                     if let openAIError = error as? OpenAIError {
@@ -122,19 +133,13 @@ final class MainViewController: UIViewController {
         )
     }
     
-    
     // MARK: 사용 가능 모델 조회
     private func fetchAvailableModels() {
-        let repository = KeychainAPIKeyRepository()
-        let openAIService = OpenAIService(apiKeyRepository: repository)
-        
-        openAIService.request(.models) { (result: Result<OpenAIModelListResponse, Error>) in
+        fetchModelsUseCase.execute { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
-            case .success(let response):
-                let models = response.data
-                    .map { OpenAIModel(id: $0.id) }
-                    .filter { $0.id.hasPrefix("gpt-") && !$0.id.contains("instruct") }
-                
+            case .success(let models):
                 self.availableModels = models
                 
                 if !models.contains(self.selectedModel) {
@@ -144,11 +149,10 @@ final class MainViewController: UIViewController {
                 self.updateModelButton()
                 
             case .failure(let error):
-                print("❌ 모델 로딩 실패: \(error)")
+                print("❌ 모델 로딩 실패: \(error.localizedDescription)")
             }
         }
     }
-    
 }
 
 // MARK: - Place for extension with KeyboardAdjustable
