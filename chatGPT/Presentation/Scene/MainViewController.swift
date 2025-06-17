@@ -7,8 +7,26 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class MainViewController: UIViewController {
+    
+    private let disposeBag = DisposeBag()
+    
+    // MARK: 선택된 chatGPT 모델
+    private var selectedModel: OpenAIModel = ModelPreference.current {
+        didSet {
+            ModelPreference.current = selectedModel
+            self.updateModelButton()
+        }
+    }
+    
+    // MARK: 모델 선택 버튼
+    private lazy var modelButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
+        return button
+    }()
     
     // MARK: 채팅관련 컴포져뷰
     private lazy var composerView: ChatComposerView = {
@@ -36,7 +54,13 @@ final class MainViewController: UIViewController {
     }
     
     private func layout() {
-        view.backgroundColor = ThemeColor.background1
+        self.navigationItem.title = "ChatGPT"
+        self.navigationItem.rightBarButtonItem = modelButton
+        
+        // MARK: 모델 버튼 초기 설정
+        self.updateModelButton()
+        
+        self.view.backgroundColor = ThemeColor.background1
         
         [self.composerView].forEach(self.view.addSubview(_:))
         
@@ -73,6 +97,35 @@ final class MainViewController: UIViewController {
                     }
                 }
         }
+    }
+    
+    // MARK: 드랍 메뉴 생성
+    private func createModelMenu() -> UIMenu {
+        UIMenu(
+            title: "모델 선택",
+            options: .displayInline,
+            children: OpenAIModel.allCases.map { model in
+                UIAction(title: model.displayName,
+                         state: model == selectedModel ? .on : .off) { [weak self] _ in
+                    self?.selectedModel = model
+                }
+            }
+        )
+    }
+    
+    // MARK: 모델 버튼 변경
+    private func updateModelButton() {
+        modelButton.title = selectedModel.displayName
+        modelButton.menu = UIMenu(
+            title: "모델 선택",
+            options: .displayInline,
+            children: OpenAIModel.allCases.map { model in
+                UIAction(title: model.displayName,
+                         state: model == selectedModel ? .on : .off) { [weak self] _ in
+                    self?.selectedModel = model
+                }
+            }
+        )
     }
 }
 
