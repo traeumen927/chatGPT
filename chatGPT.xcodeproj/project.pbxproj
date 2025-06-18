@@ -38,7 +38,6 @@
 		F1DF3AFD2DF9AD8200D8445A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AFC2DF9AD8200D8445A /* Alamofire */; };
 		F1DF3B002DF9AD9000D8445A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AFF2DF9AD9000D8445A /* Kingfisher */; };
 		F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */; };
-		F1DF3B072DF9AFDD00D8445A /* ApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */; };
 		F1DF3B0A2DF9B01100D8445A /* ApiKeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */; };
 		F1DF3B0F2DF9B04500D8445A /* GetAPIKeyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */; };
 		F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */; };
@@ -97,7 +96,6 @@
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
 		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
-		F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKey.swift; sourceTree = "<group>"; };
 		F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyRepository.swift; sourceTree = "<group>"; };
 		F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAPIKeyUseCase.swift; sourceTree = "<group>"; };
 		F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveAPIKeyUseCase.swift; sourceTree = "<group>"; };
@@ -140,26 +138,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F1051DEE2E004CE8008D5D80 /* Enum */ = {
-			isa = PBXGroup;
-			children = (
-				F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
-				F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
-				F1051DF92E004EC8008D5D80 /* OpenAIError.swift */,
-			);
-			path = Enum;
-			sourceTree = "<group>";
-		};
-		F1051DF12E004DFE008D5D80 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
-				F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
-				F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
+               F1051DF12E004DFE008D5D80 /* Model */ = {
+                       isa = PBXGroup;
+                       children = (
+                               F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
+                               F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
+                               F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
+                               F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
+                               F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
+                               F1051DF92E004EC8008D5D80 /* OpenAIError.swift */,
+                       );
+                       path = Model;
+                       sourceTree = "<group>";
+               };
 		F117E06F2E01586400D1C95F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -201,9 +192,7 @@
 			children = (
 				F1DF3B1B2DF9B40F00D8445A /* Resource */,
 				F1B7F7612DF9E525002D12BB /* Protocol */,
-				F1DF3B1E2DF9B45B00D8445A /* Extension */,
-				F1051DEE2E004CE8008D5D80 /* Enum */,
-				F1051DF12E004DFE008D5D80 /* Model */,
+                               F1051DF12E004DFE008D5D80 /* Model */,
 				F1DF3B232DF9B5B800D8445A /* Components */,
 				F1DF3B202DF9B47E00D8445A /* Service */,
 				F1DF3B012DF9AF5700D8445A /* Data */,
@@ -254,21 +243,12 @@
 		F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			isa = PBXGroup;
 			children = (
-				F1DF3B052DF9AFC900D8445A /* Entity */,
-				F1DF3B082DF9AFE900D8445A /* Repository */,
-				F1DF3B0D2DF9B02C00D8445A /* UseCase */,
-			);
-			path = Domain;
-			sourceTree = "<group>";
-		};
-		F1DF3B052DF9AFC900D8445A /* Entity */ = {
-			isa = PBXGroup;
-			children = (
-				F1DF3B062DF9AFDD00D8445A /* ApiKey.swift */,
-			);
-			path = Entity;
-			sourceTree = "<group>";
-		};
+                               F1DF3B082DF9AFE900D8445A /* Repository */,
+                               F1DF3B0D2DF9B02C00D8445A /* UseCase */,
+                       );
+                       path = Domain;
+                       sourceTree = "<group>";
+               };
 		F1DF3B082DF9AFE900D8445A /* Repository */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,13 +305,6 @@
 				F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */,
 			);
 			path = Resource;
-			sourceTree = "<group>";
-		};
-		F1DF3B1E2DF9B45B00D8445A /* Extension */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extension;
 			sourceTree = "<group>";
 		};
 		F1DF3B202DF9B47E00D8445A /* Service */ = {
@@ -508,7 +481,6 @@
 				F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
 				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
-				F1DF3B072DF9AFDD00D8445A /* ApiKey.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
