@@ -67,3 +67,51 @@ API 키 오류나 네트워크 문제 등의 요청 실패 시에는, 해당 오
   <img src="https://github.com/user-attachments/assets/d7537f77-481f-4a9c-9c25-fead6f287698" width="30%">
   <img src="https://github.com/user-attachments/assets/9b34c511-8806-4891-8def-6cceed50002e" width="30%">
 </p>
+
+---
+
+### 🧠 대화의 흐름을 기억하는 문맥 유지 기능
+
+ChatGPT API는 기본적으로 이전 대화를 기억하지 않기 때문에,  
+단순한 요청만으로는 연속된 질문에 자연스럽게 응답하기 어렵습니다.
+
+이 앱은 최근 N개의 메시지를 자동으로 유지하고,  
+대화가 길어질 경우에는 이전 흐름을 간결하게 요약한 system 메시지를 포함하여  
+이전 맥락을 바탕으로 질문을 이어갈 수 있도록 구성되어 있습니다.
+
+문맥 유지는 아래와 같이 system 메시지와 최근 대화를 함께 포함시켜  
+모델이 이전 맥락을 이해할 수 있도록 구성합니다:
+
+```swift
+// systemMessage: 요약된 메시지 (optional)
+// messageHistory: 최근 사용자 대화
+
+let messagesForAPI: [ChatMessage] = {
+    var result = [ChatMessage]()
+    if let summary = systemMessage {
+        result.append(summary) // 🧠 과거 요약 내용을 system 메시지로 삽입
+    }
+    result.append(contentsOf: messageHistory) // 🔄 최근 대화 메시지들
+    return result
+}()
+
+openAIService.request(.chat(messages: messagesForAPI, model: selectedModel)) { result in
+    ...
+}
+```
+
+이미지는 다음을 보여줍니다:
+
+1. **문맥 유지 기능 미적용 상태** — 이전 질문을 기억하지 못해 어색한 응답이 반환됩니다.  
+2. **문맥 유지 기능 적용 상태** — 요약된 대화 흐름을 기반으로 자연스럽게 이어지는 응답이 표시됩니다.
+
+<br>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f53b2ee0-c8c0-49b6-a90f-3ad6678f7e51" width="30%">
+  <img src="https://github.com/user-attachments/assets/c1f46ba6-d476-4e4f-beab-3bfa817db487" width="30%">
+</p>
+
+
+> 이 기능을 통해 긴 대화 속에서도 동일한 주제를 자연스럽게 이어갈 수 있으며,  
+> 요약된 system 메시지를 기반으로 마치 ‘기억하는’ 챗봇처럼 응답합니다.
