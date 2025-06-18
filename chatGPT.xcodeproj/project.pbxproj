@@ -50,7 +50,8 @@
 		F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */; };
 		F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */; };
 		F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */; };
-		F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */; };
+                F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */; };
+                E1B9A0B22E00000100000000 /* RoleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B9A0B12E00000100000000 /* RoleType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,7 +113,8 @@
 		F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
 		F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextField.swift; sourceTree = "<group>"; };
-		F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextView.swift; sourceTree = "<group>"; };
+                F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextView.swift; sourceTree = "<group>"; };
+                E1B9A0B12E00000100000000 /* RoleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,17 +148,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-               F1051DF12E004DFE008D5D80 /* Model */ = {
+F1051DF12E004DFE008D5D80 /* Entity */ = {
                        isa = PBXGroup;
                        children = (
                                F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
                                F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
                                F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
                                F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
-                               F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
-                               F1051DF92E004EC8008D5D80 /* OpenAIError.swift */,
                        );
-                       path = Model;
+                       path = Entity;
+                       sourceTree = "<group>";
+               };
+E1B9A0B02E00000100000000 /* Enum */ = {
+                       isa = PBXGroup;
+                       children = (
+                               F1051DF92E004EC8008D5D80 /* OpenAIError.swift */,
+                               E1B9A0B12E00000100000000 /* RoleType.swift */,
+                       );
+                       path = Enum;
                        sourceTree = "<group>";
                };
 		F117E06F2E01586400D1C95F /* Helpers */ = {
@@ -198,13 +207,12 @@
 		F166CA122DF9A39B00AAB5B0 /* chatGPT */ = {
 			isa = PBXGroup;
 			children = (
-				F1DF3B1B2DF9B40F00D8445A /* Resource */,
-				F1B7F7612DF9E525002D12BB /* Protocol */,
-                               F1051DF12E004DFE008D5D80 /* Model */,
-				F1DF3B232DF9B5B800D8445A /* Components */,
-				F1DF3B202DF9B47E00D8445A /* Service */,
-				F1DF3B012DF9AF5700D8445A /* Data */,
-				F1DF3B042DF9AF9900D8445A /* Domain */,
+                                F1DF3B1B2DF9B40F00D8445A /* Resource */,
+                                F1B7F7612DF9E525002D12BB /* Protocol */,
+                                F1DF3B232DF9B5B800D8445A /* Components */,
+                                F1DF3B202DF9B47E00D8445A /* Service */,
+                                F1DF3B012DF9AF5700D8445A /* Data */,
+                                F1DF3B042DF9AF9900D8445A /* Domain */,
 				F1DF3B122DF9B07800D8445A /* Presentation */,
 				F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
 				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
@@ -249,15 +257,17 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
-		F1DF3B042DF9AF9900D8445A /* Domain */ = {
-			isa = PBXGroup;
-			children = (
-                               F1DF3B082DF9AFE900D8445A /* Repository */,
-                               F1DF3B0D2DF9B02C00D8445A /* UseCase */,
-                       );
-                       path = Domain;
-                       sourceTree = "<group>";
-               };
+F1DF3B042DF9AF9900D8445A /* Domain */ = {
+                        isa = PBXGroup;
+                        children = (
+                                F1051DF12E004DFE008D5D80 /* Entity */,
+                                E1B9A0B02E00000100000000 /* Enum */,
+                                F1DF3B082DF9AFE900D8445A /* Repository */,
+                                F1DF3B0D2DF9B02C00D8445A /* UseCase */,
+                        );
+                        path = Domain;
+                        sourceTree = "<group>";
+                };
 		F1DF3B082DF9AFE900D8445A /* Repository */ = {
 			isa = PBXGroup;
 			children = (
@@ -319,14 +329,15 @@
 			path = Resource;
 			sourceTree = "<group>";
 		};
-		F1DF3B202DF9B47E00D8445A /* Service */ = {
-			isa = PBXGroup;
-			children = (
-				F1051DF52E004E72008D5D80 /* OpenAIService.swift */,
-			);
-			path = Service;
-			sourceTree = "<group>";
-		};
+               F1DF3B202DF9B47E00D8445A /* Service */ = {
+                        isa = PBXGroup;
+                        children = (
+                                F1051DF52E004E72008D5D80 /* OpenAIService.swift */,
+                                F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
+                        );
+                        path = Service;
+                        sourceTree = "<group>";
+                };
 		F1DF3B232DF9B5B800D8445A /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -489,9 +500,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F117E0712E01587F00D1C95F /* String+Truncate.swift in Sources */,
-				F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */,
-				F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
-				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
+                                F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */,
+                                E1B9A0B22E00000100000000 /* RoleType.swift in Sources */,
+                                F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
+                                F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,

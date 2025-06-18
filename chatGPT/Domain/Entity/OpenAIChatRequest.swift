@@ -18,10 +18,3 @@ struct Message: Codable {
     let role: RoleType
     let content: String
 }
-
-enum RoleType: String, Codable {
-    case system
-    case user
-    case assistant
-    case error
-}
