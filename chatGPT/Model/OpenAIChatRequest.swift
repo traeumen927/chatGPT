@@ -20,6 +20,7 @@ struct Message: Codable {
 }
 
 enum RoleType: String, Codable {
+    case system
     case user
     case assistant
     case error

@@ -9,5 +9,5 @@ import Foundation
 
 protocol OpenAIRepository {
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void)
-    func sendChat(prompt: String, model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void)
+    func sendChat(messages: [Message], model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void)
 }
