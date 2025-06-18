@@ -30,8 +30,14 @@ final class AppCoordinator {
     private func showMain() {
         let service = OpenAIService(apiKeyRepository: KeychainAPIKeyRepository())
         let repository = OpenAIRepositoryImpl(service: service)
+        let contextRepository = ChatContextRepositoryImpl()
         let fetchModelsUseCase = FetchAvailableModelsUseCase(repository: repository)
-        let sendChatUseCase = SendChatMessageUseCase(repository: repository)
+        let summarizeUseCase = SummarizeMessagesUseCase(repository: repository)
+        let sendChatUseCase = SendChatWithContextUseCase(
+            openAIRepository: repository,
+            contextRepository: contextRepository,
+            summarizeUseCase: summarizeUseCase
+        )
         
         let vc = MainViewController(
             fetchModelsUseCase: fetchModelsUseCase,

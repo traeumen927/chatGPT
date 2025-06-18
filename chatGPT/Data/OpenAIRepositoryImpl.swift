@@ -15,8 +15,8 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     }
     
     /// 채팅전송
-    func sendChat(prompt: String, model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void) {
-        service.request(.chat(prompt: prompt, model: model, stream: false)) { (result: Result<OpenAIResponse, Error>) in
+    func sendChat(messages: [Message], model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void) {
+        service.request(.chat(messages: messages, model: model, stream: false)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
                 let reply = decoded.choices.first?.message.content ?? ""

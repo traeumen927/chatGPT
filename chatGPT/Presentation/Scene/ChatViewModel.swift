@@ -26,10 +26,10 @@ final class ChatViewModel {
     let messages = BehaviorRelay<[ChatMessage]>(value: [])
 
     // MARK: - Dependencies
-    private let sendMessageUseCase: SendChatMessageUseCase
+    private let sendMessageUseCase: SendChatWithContextUseCase
     private let disposeBag = DisposeBag()
 
-    init(sendMessageUseCase: SendChatMessageUseCase) {
+    init(sendMessageUseCase: SendChatWithContextUseCase) {
         self.sendMessageUseCase = sendMessageUseCase
     }
 

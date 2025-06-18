@@ -12,7 +12,7 @@ enum OpenAIEndpoint {
     
     /// 질문요청
     case chat(
-        prompt: String,
+        messages: [Message],
         model: OpenAIModel,
         stream: Bool = false,
         temperature: Double = 0.7
@@ -48,10 +48,10 @@ enum OpenAIEndpoint {
     
     var encodableBody: OpenAIChatRequest? {
         switch self {
-        case .chat(let prompt, let model, let stream, let temp):
+        case .chat(let messages, let model, let stream, let temp):
             return OpenAIChatRequest(
                 model: model.id,
-                messages: [Message(role: .user, content: prompt)],
+                messages: messages,
                 temperature: temp,
                 stream: stream
             )
