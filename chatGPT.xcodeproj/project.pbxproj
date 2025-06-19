@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */; };
+		7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */; };
+		E1B9A0B22E00000100000000 /* RoleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B9A0B12E00000100000000 /* RoleType.swift */; };
 		F1051DF02E004CFA008D5D80 /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */; };
 		F1051DF32E004E17008D5D80 /* OpenAIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */; };
 		F1051DF62E004E72008D5D80 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF52E004E72008D5D80 /* OpenAIService.swift */; };
@@ -20,11 +23,7 @@
 		F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */; };
 		F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */; };
 		F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* ChatViewModel.swift */; };
-                F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
-                7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */; };
-                0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */; };
-                c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
-                ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
+		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
 		F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */; };
 		F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */; };
@@ -50,8 +49,13 @@
 		F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */; };
 		F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */; };
 		F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */; };
-                F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */; };
-                E1B9A0B22E00000100000000 /* RoleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B9A0B12E00000100000000 /* RoleType.swift */; };
+		F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */; };
+		F1E5710E2E042F3D00438A53 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1E5710D2E042F3D00438A53 /* GoogleService-Info.plist */; };
+		F1E571222E0430AD00438A53 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571212E0430AD00438A53 /* FirebaseCore */; };
+		F1E571242E0430AD00438A53 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571232E0430AD00438A53 /* FirebaseFirestore */; };
+		F1E571262E0430AD00438A53 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571252E0430AD00438A53 /* FirebaseStorage */; };
+		c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
+		ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +76,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatContextRepository.swift; sourceTree = "<group>"; };
+		E1B9A0B12E00000100000000 /* RoleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleType.swift; sourceTree = "<group>"; };
 		F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModel.swift; sourceTree = "<group>"; };
 		F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIResponse.swift; sourceTree = "<group>"; };
 		F1051DF52E004E72008D5D80 /* OpenAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
@@ -85,11 +91,7 @@
 		F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRepositoryImpl.swift; sourceTree = "<group>"; };
 		F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatMessageUseCase.swift; sourceTree = "<group>"; };
 		F117E07A2E0188F200D1C95F /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
-                F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
-                3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatContextRepository.swift; sourceTree = "<group>"; };
-                d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatContextRepositoryImpl.swift; sourceTree = "<group>"; };
-                ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarizeMessagesUseCase.swift; sourceTree = "<group>"; };
-                f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
+		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		F16563C82DF9A30F001CDF3B /* chatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563DE2DF9A310001CDF3B /* chatGPTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563E82DF9A310001CDF3B /* chatGPTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,8 +115,11 @@
 		F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F1DF3B1C2DF9B42700D8445A /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
 		F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextField.swift; sourceTree = "<group>"; };
-                F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextView.swift; sourceTree = "<group>"; };
-                E1B9A0B12E00000100000000 /* RoleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleType.swift; sourceTree = "<group>"; };
+		F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextView.swift; sourceTree = "<group>"; };
+		F1E5710D2E042F3D00438A53 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatContextRepositoryImpl.swift; sourceTree = "<group>"; };
+		ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarizeMessagesUseCase.swift; sourceTree = "<group>"; };
+		f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,8 +129,11 @@
 			files = (
 				F1DF3B002DF9AD9000D8445A /* Kingfisher in Frameworks */,
 				F1DF3AFD2DF9AD8200D8445A /* Alamofire in Frameworks */,
+				F1E571262E0430AD00438A53 /* FirebaseStorage in Frameworks */,
 				F1DF3AF82DF9AD6E00D8445A /* RxCocoa in Frameworks */,
 				F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */,
+				F1E571222E0430AD00438A53 /* FirebaseCore in Frameworks */,
+				F1E571242E0430AD00438A53 /* FirebaseFirestore in Frameworks */,
 				F1DF3AFA2DF9AD6E00D8445A /* RxSwift in Frameworks */,
 				F1DF3AF52DF9AD5200D8445A /* SnapKit in Frameworks */,
 			);
@@ -148,26 +156,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-F1051DF12E004DFE008D5D80 /* Entity */ = {
-                       isa = PBXGroup;
-                       children = (
-                               F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
-                               F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
-                               F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
-                               F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
-                       );
-                       path = Entity;
-                       sourceTree = "<group>";
-               };
-E1B9A0B02E00000100000000 /* Enum */ = {
-                       isa = PBXGroup;
-                       children = (
-                               F1051DF92E004EC8008D5D80 /* OpenAIError.swift */,
-                               E1B9A0B12E00000100000000 /* RoleType.swift */,
-                       );
-                       path = Enum;
-                       sourceTree = "<group>";
-               };
+		E1B9A0B02E00000100000000 /* Enum */ = {
+			isa = PBXGroup;
+			children = (
+				F1051DF92E004EC8008D5D80 /* OpenAIError.swift */,
+				E1B9A0B12E00000100000000 /* RoleType.swift */,
+			);
+			path = Enum;
+			sourceTree = "<group>";
+		};
+		F1051DF12E004DFE008D5D80 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
+				F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
+				F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
+				F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
 		F117E06F2E01586400D1C95F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,16 +215,17 @@ E1B9A0B02E00000100000000 /* Enum */ = {
 		F166CA122DF9A39B00AAB5B0 /* chatGPT */ = {
 			isa = PBXGroup;
 			children = (
-                                F1DF3B1B2DF9B40F00D8445A /* Resource */,
-                                F1B7F7612DF9E525002D12BB /* Protocol */,
-                                F1DF3B232DF9B5B800D8445A /* Components */,
-                                F1DF3B202DF9B47E00D8445A /* Service */,
-                                F1DF3B012DF9AF5700D8445A /* Data */,
-                                F1DF3B042DF9AF9900D8445A /* Domain */,
+				F1DF3B1B2DF9B40F00D8445A /* Resource */,
+				F1B7F7612DF9E525002D12BB /* Protocol */,
+				F1DF3B232DF9B5B800D8445A /* Components */,
+				F1DF3B202DF9B47E00D8445A /* Service */,
+				F1DF3B012DF9AF5700D8445A /* Data */,
+				F1DF3B042DF9AF9900D8445A /* Domain */,
 				F1DF3B122DF9B07800D8445A /* Presentation */,
 				F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
-				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
 				F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */,
+				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
+				F1E5710D2E042F3D00438A53 /* GoogleService-Info.plist */,
 			);
 			path = chatGPT;
 			sourceTree = "<group>";
@@ -251,29 +260,29 @@ E1B9A0B02E00000100000000 /* Enum */ = {
 			children = (
 				F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */,
 				F117E0742E0184A900D1C95F /* OpenAIRepository.swift */,
-                                F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */,
-                                d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */,
-                        );
+				F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */,
+				d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */,
+			);
 			path = Data;
 			sourceTree = "<group>";
 		};
-F1DF3B042DF9AF9900D8445A /* Domain */ = {
-                        isa = PBXGroup;
-                        children = (
-                                F1051DF12E004DFE008D5D80 /* Entity */,
-                                E1B9A0B02E00000100000000 /* Enum */,
-                                F1DF3B082DF9AFE900D8445A /* Repository */,
-                                F1DF3B0D2DF9B02C00D8445A /* UseCase */,
-                        );
-                        path = Domain;
-                        sourceTree = "<group>";
-                };
+		F1DF3B042DF9AF9900D8445A /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				F1051DF12E004DFE008D5D80 /* Entity */,
+				E1B9A0B02E00000100000000 /* Enum */,
+				F1DF3B082DF9AFE900D8445A /* Repository */,
+				F1DF3B0D2DF9B02C00D8445A /* UseCase */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
 		F1DF3B082DF9AFE900D8445A /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-                                F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */,
-                                3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */,
-                        );
+				F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */,
+				3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */,
+			);
 			path = Repository;
 			sourceTree = "<group>";
 		};
@@ -282,11 +291,11 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			children = (
 				F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */,
 				F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */,
-                                F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */,
-                                F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */,
-                                ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */,
-                                f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */,
-                        );
+				F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */,
+				F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */,
+				ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */,
+				f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */,
+			);
 			path = UseCase;
 			sourceTree = "<group>";
 		};
@@ -329,15 +338,15 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			path = Resource;
 			sourceTree = "<group>";
 		};
-               F1DF3B202DF9B47E00D8445A /* Service */ = {
-                        isa = PBXGroup;
-                        children = (
-                                F1051DF52E004E72008D5D80 /* OpenAIService.swift */,
-                                F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
-                        );
-                        path = Service;
-                        sourceTree = "<group>";
-                };
+		F1DF3B202DF9B47E00D8445A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F1051DF52E004E72008D5D80 /* OpenAIService.swift */,
+				F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		F1DF3B232DF9B5B800D8445A /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +381,9 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 				F1DF3AF92DF9AD6E00D8445A /* RxSwift */,
 				F1DF3AFC2DF9AD8200D8445A /* Alamofire */,
 				F1DF3AFF2DF9AD9000D8445A /* Kingfisher */,
+				F1E571212E0430AD00438A53 /* FirebaseCore */,
+				F1E571232E0430AD00438A53 /* FirebaseFirestore */,
+				F1E571252E0430AD00438A53 /* FirebaseStorage */,
 			);
 			productName = chatGPT;
 			productReference = F16563C82DF9A30F001CDF3B /* chatGPT.app */;
@@ -455,6 +467,7 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 				F1DF3AF62DF9AD6E00D8445A /* XCRemoteSwiftPackageReference "RxSwift" */,
 				F1DF3AFB2DF9AD8200D8445A /* XCRemoteSwiftPackageReference "Alamofire" */,
 				F1DF3AFE2DF9AD9000D8445A /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				F1E571202E0430AD00438A53 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F16563C92DF9A30F001CDF3B /* Products */;
@@ -475,6 +488,7 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			files = (
 				F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */,
 				F166CA182DF9A39B00AAB5B0 /* LaunchScreen.storyboard in Resources */,
+				F1E5710E2E042F3D00438A53 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,10 +514,10 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			buildActionMask = 2147483647;
 			files = (
 				F117E0712E01587F00D1C95F /* String+Truncate.swift in Sources */,
-                                F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */,
-                                E1B9A0B22E00000100000000 /* RoleType.swift in Sources */,
-                                F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
-                                F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
+				F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */,
+				E1B9A0B22E00000100000000 /* RoleType.swift in Sources */,
+				F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
+				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
@@ -519,13 +533,13 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 				F1DF3B0A2DF9B01100D8445A /* ApiKeyRepository.swift in Sources */,
 				F1DF3B0F2DF9B04500D8445A /* GetAPIKeyUseCase.swift in Sources */,
 				F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */,
-                                F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */,
-                                F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */,
-                                7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */,
-                                0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
-                                c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
-                                ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */,
-                                F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
+				F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */,
+				F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */,
+				7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */,
+				0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
+				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
+				ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */,
+				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
 				F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */,
 				F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */,
 				F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */,
@@ -901,6 +915,14 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 				minimumVersion = 8.3.2;
 			};
 		};
+		F1E571202E0430AD00438A53 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.14.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -933,6 +955,21 @@ F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F1DF3AFE2DF9AD9000D8445A /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		F1E571212E0430AD00438A53 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1E571202E0430AD00438A53 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		F1E571232E0430AD00438A53 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1E571202E0430AD00438A53 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		F1E571252E0430AD00438A53 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1E571202E0430AD00438A53 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
