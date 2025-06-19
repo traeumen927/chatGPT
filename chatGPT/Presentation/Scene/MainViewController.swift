@@ -69,6 +69,13 @@ final class MainViewController: UIViewController {
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            chatUseCase: chatUseCase)
         super.init(nibName: nil, bundle: nil)
+
+        rx.viewDidLoad
+            .bind { [weak self] in
+                self?.layout()
+                self?.bind()
+            }
+            .disposed(by: disposeBag)
     }
     
     required init?(coder: NSCoder) {
@@ -82,9 +89,6 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.layout()
-        self.bind()
     }
     
     private func layout() {

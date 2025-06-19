@@ -12,6 +12,13 @@ final class ChatListViewController: UIViewController {
     init(viewModel: ChatListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+
+        rx.viewDidLoad
+            .bind { [weak self] in
+                self?.layout()
+                self?.bind()
+            }
+            .disposed(by: disposeBag)
     }
 
     required init?(coder: NSCoder) {
@@ -20,8 +27,6 @@ final class ChatListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        layout()
-        bind()
     }
 
     private func layout() {

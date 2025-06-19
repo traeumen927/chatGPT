@@ -68,6 +68,13 @@ final class APIKeyInputViewController: UIViewController {
         self.saveUseCase = saveUseCase
         self.completion = completion
         super.init(nibName: nil, bundle: nil)
+
+        rx.viewDidLoad
+            .bind { [weak self] in
+                self?.layout()
+                self?.bind()
+            }
+            .disposed(by: disposeBag)
     }
 
     required init?(coder: NSCoder) {
@@ -81,8 +88,6 @@ final class APIKeyInputViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.layout()
-        self.bind()
     }
     
     private func layout() {
