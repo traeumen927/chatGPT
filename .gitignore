@@ -6,3 +6,6 @@
 DerivedData/
 build/
 xcuserdata/
+
+# Firebase config
+GoogleService-Info.plist

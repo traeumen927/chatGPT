@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import FirebaseAuth
 
 final class AppCoordinator {
     private let window: UIWindow
@@ -20,7 +21,9 @@ final class AppCoordinator {
     }
     
     func start() {
-        if getKeyUseCase.execute() != nil {
+        if Auth.auth().currentUser == nil {
+            showLogin()
+        } else if getKeyUseCase.execute() != nil {
             showMain()
         } else {
             showKeyInput()
@@ -52,6 +55,19 @@ final class AppCoordinator {
     private func showKeyInput() {
         let vc = APIKeyInputViewController(saveUseCase: saveKeyUseCase) { [weak self] in
             self?.showMain()
+        }
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
+    }
+
+    private func showLogin() {
+        let vc = LoginViewController { [weak self] in
+            guard let self = self else { return }
+            if self.getKeyUseCase.execute() != nil {
+                self.showMain()
+            } else {
+                self.showKeyInput()
+            }
         }
         window.rootViewController = vc
         window.makeKeyAndVisible()
