@@ -62,9 +62,12 @@ final class MainViewController: UIViewController {
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
     
-    init(fetchModelsUseCase: FetchAvailableModelsUseCase, sendChatMessageUseCase: SendChatWithContextUseCase) {
+    init(fetchModelsUseCase: FetchAvailableModelsUseCase,
+         sendChatMessageUseCase: SendChatWithContextUseCase,
+         chatUseCase: ChatUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
-        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
+        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
+                                           chatUseCase: chatUseCase)
         super.init(nibName: nil, bundle: nil)
     }
     
