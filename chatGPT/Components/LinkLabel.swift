@@ -22,14 +22,14 @@ class LinkLabel: UILabel {
     // MARK: 초기화
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        layout()
     }
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setup()
+        layout()
     }
 
-    private func setup() {
+    private func layout() {
         isUserInteractionEnabled = true
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap(_:))))
     }
