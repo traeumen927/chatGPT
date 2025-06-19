@@ -7,11 +7,13 @@
 
 import Foundation
 import UIKit
+import FirebaseAuth
 
 final class AppCoordinator {
     private let window: UIWindow
     private let getKeyUseCase: GetAPIKeyUseCase
     private let saveKeyUseCase: SaveAPIKeyUseCase
+    private var navigationController: UINavigationController?
     
     init(window: UIWindow, getKeyUseCase: GetAPIKeyUseCase, saveKeyUseCase: SaveAPIKeyUseCase) {
         self.window = window
@@ -20,10 +22,23 @@ final class AppCoordinator {
     }
     
     func start() {
-        if getKeyUseCase.execute() != nil {
-            showMain()
+        signInIfNeeded { [weak self] in
+            guard let self else { return }
+            if self.getKeyUseCase.execute() != nil {
+                self.showMain()
+            } else {
+                self.showKeyInput()
+            }
+        }
+    }
+
+    private func signInIfNeeded(completion: @escaping () -> Void) {
+        if Auth.auth().currentUser == nil {
+            Auth.auth().signInAnonymously { _, _ in
+                completion()
+            }
         } else {
-            showKeyInput()
+            completion()
         }
     }
     
@@ -38,13 +53,22 @@ final class AppCoordinator {
             contextRepository: contextRepository,
             summarizeUseCase: summarizeUseCase
         )
-        
-        let vc = MainViewController(
-            fetchModelsUseCase: fetchModelsUseCase,
-            sendChatMessageUseCase: sendChatUseCase
-        )
-        
+
+        let chatDataSource = FirebaseChatDataSource()
+        let chatRepository = ChatRepositoryImpl(dataSource: chatDataSource)
+        let chatUseCase = ChatUseCase(repository: chatRepository)
+
+        let chatListVM = ChatListViewModel(useCase: chatUseCase)
+        let vc = ChatListViewController(viewModel: chatListVM)
+        vc.onSelectChat = { [weak self] _ in
+            let chatVC = MainViewController(fetchModelsUseCase: fetchModelsUseCase,
+                                            sendChatMessageUseCase: sendChatUseCase,
+                                            chatUseCase: chatUseCase)
+            self?.navigationController?.pushViewController(chatVC, animated: true)
+        }
+
         let nav = UINavigationController(rootViewController: vc)
+        self.navigationController = nav
         window.rootViewController = nav
         window.makeKeyAndVisible()
     }
