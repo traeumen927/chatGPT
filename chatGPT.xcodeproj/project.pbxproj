@@ -56,7 +56,8 @@
 		F1E571452E043CD100438A53 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571442E043CD100438A53 /* FirebaseFirestore */; };
 		F1E571472E043CD100438A53 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571462E043CD100438A53 /* FirebaseStorage */; };
 		c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
-		ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
+                ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
+                E6BFBABECC6C47DA818A13E5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D564E2F8AC41B39D235947 /* LoginViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,7 +121,8 @@
 		F1E5710D2E042F3D00438A53 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatContextRepositoryImpl.swift; sourceTree = "<group>"; };
 		ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarizeMessagesUseCase.swift; sourceTree = "<group>"; };
-		f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
+                f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
+                A1D564E2F8AC41B39D235947 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,16 +321,17 @@
 			path = Coordinator;
 			sourceTree = "<group>";
 		};
-		F1DF3B162DF9B0C400D8445A /* Scene */ = {
-			isa = PBXGroup;
-			children = (
-				F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */,
-				F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
-				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
-				F117E07C2E018AF400D1C95F /* Cells */,
-			);
-			path = Scene;
-			sourceTree = "<group>";
+                F1DF3B162DF9B0C400D8445A /* Scene */ = {
+                        isa = PBXGroup;
+                        children = (
+                                F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */,
+                                F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
+                                A1D564E2F8AC41B39D235947 /* LoginViewController.swift */,
+                                F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
+                                F117E07C2E018AF400D1C95F /* Cells */,
+                        );
+                        path = Scene;
+                        sourceTree = "<group>";
 		};
 		F1DF3B1B2DF9B40F00D8445A /* Resource */ = {
 			isa = PBXGroup;
@@ -523,8 +526,9 @@
 				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
-				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
-				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
+                                F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
+                                E6BFBABECC6C47DA818A13E5 /* LoginViewController.swift in Sources */,
+                                F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
 				F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */,
 				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
 				F1051DF02E004CFA008D5D80 /* OpenAIModel.swift in Sources */,
