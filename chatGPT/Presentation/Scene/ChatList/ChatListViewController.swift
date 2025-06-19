@@ -37,7 +37,10 @@ final class ChatListViewController: UIViewController {
         let output = viewModel.transform(input: input)
 
         output.chats
-            .drive(tableView.rx.items(cellIdentifier: "Cell")) { _, chat, cell in
+            .drive(tableView.rx.items(
+                cellIdentifier: "Cell",
+                cellType: UITableViewCell.self
+            )) { _, chat, cell in
                 cell.textLabel?.text = chat.title
             }
             .disposed(by: disposeBag)
