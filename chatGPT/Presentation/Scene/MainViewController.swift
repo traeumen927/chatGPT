@@ -40,7 +40,13 @@ final class MainViewController: UIViewController {
 
     // MARK: 메뉴 버튼
     private lazy var menuButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "메뉴", style: .plain, target: nil, action: nil)
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "line.3.horizontal"), // SF 심볼: 메뉴 아이콘
+            style: .plain,
+            target: self,
+            action: nil
+        )
+        button.tintColor = ThemeColor.label1
         return button
     }()
 
