@@ -55,11 +55,13 @@ final class AppCoordinator {
             summarizeUseCase: summarizeUseCase
         )
         let signOutUseCase = SignOutUseCase(repository: authRepository)
+        let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
 
         let vc = MainViewController(
             fetchModelsUseCase: fetchModelsUseCase,
             sendChatMessageUseCase: sendChatUseCase,
-            signOutUseCase: signOutUseCase
+            signOutUseCase: signOutUseCase,
+            getCurrentUserUseCase: getCurrentUserUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)

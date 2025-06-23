@@ -1,8 +1,9 @@
 import Foundation
 import RxSwift
-import FirebaseAuth
+
 
 protocol AuthRepository {
-    func observeAuthState() -> Observable<User?>
+    func observeAuthState() -> Observable<AuthUser?>
+    func currentUser() -> AuthUser?
     func signOut() throws
 }

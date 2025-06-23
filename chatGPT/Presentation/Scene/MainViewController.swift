@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
-import FirebaseAuth
 import Kingfisher
 
 final class MainViewController: UIViewController {
@@ -20,6 +19,7 @@ final class MainViewController: UIViewController {
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
     private let signOutUseCase: SignOutUseCase
+    private let getCurrentUserUseCase: GetCurrentUserUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -83,10 +83,12 @@ final class MainViewController: UIViewController {
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
-         signOutUseCase: SignOutUseCase) {
+         signOutUseCase: SignOutUseCase,
+         getCurrentUserUseCase: GetCurrentUserUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
         self.signOutUseCase = signOutUseCase
+        self.getCurrentUserUseCase = getCurrentUserUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -234,7 +236,8 @@ final class MainViewController: UIViewController {
     }
 
     private func loadUserImage() {
-        if let url = Auth.auth().currentUser?.photoURL {
+        if let user = getCurrentUserUseCase.execute(),
+           let url = user.photoURL {
             menuButton.tintColor = nil
             menuButton.kf.setImage(with: url, for: .normal)
         } else {
