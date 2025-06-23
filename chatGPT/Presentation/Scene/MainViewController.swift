@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
-import Kingfisher
 
 final class MainViewController: UIViewController {
     
@@ -19,7 +18,8 @@ final class MainViewController: UIViewController {
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
     private let signOutUseCase: SignOutUseCase
-    private let getCurrentUserUseCase: GetCurrentUserUseCase
+    private let loadUserImageUseCase: LoadUserProfileImageUseCase
+    private let observeAuthStateUseCase: ObserveAuthStateUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -86,11 +86,13 @@ final class MainViewController: UIViewController {
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
          signOutUseCase: SignOutUseCase,
-         getCurrentUserUseCase: GetCurrentUserUseCase) {
+         loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
         self.signOutUseCase = signOutUseCase
-        self.getCurrentUserUseCase = getCurrentUserUseCase
+        self.loadUserImageUseCase = loadUserImageUseCase
+        self.observeAuthStateUseCase = observeAuthStateUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -139,7 +141,11 @@ final class MainViewController: UIViewController {
         // MARK: KeyboardAdjustable 프로토콜의 옵저버 추가
         self.addKeyboardObservers()
         
-        self.loadUserImage()
+        observeAuthStateUseCase.execute()
+            .subscribe(onNext: { [weak self] _ in
+                self?.loadUserImage()
+            })
+            .disposed(by: disposeBag)
         
         // MARK: 사용가능한 모델 fetch
         self.fetchAvailableModels()
@@ -231,37 +237,27 @@ final class MainViewController: UIViewController {
     }
     
     private func loadUserImage() {
-        guard let user = getCurrentUserUseCase.execute(), let url = user.photoURL else {
-            
-            self.setDefaultProfileImage()
-            
-            return
-        }
-        KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
-            switch result {
-            case .success(let value):
-                let resized = value.image.resize(to: CGSize(width: 32, height: 32))
+        loadUserImageUseCase.execute()
+            .map { image -> UIImage in
+                let resized = image.resize(to: CGSize(width: 32, height: 32))
                 let rounded = resized.withRoundedCorners(radius: 16)
-                let original = rounded.withRenderingMode(.alwaysOriginal)
-                
-                DispatchQueue.main.async {
-                    self?.menuBarButton.image = original
-                    self?.menuBarButton.tintColor = nil
-                }
-                
-            case .failure(let error):
-                print("❌ 이미지 로딩 실패: \(error)")
-                DispatchQueue.main.async {
-                    self?.setDefaultProfileImage()
-                }
+                return rounded.withRenderingMode(.alwaysOriginal)
             }
-        }
+            .do(onSuccess: { [weak self] _ in
+                self?.menuBarButton.tintColor = nil
+            }, onError: { [weak self] _ in
+                self?.menuBarButton.tintColor = ThemeColor.label1
+            })
+            .catchAndReturn(defaultProfileImage())
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] image in
+                self?.menuBarButton.image = image
+            })
+            .disposed(by: disposeBag)
     }
-    
-    private func setDefaultProfileImage() {
+    private func defaultProfileImage() -> UIImage {
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        menuBarButton.image = UIImage(systemName: "person.circle.fill", withConfiguration: config)
-        menuBarButton.tintColor = ThemeColor.label1
+        return UIImage(systemName: "person.circle.fill", withConfiguration: config) ?? UIImage()
     }
 }
 
