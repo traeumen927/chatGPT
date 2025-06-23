@@ -54,10 +54,12 @@ final class AppCoordinator {
             contextRepository: contextRepository,
             summarizeUseCase: summarizeUseCase
         )
-        
+        let signOutUseCase = SignOutUseCase(repository: authRepository)
+
         let vc = MainViewController(
             fetchModelsUseCase: fetchModelsUseCase,
-            sendChatMessageUseCase: sendChatUseCase
+            sendChatMessageUseCase: sendChatUseCase,
+            signOutUseCase: signOutUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)
@@ -86,3 +88,4 @@ final class AppCoordinator {
         window.makeKeyAndVisible()
     }
 }
+
