@@ -19,9 +19,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let repository = KeychainAPIKeyRepository()
         let getUseCase = GetAPIKeyUseCase(repository: repository)
         let saveUseCase = SaveAPIKeyUseCase(repository: repository)
+        let authRepository = FirebaseAuthRepository()
         let coordinator = AppCoordinator(window: window,
                                         getKeyUseCase: getUseCase,
-                                        saveKeyUseCase: saveUseCase)
+                                        saveKeyUseCase: saveUseCase,
+                                        authRepository: authRepository)
         self.window = window
         self.coordinator = coordinator
         coordinator.start()
