@@ -7,27 +7,40 @@
 
 import Foundation
 import UIKit
-import FirebaseAuth
+import RxSwift
 
 final class AppCoordinator {
     private let window: UIWindow
     private let getKeyUseCase: GetAPIKeyUseCase
     private let saveKeyUseCase: SaveAPIKeyUseCase
-    
-    init(window: UIWindow, getKeyUseCase: GetAPIKeyUseCase, saveKeyUseCase: SaveAPIKeyUseCase) {
+    private let authRepository: AuthRepository
+    private let disposeBag = DisposeBag()
+
+    init(window: UIWindow,
+         getKeyUseCase: GetAPIKeyUseCase,
+         saveKeyUseCase: SaveAPIKeyUseCase,
+         authRepository: AuthRepository) {
         self.window = window
         self.getKeyUseCase = getKeyUseCase
         self.saveKeyUseCase = saveKeyUseCase
+        self.authRepository = authRepository
     }
     
     func start() {
-        if Auth.auth().currentUser == nil {
-            showLogin()
-        } else if getKeyUseCase.execute() != nil {
-            showMain()
-        } else {
-            showKeyInput()
-        }
+        authRepository.observeAuthState()
+            .distinctUntilChanged { $0?.uid == $1?.uid }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] user in
+                guard let self = self else { return }
+                if user == nil {
+                    self.showLogin()
+                } else if self.getKeyUseCase.execute() != nil {
+                    self.showMain()
+                } else {
+                    self.showKeyInput()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     private func showMain() {
