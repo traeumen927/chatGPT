@@ -116,6 +116,7 @@ final class MainViewController: UIViewController {
         }
         menuButton.layer.cornerRadius = 16
         menuButton.clipsToBounds = true
+        menuButton.imageView?.contentMode = .scaleAspectFill
         
         // MARK: 모델 버튼 초기 설정
         self.updateModelButton()
@@ -233,13 +234,14 @@ final class MainViewController: UIViewController {
     }
 
     private func loadUserImage() {
-        guard let url = Auth.auth().currentUser?.photoURL else {
+        if let url = Auth.auth().currentUser?.photoURL {
+            menuButton.tintColor = nil
+            menuButton.kf.setImage(with: url, for: .normal)
+        } else {
             let image = UIImage(systemName: "person.circle.fill")
             menuButton.setImage(image, for: .normal)
             menuButton.tintColor = ThemeColor.label1
-            return
         }
-        menuButton.kf.setImage(with: url, for: .normal)
     }
 }
 
