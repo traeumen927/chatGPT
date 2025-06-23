@@ -241,9 +241,6 @@ final class MainViewController: UIViewController {
         }
         menuButton.kf.setImage(with: url, for: .normal)
     }
-
-    // MARK: -
-
 }
 
 // MARK: - Place for extension with KeyboardAdjustable
