@@ -56,12 +56,19 @@ final class AppCoordinator {
         )
         let signOutUseCase = SignOutUseCase(repository: authRepository)
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
+        let imageRepository = KingfisherImageRepository()
+        let loadUserImageUseCase = LoadUserProfileImageUseCase(
+            imageRepository: imageRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let observeAuthStateUseCase = ObserveAuthStateUseCase(repository: authRepository)
 
         let vc = MainViewController(
             fetchModelsUseCase: fetchModelsUseCase,
             sendChatMessageUseCase: sendChatUseCase,
             signOutUseCase: signOutUseCase,
-            getCurrentUserUseCase: getCurrentUserUseCase
+            loadUserImageUseCase: loadUserImageUseCase,
+            observeAuthStateUseCase: observeAuthStateUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)
