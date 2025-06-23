@@ -27,13 +27,20 @@ final class ChatViewModel {
 
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
+    private let summarizeUseCase: SummarizeMessagesUseCase
+    private let saveConversationUseCase: SaveConversationUseCase
     private let disposeBag = DisposeBag()
 
-    init(sendMessageUseCase: SendChatWithContextUseCase) {
+    init(sendMessageUseCase: SendChatWithContextUseCase,
+         summarizeUseCase: SummarizeMessagesUseCase,
+         saveConversationUseCase: SaveConversationUseCase) {
         self.sendMessageUseCase = sendMessageUseCase
+        self.summarizeUseCase = summarizeUseCase
+        self.saveConversationUseCase = saveConversationUseCase
     }
 
     func send(prompt: String, model: OpenAIModel) {
+        let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
 
         sendMessageUseCase.execute(prompt: prompt, model: model) { [weak self] result in
@@ -42,10 +49,29 @@ final class ChatViewModel {
             switch result {
             case .success(let reply):
                 self.appendMessage(ChatMessage(type: .assistant, text: reply))
+                if isFirst {
+                    self.saveFirstConversation(question: prompt, answer: reply, model: model)
+                }
 
             case .failure(let error):
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                 self.appendMessage(ChatMessage(type: .error, text: message))
+            }
+        }
+    }
+
+    private func saveFirstConversation(question: String, answer: String, model: OpenAIModel) {
+        let history = [
+            Message(role: .user, content: question),
+            Message(role: .assistant, content: answer)
+        ]
+
+        summarizeUseCase.execute(messages: history, model: model) { [weak self] result in
+            guard let self = self else { return }
+            if case .success(let title) = result {
+                self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
+                    .subscribe()
+                    .disposed(by: self.disposeBag)
             }
         }
     }

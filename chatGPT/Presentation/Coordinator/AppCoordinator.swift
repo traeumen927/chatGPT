@@ -54,8 +54,13 @@ final class AppCoordinator {
             contextRepository: contextRepository,
             summarizeUseCase: summarizeUseCase
         )
-        let signOutUseCase = SignOutUseCase(repository: authRepository)
+        let conversationRepository = FirestoreConversationRepository()
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
+        let saveConversationUseCase = SaveConversationUseCase(
+            repository: conversationRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let signOutUseCase = SignOutUseCase(repository: authRepository)
         let imageRepository = KingfisherImageRepository()
         let loadUserImageUseCase = LoadUserProfileImageUseCase(
             imageRepository: imageRepository,
@@ -66,6 +71,8 @@ final class AppCoordinator {
         let vc = MainViewController(
             fetchModelsUseCase: fetchModelsUseCase,
             sendChatMessageUseCase: sendChatUseCase,
+            summarizeUseCase: summarizeUseCase,
+            saveConversationUseCase: saveConversationUseCase,
             signOutUseCase: signOutUseCase,
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase
