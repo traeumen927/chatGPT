@@ -50,15 +50,15 @@ final class MainViewController: UIViewController {
         return button
     }()
 
-    // MARK: 사이드 메뉴 관련 뷰
-    private lazy var menuViewController: MenuViewController = {
-        let vc = MenuViewController(signOutUseCase: signOutUseCase)
-        return vc
-    }()
-    private let dimmingView = UIView()
-    private let sideMenuWidth: CGFloat = 260
-    private var sideMenuLeadingConstraint: Constraint?
-    private var isMenuVisible = false
+    // MARK: 메뉴 화면 프레젠트용
+    private func presentMenu() {
+        let menuVC = MenuViewController(signOutUseCase: signOutUseCase)
+        menuVC.modalPresentationStyle = .formSheet
+        menuVC.onClose = { [weak menuVC] in
+            menuVC?.dismiss(animated: true)
+        }
+        present(menuVC, animated: true)
+    }
     
     // MARK: 채팅관련 컴포져뷰
     private lazy var composerView: ChatComposerView = {
@@ -120,10 +120,7 @@ final class MainViewController: UIViewController {
         
         self.view.backgroundColor = ThemeColor.background1
 
-        [self.tableView, self.composerView, self.dimmingView].forEach(self.view.addSubview(_:))
-        addChild(menuViewController)
-        self.view.addSubview(menuViewController.view)
-        menuViewController.didMove(toParent: self)
+        [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
 
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
@@ -136,18 +133,6 @@ final class MainViewController: UIViewController {
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
         }
 
-        self.dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        self.dimmingView.alpha = 0
-        self.dimmingView.isHidden = true
-        self.dimmingView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-
-        self.menuViewController.view.snp.makeConstraints { make in
-            self.sideMenuLeadingConstraint = make.leading.equalToSuperview().offset(-sideMenuWidth).constraint
-            make.top.bottom.equalToSuperview()
-            make.width.equalTo(sideMenuWidth)
-        }
     }
     
     private func bind(){
@@ -172,22 +157,10 @@ final class MainViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        menuViewController.onClose = { [weak self] in
-            self?.hideSideMenu()
-        }
-
-        let dimTap = UITapGestureRecognizer()
-        dimmingView.addGestureRecognizer(dimTap)
-        dimTap.rx.event
-            .bind(onNext: { [weak self] _ in
-                self?.hideSideMenu()
-            })
-            .disposed(by: disposeBag)
-
         menuButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .bind(onNext: { [weak self] in
-                self?.toggleSideMenu()
+                self?.presentMenu()
             })
             .disposed(by: disposeBag)
 
@@ -255,31 +228,7 @@ final class MainViewController: UIViewController {
         }
     }
 
-    // MARK: 사이드 메뉴 제어
-    private func toggleSideMenu() {
-        isMenuVisible ? hideSideMenu() : showSideMenu()
-    }
-
-    private func showSideMenu() {
-        isMenuVisible = true
-        dimmingView.isHidden = false
-        sideMenuLeadingConstraint?.update(offset: 0)
-        UIView.animate(withDuration: 0.3) {
-            self.dimmingView.alpha = 0.3
-            self.view.layoutIfNeeded()
-        }
-    }
-
-    private func hideSideMenu() {
-        sideMenuLeadingConstraint?.update(offset: -sideMenuWidth)
-        UIView.animate(withDuration: 0.3, animations: {
-            self.dimmingView.alpha = 0
-            self.view.layoutIfNeeded()
-        }) { _ in
-            self.dimmingView.isHidden = true
-            self.isMenuVisible = false
-        }
-    }
+    // MARK: -
 
 }
 
