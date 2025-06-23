@@ -17,6 +17,7 @@ final class MainViewController: UIViewController {
     
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
+    private let signOutUseCase: SignOutUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -34,6 +35,12 @@ final class MainViewController: UIViewController {
     // MARK: 모델 선택 버튼
     private lazy var modelButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
+        return button
+    }()
+
+    // MARK: 메뉴 버튼
+    private lazy var menuButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "메뉴", style: .plain, target: nil, action: nil)
         return button
     }()
     
@@ -62,9 +69,12 @@ final class MainViewController: UIViewController {
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
     
-    init(fetchModelsUseCase: FetchAvailableModelsUseCase, sendChatMessageUseCase: SendChatWithContextUseCase) {
+    init(fetchModelsUseCase: FetchAvailableModelsUseCase,
+         sendChatMessageUseCase: SendChatWithContextUseCase,
+         signOutUseCase: SignOutUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
+        self.signOutUseCase = signOutUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -87,6 +97,7 @@ final class MainViewController: UIViewController {
     private func layout() {
         self.navigationItem.title = "ChatGPT"
         self.navigationItem.rightBarButtonItem = modelButton
+        self.navigationItem.leftBarButtonItem = menuButton
         
         // MARK: 모델 버튼 초기 설정
         self.updateModelButton()
@@ -128,7 +139,18 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
-        
+
+        menuButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                let menuVC = MenuViewController(signOutUseCase: self.signOutUseCase)
+                let nav = UINavigationController(rootViewController: menuVC)
+                nav.modalPresentationStyle = .pageSheet
+                self.present(nav, animated: true)
+            })
+            .disposed(by: disposeBag)
+
     }
     
     private func updateModelButton() {
@@ -202,3 +224,4 @@ extension MainViewController: KeyboardAdjustable {
         set { self.composerViewBottomConstraint = newValue }
     }
 }
+
