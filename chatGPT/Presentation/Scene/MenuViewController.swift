@@ -7,6 +7,9 @@ final class MenuViewController: UIViewController {
     private let signOutUseCase: SignOutUseCase
     private let disposeBag = DisposeBag()
 
+    // 메뉴 닫기용 클로저
+    var onClose: (() -> Void)?
+
     private lazy var signOutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("로그아웃", for: .normal)
@@ -14,8 +17,9 @@ final class MenuViewController: UIViewController {
         return button
     }()
 
-    init(signOutUseCase: SignOutUseCase) {
+    init(signOutUseCase: SignOutUseCase, onClose: (() -> Void)? = nil) {
         self.signOutUseCase = signOutUseCase
+        self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -44,7 +48,7 @@ final class MenuViewController: UIViewController {
                 guard let self = self else { return }
                 do {
                     try self.signOutUseCase.execute()
-                    self.dismiss(animated: true)
+                    self.onClose?()
                 } catch {
                     print("❌ Sign out failed: \(error.localizedDescription)")
                 }
