@@ -17,6 +17,7 @@ final class MainViewController: UIViewController {
     
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
+    private let signOutUseCase: SignOutUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -36,6 +37,22 @@ final class MainViewController: UIViewController {
         let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
         return button
     }()
+
+    // MARK: 메뉴 버튼
+    private lazy var menuButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "메뉴", style: .plain, target: nil, action: nil)
+        return button
+    }()
+
+    // MARK: 사이드 메뉴 관련 뷰
+    private lazy var menuViewController: MenuViewController = {
+        let vc = MenuViewController(signOutUseCase: signOutUseCase)
+        return vc
+    }()
+    private let dimmingView = UIView()
+    private let sideMenuWidth: CGFloat = 260
+    private var sideMenuLeadingConstraint: Constraint?
+    private var isMenuVisible = false
     
     // MARK: 채팅관련 컴포져뷰
     private lazy var composerView: ChatComposerView = {
@@ -62,9 +79,12 @@ final class MainViewController: UIViewController {
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
     
-    init(fetchModelsUseCase: FetchAvailableModelsUseCase, sendChatMessageUseCase: SendChatWithContextUseCase) {
+    init(fetchModelsUseCase: FetchAvailableModelsUseCase,
+         sendChatMessageUseCase: SendChatWithContextUseCase,
+         signOutUseCase: SignOutUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
+        self.signOutUseCase = signOutUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -87,14 +107,18 @@ final class MainViewController: UIViewController {
     private func layout() {
         self.navigationItem.title = "ChatGPT"
         self.navigationItem.rightBarButtonItem = modelButton
+        self.navigationItem.leftBarButtonItem = menuButton
         
         // MARK: 모델 버튼 초기 설정
         self.updateModelButton()
         
         self.view.backgroundColor = ThemeColor.background1
-        
-        [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
-        
+
+        [self.tableView, self.composerView, self.dimmingView].forEach(self.view.addSubview(_:))
+        addChild(menuViewController)
+        self.view.addSubview(menuViewController.view)
+        menuViewController.didMove(toParent: self)
+
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
@@ -104,6 +128,19 @@ final class MainViewController: UIViewController {
         self.composerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
+        }
+
+        self.dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        self.dimmingView.alpha = 0
+        self.dimmingView.isHidden = true
+        self.dimmingView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        self.menuViewController.view.snp.makeConstraints { make in
+            self.sideMenuLeadingConstraint = make.leading.equalToSuperview().offset(-sideMenuWidth).constraint
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(sideMenuWidth)
         }
     }
     
@@ -128,7 +165,26 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
-        
+
+        menuViewController.onClose = { [weak self] in
+            self?.hideSideMenu()
+        }
+
+        let dimTap = UITapGestureRecognizer()
+        dimmingView.addGestureRecognizer(dimTap)
+        dimTap.rx.event
+            .bind(onNext: { [weak self] _ in
+                self?.hideSideMenu()
+            })
+            .disposed(by: disposeBag)
+
+        menuButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .bind(onNext: { [weak self] in
+                self?.toggleSideMenu()
+            })
+            .disposed(by: disposeBag)
+
     }
     
     private func updateModelButton() {
@@ -193,6 +249,32 @@ final class MainViewController: UIViewController {
         }
     }
 
+    // MARK: 사이드 메뉴 제어
+    private func toggleSideMenu() {
+        isMenuVisible ? hideSideMenu() : showSideMenu()
+    }
+
+    private func showSideMenu() {
+        isMenuVisible = true
+        dimmingView.isHidden = false
+        sideMenuLeadingConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.dimmingView.alpha = 0.3
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    private func hideSideMenu() {
+        sideMenuLeadingConstraint?.update(offset: -sideMenuWidth)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.dimmingView.alpha = 0
+            self.view.layoutIfNeeded()
+        }) { _ in
+            self.dimmingView.isHidden = true
+            self.isMenuVisible = false
+        }
+    }
+
 }
 
 // MARK: - Place for extension with KeyboardAdjustable
@@ -202,3 +284,4 @@ extension MainViewController: KeyboardAdjustable {
         set { self.composerViewBottomConstraint = newValue }
     }
 }
+

@@ -1,4 +1,4 @@
-# Xcode
+# === Xcode ===
 *.xcuserstate
 *.xcscmblueprint
 *.xccheckout
@@ -6,6 +6,12 @@
 DerivedData/
 build/
 xcuserdata/
+*.xcworkspace/contents.xcworkspacedata
+.swiftpm/
 
-# Firebase config
+# === Firebase ===
 GoogleService-Info.plist
+
+# === SwiftPM ===
+.build/
+Packages/
