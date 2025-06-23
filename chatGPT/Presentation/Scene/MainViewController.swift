@@ -41,7 +41,7 @@ final class MainViewController: UIViewController {
     // MARK: 메뉴 버튼
     private lazy var menuButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
-            image: UIImage(systemName: "line.3.horizontal"), // SF 심볼: 메뉴 아이콘
+            image: UIImage(systemName: "line.3.horizontal"),
             style: .plain,
             target: self,
             action: nil
