@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import FirebaseAuth
+import Kingfisher
 
 final class MainViewController: UIViewController {
     
@@ -39,15 +41,9 @@ final class MainViewController: UIViewController {
     }()
 
     // MARK: 메뉴 버튼
-    private lazy var menuButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(
-            image: UIImage(systemName: "line.3.horizontal"),
-            style: .plain,
-            target: self,
-            action: nil
-        )
-        button.tintColor = ThemeColor.label1
-        return button
+    private let menuButton = UIButton(type: .system)
+    private lazy var menuBarButton: UIBarButtonItem = {
+        UIBarButtonItem(customView: menuButton)
     }()
 
     // MARK: 메뉴 화면 프레젠트용
@@ -113,7 +109,13 @@ final class MainViewController: UIViewController {
     private func layout() {
         self.navigationItem.title = "ChatGPT"
         self.navigationItem.rightBarButtonItem = modelButton
-        self.navigationItem.leftBarButtonItem = menuButton
+        self.navigationItem.leftBarButtonItem = menuBarButton
+
+        menuButton.snp.makeConstraints { make in
+            make.width.height.equalTo(32)
+        }
+        menuButton.layer.cornerRadius = 16
+        menuButton.clipsToBounds = true
         
         // MARK: 모델 버튼 초기 설정
         self.updateModelButton()
@@ -138,6 +140,8 @@ final class MainViewController: UIViewController {
     private func bind(){
         // MARK: KeyboardAdjustable 프로토콜의 옵저버 추가
         self.addKeyboardObservers()
+
+        self.loadUserImage()
         
         // MARK: 사용가능한 모델 fetch
         self.fetchAvailableModels()
@@ -228,8 +232,15 @@ final class MainViewController: UIViewController {
         }
     }
 
-    // MARK: -
-
+    private func loadUserImage() {
+        guard let url = Auth.auth().currentUser?.photoURL else {
+            let image = UIImage(systemName: "person.circle.fill")
+            menuButton.setImage(image, for: .normal)
+            menuButton.tintColor = ThemeColor.label1
+            return
+        }
+        menuButton.kf.setImage(with: url, for: .normal)
+    }
 }
 
 // MARK: - Place for extension with KeyboardAdjustable
