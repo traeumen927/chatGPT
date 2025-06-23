@@ -7,11 +7,13 @@ let package = Package(
     name: "chatGPT",
     targets: [
         .executableTarget(
-            name: "chatGPT"
+            name: "chatGPT",
+            path: "chatGPT"
         ),
         .testTarget(
             name: "chatGPTTests",
-            dependencies: ["chatGPT"]
+            dependencies: ["chatGPT"],
+            path: "chatGPTTests"
         )
     ]
 )
