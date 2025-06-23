@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class MainViewController: UIViewController {
     
@@ -18,6 +19,7 @@ final class MainViewController: UIViewController {
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
     private let signOutUseCase: SignOutUseCase
+    private let getCurrentUserUseCase: GetCurrentUserUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -37,28 +39,24 @@ final class MainViewController: UIViewController {
         let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
         return button
     }()
-
+    
     // MARK: 메뉴 버튼
-    private lazy var menuButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(
-            image: UIImage(systemName: "line.3.horizontal"),
-            style: .plain,
-            target: self,
-            action: nil
-        )
-        button.tintColor = ThemeColor.label1
+    private lazy var menuBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(image: nil, style: .plain, target: self, action: nil)
+        button.tintColor = .clear
         return button
     }()
-
-    // MARK: 사이드 메뉴 관련 뷰
-    private lazy var menuViewController: MenuViewController = {
-        let vc = MenuViewController(signOutUseCase: signOutUseCase)
-        return vc
-    }()
-    private let dimmingView = UIView()
-    private let sideMenuWidth: CGFloat = 260
-    private var sideMenuLeadingConstraint: Constraint?
-    private var isMenuVisible = false
+    
+    
+    // MARK: 메뉴 화면 프레젠트용
+    private func presentMenu() {
+        let menuVC = MenuViewController(signOutUseCase: signOutUseCase)
+        menuVC.modalPresentationStyle = .formSheet
+        menuVC.onClose = { [weak menuVC] in
+            menuVC?.dismiss(animated: true)
+        }
+        present(menuVC, animated: true)
+    }
     
     // MARK: 채팅관련 컴포져뷰
     private lazy var composerView: ChatComposerView = {
@@ -87,10 +85,12 @@ final class MainViewController: UIViewController {
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
-         signOutUseCase: SignOutUseCase) {
+         signOutUseCase: SignOutUseCase,
+         getCurrentUserUseCase: GetCurrentUserUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase)
         self.signOutUseCase = signOutUseCase
+        self.getCurrentUserUseCase = getCurrentUserUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -113,18 +113,15 @@ final class MainViewController: UIViewController {
     private func layout() {
         self.navigationItem.title = "ChatGPT"
         self.navigationItem.rightBarButtonItem = modelButton
-        self.navigationItem.leftBarButtonItem = menuButton
+        self.navigationItem.leftBarButtonItem = menuBarButton
         
         // MARK: 모델 버튼 초기 설정
         self.updateModelButton()
         
         self.view.backgroundColor = ThemeColor.background1
-
-        [self.tableView, self.composerView, self.dimmingView].forEach(self.view.addSubview(_:))
-        addChild(menuViewController)
-        self.view.addSubview(menuViewController.view)
-        menuViewController.didMove(toParent: self)
-
+        
+        [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
+        
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
@@ -135,24 +132,14 @@ final class MainViewController: UIViewController {
             make.leading.trailing.equalToSuperview()
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
         }
-
-        self.dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        self.dimmingView.alpha = 0
-        self.dimmingView.isHidden = true
-        self.dimmingView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-
-        self.menuViewController.view.snp.makeConstraints { make in
-            self.sideMenuLeadingConstraint = make.leading.equalToSuperview().offset(-sideMenuWidth).constraint
-            make.top.bottom.equalToSuperview()
-            make.width.equalTo(sideMenuWidth)
-        }
+        
     }
     
     private func bind(){
         // MARK: KeyboardAdjustable 프로토콜의 옵저버 추가
         self.addKeyboardObservers()
+        
+        self.loadUserImage()
         
         // MARK: 사용가능한 모델 fetch
         self.fetchAvailableModels()
@@ -171,26 +158,14 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
-
-        menuViewController.onClose = { [weak self] in
-            self?.hideSideMenu()
-        }
-
-        let dimTap = UITapGestureRecognizer()
-        dimmingView.addGestureRecognizer(dimTap)
-        dimTap.rx.event
-            .bind(onNext: { [weak self] _ in
-                self?.hideSideMenu()
-            })
-            .disposed(by: disposeBag)
-
-        menuButton.rx.tap
+        
+        menuBarButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .bind(onNext: { [weak self] in
-                self?.toggleSideMenu()
+                self?.presentMenu()
             })
             .disposed(by: disposeBag)
-
+        
     }
     
     private func updateModelButton() {
@@ -246,41 +221,48 @@ final class MainViewController: UIViewController {
         
         // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
         snapshot.appendItems(messages.reversed())
-
+        
         dataSource.apply(snapshot, animatingDifferences: true)
-
+        
         if !messages.isEmpty {
             let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
             tableView.scrollToRow(at: indexPath, at: .top, animated: true)
         }
     }
-
-    // MARK: 사이드 메뉴 제어
-    private func toggleSideMenu() {
-        isMenuVisible ? hideSideMenu() : showSideMenu()
-    }
-
-    private func showSideMenu() {
-        isMenuVisible = true
-        dimmingView.isHidden = false
-        sideMenuLeadingConstraint?.update(offset: 0)
-        UIView.animate(withDuration: 0.3) {
-            self.dimmingView.alpha = 0.3
-            self.view.layoutIfNeeded()
+    
+    private func loadUserImage() {
+        guard let user = getCurrentUserUseCase.execute(), let url = user.photoURL else {
+            
+            self.setDefaultProfileImage()
+            
+            return
+        }
+        KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
+            switch result {
+            case .success(let value):
+                let resized = value.image.resize(to: CGSize(width: 32, height: 32))
+                let rounded = resized.withRoundedCorners(radius: 16)
+                let original = rounded.withRenderingMode(.alwaysOriginal)
+                
+                DispatchQueue.main.async {
+                    self?.menuBarButton.image = original
+                    self?.menuBarButton.tintColor = nil
+                }
+                
+            case .failure(let error):
+                print("❌ 이미지 로딩 실패: \(error)")
+                DispatchQueue.main.async {
+                    self?.setDefaultProfileImage()
+                }
+            }
         }
     }
-
-    private func hideSideMenu() {
-        sideMenuLeadingConstraint?.update(offset: -sideMenuWidth)
-        UIView.animate(withDuration: 0.3, animations: {
-            self.dimmingView.alpha = 0
-            self.view.layoutIfNeeded()
-        }) { _ in
-            self.dimmingView.isHidden = true
-            self.isMenuVisible = false
-        }
+    
+    private func setDefaultProfileImage() {
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        menuBarButton.image = UIImage(systemName: "person.circle.fill", withConfiguration: config)
+        menuBarButton.tintColor = ThemeColor.label1
     }
-
 }
 
 // MARK: - Place for extension with KeyboardAdjustable
