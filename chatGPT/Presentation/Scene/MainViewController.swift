@@ -39,13 +39,15 @@ final class MainViewController: UIViewController {
         let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
         return button
     }()
-
+    
     // MARK: 메뉴 버튼
-    private let menuButton = UIButton(type: .system)
     private lazy var menuBarButton: UIBarButtonItem = {
-        UIBarButtonItem(customView: menuButton)
+        let button = UIBarButtonItem(image: nil, style: .plain, target: self, action: nil)
+        button.tintColor = .clear
+        return button
     }()
-
+    
+    
     // MARK: 메뉴 화면 프레젠트용
     private func presentMenu() {
         let menuVC = MenuViewController(signOutUseCase: signOutUseCase)
@@ -112,21 +114,14 @@ final class MainViewController: UIViewController {
         self.navigationItem.title = "ChatGPT"
         self.navigationItem.rightBarButtonItem = modelButton
         self.navigationItem.leftBarButtonItem = menuBarButton
-
-        menuButton.snp.makeConstraints { make in
-            make.width.height.equalTo(32)
-        }
-        menuButton.layer.cornerRadius = 16
-        menuButton.clipsToBounds = true
-        menuButton.imageView?.contentMode = .scaleAspectFill
         
         // MARK: 모델 버튼 초기 설정
         self.updateModelButton()
         
         self.view.backgroundColor = ThemeColor.background1
-
+        
         [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
-
+        
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
@@ -137,13 +132,13 @@ final class MainViewController: UIViewController {
             make.leading.trailing.equalToSuperview()
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
         }
-
+        
     }
     
     private func bind(){
         // MARK: KeyboardAdjustable 프로토콜의 옵저버 추가
         self.addKeyboardObservers()
-
+        
         self.loadUserImage()
         
         // MARK: 사용가능한 모델 fetch
@@ -163,14 +158,14 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
-
-        menuButton.rx.tap
+        
+        menuBarButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .bind(onNext: { [weak self] in
                 self?.presentMenu()
             })
             .disposed(by: disposeBag)
-
+        
     }
     
     private func updateModelButton() {
@@ -226,25 +221,47 @@ final class MainViewController: UIViewController {
         
         // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
         snapshot.appendItems(messages.reversed())
-
+        
         dataSource.apply(snapshot, animatingDifferences: true)
-
+        
         if !messages.isEmpty {
             let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
             tableView.scrollToRow(at: indexPath, at: .top, animated: true)
         }
     }
-
+    
     private func loadUserImage() {
-        if let user = getCurrentUserUseCase.execute(),
-           let url = user.photoURL {
-            menuButton.tintColor = nil
-            menuButton.kf.setImage(with: url, for: .normal)
-        } else {
-            let image = UIImage(systemName: "person.circle.fill")
-            menuButton.setImage(image, for: .normal)
-            menuButton.tintColor = ThemeColor.label1
+        guard let user = getCurrentUserUseCase.execute(), let url = user.photoURL else {
+            
+            self.setDefaultProfileImage()
+            
+            return
         }
+        KingfisherManager.shared.retrieveImage(with: url) { [weak self] result in
+            switch result {
+            case .success(let value):
+                let resized = value.image.resize(to: CGSize(width: 32, height: 32))
+                let rounded = resized.withRoundedCorners(radius: 16)
+                let original = rounded.withRenderingMode(.alwaysOriginal)
+                
+                DispatchQueue.main.async {
+                    self?.menuBarButton.image = original
+                    self?.menuBarButton.tintColor = nil
+                }
+                
+            case .failure(let error):
+                print("❌ 이미지 로딩 실패: \(error)")
+                DispatchQueue.main.async {
+                    self?.setDefaultProfileImage()
+                }
+            }
+        }
+    }
+    
+    private func setDefaultProfileImage() {
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        menuBarButton.image = UIImage(systemName: "person.circle.fill", withConfiguration: config)
+        menuBarButton.tintColor = ThemeColor.label1
     }
 }
 

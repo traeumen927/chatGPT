@@ -86,7 +86,6 @@ final class LoginViewController: UIViewController {
                 .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                 .flatMapLatest { [weak self] _ -> Observable<AuthDataResult> in
                     guard let self = self else { return .empty() }
-                    print("버튼눌림")
                     return self.signInWithGoogle()
                         .catch { error in
                             print("❌ 로그인 에러 발생: \(error.localizedDescription)")
