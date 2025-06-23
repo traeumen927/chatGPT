@@ -122,10 +122,11 @@ final class MainViewController: UIViewController {
 
         [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
         let containerView: UIView = self.navigationController?.view ?? self.view
-        let parentVC: UIViewController = self.navigationController ?? self
+
         [self.dimmingView, menuViewController.view].forEach(containerView.addSubview(_:))
-        parentVC.addChild(menuViewController)
-        menuViewController.didMove(toParent: parentVC)
+        addChild(menuViewController)
+        menuViewController.didMove(toParent: self)
+
 
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
