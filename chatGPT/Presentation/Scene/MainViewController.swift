@@ -120,10 +120,12 @@ final class MainViewController: UIViewController {
         
         self.view.backgroundColor = ThemeColor.background1
 
-        [self.tableView, self.composerView, self.dimmingView].forEach(self.view.addSubview(_:))
-        addChild(menuViewController)
-        self.view.addSubview(menuViewController.view)
-        menuViewController.didMove(toParent: self)
+        [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
+        let containerView: UIView = self.navigationController?.view ?? self.view
+        let parentVC: UIViewController = self.navigationController ?? self
+        [self.dimmingView, menuViewController.view].forEach(containerView.addSubview(_:))
+        parentVC.addChild(menuViewController)
+        menuViewController.didMove(toParent: parentVC)
 
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
@@ -140,12 +142,12 @@ final class MainViewController: UIViewController {
         self.dimmingView.alpha = 0
         self.dimmingView.isHidden = true
         self.dimmingView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.edges.equalTo(containerView)
         }
 
         self.menuViewController.view.snp.makeConstraints { make in
-            self.sideMenuLeadingConstraint = make.leading.equalToSuperview().offset(-sideMenuWidth).constraint
-            make.top.bottom.equalToSuperview()
+            self.sideMenuLeadingConstraint = make.leading.equalTo(containerView.snp.leading).offset(-sideMenuWidth).constraint
+            make.top.bottom.equalTo(containerView)
             make.width.equalTo(sideMenuWidth)
         }
     }
@@ -264,17 +266,19 @@ final class MainViewController: UIViewController {
         isMenuVisible = true
         dimmingView.isHidden = false
         sideMenuLeadingConstraint?.update(offset: 0)
+        let containerView: UIView = self.navigationController?.view ?? self.view
         UIView.animate(withDuration: 0.3) {
             self.dimmingView.alpha = 0.3
-            self.view.layoutIfNeeded()
+            containerView.layoutIfNeeded()
         }
     }
 
     private func hideSideMenu() {
         sideMenuLeadingConstraint?.update(offset: -sideMenuWidth)
+        let containerView: UIView = self.navigationController?.view ?? self.view
         UIView.animate(withDuration: 0.3, animations: {
             self.dimmingView.alpha = 0
-            self.view.layoutIfNeeded()
+            containerView.layoutIfNeeded()
         }) { _ in
             self.dimmingView.isHidden = true
             self.isMenuVisible = false
