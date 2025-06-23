@@ -26,6 +26,7 @@
 		F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */; };
 		F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* ChatViewModel.swift */; };
 		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
+		F1452D832E095F7D00795A9E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1452D822E095F7D00795A9E /* GoogleService-Info.plist */; };
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
 		F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */; };
 		F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F166CA0C2DF9A39B00AAB5B0 /* Assets.xcassets */; };
@@ -37,7 +38,6 @@
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
 		F1C897122E044087000A0C3D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F1C897112E044087000A0C3D /* GoogleSignIn */; };
-		F1C897142E044126000A0C3D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1C897132E044126000A0C3D /* GoogleService-Info.plist */; };
 		F1DE5A762E094BD6001B0CA8 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */; };
 		F1DE5A782E094C37001B0CA8 /* FirebaseAuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */; };
 		F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF12DF9AD4400D8445A /* Toast */; };
@@ -103,6 +103,7 @@
 		F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatMessageUseCase.swift; sourceTree = "<group>"; };
 		F117E07A2E0188F200D1C95F /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
+		F1452D822E095F7D00795A9E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F16563C82DF9A30F001CDF3B /* chatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563DE2DF9A310001CDF3B /* chatGPTTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F16563E82DF9A310001CDF3B /* chatGPTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatGPTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,7 +118,6 @@
 		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
-		F1C897132E044126000A0C3D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthRepository.swift; sourceTree = "<group>"; };
 		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
@@ -244,7 +244,7 @@
 				F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
 				F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */,
 				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
-				F1C897132E044126000A0C3D /* GoogleService-Info.plist */,
+				F1452D822E095F7D00795A9E /* GoogleService-Info.plist */,
 			);
 			path = chatGPT;
 			sourceTree = "<group>";
@@ -516,7 +516,7 @@
 			files = (
 				F166CA162DF9A39B00AAB5B0 /* Assets.xcassets in Resources */,
 				F166CA182DF9A39B00AAB5B0 /* LaunchScreen.storyboard in Resources */,
-				F1C897142E044126000A0C3D /* GoogleService-Info.plist in Resources */,
+				F1452D832E095F7D00795A9E /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
