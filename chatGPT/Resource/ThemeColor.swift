@@ -13,10 +13,10 @@ struct ThemeColor {
     static let tintPrimary: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     
     ///대표2 (255, 255, 255)
-    static let tineSecondary: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+    static let tintSecondary: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     
     ///대표3 (255, 255, 255)
-    static let tintTertiay: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+    static let tintTertiary: UIColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     
     ///비활성화(49, 50, 57)
     static let tintDisable: UIColor = #colorLiteral(red: 0.1921568627, green: 0.1960784314, blue: 0.2235294118, alpha: 1)
