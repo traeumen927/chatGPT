@@ -29,19 +29,32 @@ final class ChatViewModel {
     private let sendMessageUseCase: SendChatWithContextUseCase
     private let summarizeUseCase: SummarizeMessagesUseCase
     private let saveConversationUseCase: SaveConversationUseCase
+    private let appendMessageUseCase: AppendMessageUseCase
     private let disposeBag = DisposeBag()
+
+    private var conversationID: String?
 
     init(sendMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
-         saveConversationUseCase: SaveConversationUseCase) {
+         saveConversationUseCase: SaveConversationUseCase,
+         appendMessageUseCase: AppendMessageUseCase) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
+        self.appendMessageUseCase = appendMessageUseCase
     }
 
     func send(prompt: String, model: OpenAIModel) {
         let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
+
+        if let id = conversationID {
+            appendMessageUseCase.execute(conversationID: id,
+                                        role: .user,
+                                        text: prompt)
+                .subscribe()
+                .disposed(by: disposeBag)
+        }
 
         sendMessageUseCase.execute(prompt: prompt, model: model) { [weak self] result in
             guard let self = self else { return }
@@ -49,6 +62,13 @@ final class ChatViewModel {
             switch result {
             case .success(let reply):
                 self.appendMessage(ChatMessage(type: .assistant, text: reply))
+                if let id = self.conversationID, !isFirst {
+                    self.appendMessageUseCase.execute(conversationID: id,
+                                                     role: .assistant,
+                                                     text: reply)
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
+                }
                 if isFirst {
                     self.saveFirstConversation(question: prompt, answer: reply, model: model)
                 }
@@ -70,7 +90,9 @@ final class ChatViewModel {
             guard let self = self else { return }
             if case .success(let title) = result {
                 self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
-                    .subscribe()
+                    .subscribe(onSuccess: { [weak self] id in
+                        self?.conversationID = id
+                    })
                     .disposed(by: self.disposeBag)
             }
         }

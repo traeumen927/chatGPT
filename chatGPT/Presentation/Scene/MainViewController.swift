@@ -85,15 +85,17 @@ final class MainViewController: UIViewController {
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
-         summarizeUseCase: SummarizeMessagesUseCase,
-         saveConversationUseCase: SaveConversationUseCase,
-         signOutUseCase: SignOutUseCase,
-         loadUserImageUseCase: LoadUserProfileImageUseCase,
-         observeAuthStateUseCase: ObserveAuthStateUseCase) {
+        summarizeUseCase: SummarizeMessagesUseCase,
+        saveConversationUseCase: SaveConversationUseCase,
+        appendMessageUseCase: AppendMessageUseCase,
+        signOutUseCase: SignOutUseCase,
+        loadUserImageUseCase: LoadUserProfileImageUseCase,
+        observeAuthStateUseCase: ObserveAuthStateUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
-                                           saveConversationUseCase: saveConversationUseCase)
+                                           saveConversationUseCase: saveConversationUseCase,
+                                           appendMessageUseCase: appendMessageUseCase)
         self.signOutUseCase = signOutUseCase
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase

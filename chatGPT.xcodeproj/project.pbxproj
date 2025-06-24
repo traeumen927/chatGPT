@@ -32,7 +32,8 @@
 		F1452D852E09741500795A9E /* AuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1452D842E09741500795A9E /* AuthUser.swift */; };
 		F1452D872E09741F00795A9E /* GetCurrentUserUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1452D862E09741F00795A9E /* GetCurrentUserUseCase.swift */; };
 		F1452D892E09796F00795A9E /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1452D882E09796F00795A9E /* UIImage.swift */; };
-		F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F52E0A955B00F25923 /* SaveConversationUseCase.swift */; };
+               F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F52E0A955B00F25923 /* SaveConversationUseCase.swift */; };
+                FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */; };
 		F15BC4F82E0A957300F25923 /* ConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F72E0A957300F25923 /* ConversationRepository.swift */; };
 		F15BC4FA2E0A959200F25923 /* FirestoreConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F92E0A959200F25923 /* FirestoreConversationRepository.swift */; };
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
@@ -119,7 +120,8 @@
 		F1452D842E09741500795A9E /* AuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUser.swift; sourceTree = "<group>"; };
 		F1452D862E09741F00795A9E /* GetCurrentUserUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCurrentUserUseCase.swift; sourceTree = "<group>"; };
 		F1452D882E09796F00795A9E /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
-		F15BC4F52E0A955B00F25923 /* SaveConversationUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveConversationUseCase.swift; sourceTree = "<group>"; };
+               F15BC4F52E0A955B00F25923 /* SaveConversationUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveConversationUseCase.swift; sourceTree = "<group>"; };
+                79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendMessageUseCase.swift; sourceTree = "<group>"; };
 		F15BC4F72E0A957300F25923 /* ConversationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepository.swift; sourceTree = "<group>"; };
 		F15BC4F92E0A959200F25923 /* FirestoreConversationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreConversationRepository.swift; sourceTree = "<group>"; };
 		F16563C82DF9A30F001CDF3B /* chatGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -340,14 +342,15 @@
 				F1452D862E09741F00795A9E /* GetCurrentUserUseCase.swift */,
 				F1DF3B0E2DF9B04500D8445A /* GetAPIKeyUseCase.swift */,
 				F1DF3B102DF9B06500D8445A /* SaveAPIKeyUseCase.swift */,
-				F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */,
-				F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */,
-				ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */,
-				f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */,
-				896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */,
-				eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */,
-				9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
-			);
+                               F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */,
+                               F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */,
+                               ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */,
+                               f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */,
+                               896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */,
+                               eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */,
+                               9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
+                               79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
+                       );
 			path = UseCase;
 			sourceTree = "<group>";
 		};
@@ -586,8 +589,9 @@
 				F1452D852E09741500795A9E /* AuthUser.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				E6BFBABECC6C47DA818A13E5 /* LoginViewController.swift in Sources */,
-				F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */,
-				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
+                               F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */,
+                               FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */,
+                               F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
 				F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */,
 				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
 				F1051DF02E004CFA008D5D80 /* OpenAIModel.swift in Sources */,

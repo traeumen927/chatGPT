@@ -14,7 +14,7 @@ final class SaveConversationUseCase {
     func execute(title: String,
                  question: String,
                  answer: String,
-                 timestamp: Date = Date()) -> Single<Void> {
+                 timestamp: Date = Date()) -> Single<String> {
         guard let user = getCurrentUserUseCase.execute() else {
             return .error(ConversationError.noUser)
         }
