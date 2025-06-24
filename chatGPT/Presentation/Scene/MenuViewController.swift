@@ -19,6 +19,7 @@ final class MenuViewController: UIViewController {
     private let currentConversationID: String?
     private let disposeBag = DisposeBag()
 
+
     private lazy var signOutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("로그아웃", for: .normal)
@@ -34,7 +35,7 @@ final class MenuViewController: UIViewController {
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tv
     }()
-
+  
     private var dataSource: UITableViewDiffableDataSource<Section, Item>!
 
     init(fetchConversationsUseCase: FetchConversationsUseCase,
