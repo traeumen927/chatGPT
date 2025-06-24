@@ -32,7 +32,9 @@ final class ChatViewModel {
     private let appendMessageUseCase: AppendMessageUseCase
     private let disposeBag = DisposeBag()
 
-    private var conversationID: String?
+    private let conversationIDRelay = BehaviorRelay<String?>(value: nil)
+    var conversationID: String? { conversationIDRelay.value }
+    var conversationIDObservable: Observable<String?> { conversationIDRelay.asObservable() }
 
     init(sendMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
@@ -91,7 +93,7 @@ final class ChatViewModel {
             if case .success(let title) = result {
                 self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
                     .subscribe(onSuccess: { [weak self] id in
-                        self?.conversationID = id
+                        self?.conversationIDRelay.accept(id)
                     })
                     .disposed(by: self.disposeBag)
             }
