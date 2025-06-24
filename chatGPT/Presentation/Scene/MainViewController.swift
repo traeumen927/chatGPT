@@ -18,6 +18,7 @@ final class MainViewController: UIViewController {
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
     private let signOutUseCase: SignOutUseCase
+    private let fetchConversationsUseCase: FetchConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
     
@@ -50,7 +51,11 @@ final class MainViewController: UIViewController {
     
     // MARK: 메뉴 화면 프레젠트용
     private func presentMenu() {
-        let menuVC = MenuViewController(signOutUseCase: signOutUseCase)
+        let menuVC = MenuViewController(
+            fetchConversationsUseCase: fetchConversationsUseCase,
+            signOutUseCase: signOutUseCase,
+            currentConversationID: chatViewModel.conversationID
+        )
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onClose = { [weak menuVC] in
             menuVC?.dismiss(animated: true)
@@ -85,18 +90,20 @@ final class MainViewController: UIViewController {
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
-        summarizeUseCase: SummarizeMessagesUseCase,
-        saveConversationUseCase: SaveConversationUseCase,
-        appendMessageUseCase: AppendMessageUseCase,
-        signOutUseCase: SignOutUseCase,
-        loadUserImageUseCase: LoadUserProfileImageUseCase,
-        observeAuthStateUseCase: ObserveAuthStateUseCase) {
+         summarizeUseCase: SummarizeMessagesUseCase,
+         saveConversationUseCase: SaveConversationUseCase,
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchConversationsUseCase: FetchConversationsUseCase,
+         signOutUseCase: SignOutUseCase,
+         loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
                                            appendMessageUseCase: appendMessageUseCase)
         self.signOutUseCase = signOutUseCase
+        self.fetchConversationsUseCase = fetchConversationsUseCase
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
         super.init(nibName: nil, bundle: nil)
