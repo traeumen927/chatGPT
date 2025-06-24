@@ -9,7 +9,7 @@ final class FirestoreConversationRepository: ConversationRepository {
                             title: String,
                             question: String,
                             answer: String,
-                            timestamp: Date) -> Single<Void> {
+                            timestamp: Date) -> Single<String> {
         Single.create { single in
             let conversationID = UUID().uuidString
             let data: [String: Any] = [
@@ -31,9 +31,33 @@ final class FirestoreConversationRepository: ConversationRepository {
                 if let error = error {
                     single(.failure(error))
                 } else {
-                    single(.success(()))
+                    single(.success(conversationID))
                 }
             }
+            return Disposables.create()
+        }
+    }
+
+    func appendMessage(uid: String,
+                       conversationID: String,
+                       role: RoleType,
+                       text: String,
+                       timestamp: Date) -> Single<Void> {
+        Single.create { single in
+            let message: [String: Any] = [
+                "role": role.rawValue,
+                "text": text,
+                "timestamp": Timestamp(date: timestamp)
+            ]
+            self.db.collection(uid)
+                .document(conversationID)
+                .updateData(["messages": FieldValue.arrayUnion([message])]) { error in
+                    if let error = error {
+                        single(.failure(error))
+                    } else {
+                        single(.success(()))
+                    }
+                }
             return Disposables.create()
         }
     }

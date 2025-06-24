@@ -6,5 +6,10 @@ protocol ConversationRepository {
                             title: String,
                             question: String,
                             answer: String,
-                            timestamp: Date) -> Single<Void>
+                            timestamp: Date) -> Single<String>
+    func appendMessage(uid: String,
+                       conversationID: String,
+                       role: RoleType,
+                       text: String,
+                       timestamp: Date) -> Single<Void>
 }
