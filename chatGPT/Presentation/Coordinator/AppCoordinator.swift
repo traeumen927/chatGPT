@@ -60,6 +60,10 @@ final class AppCoordinator {
             repository: conversationRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
+        let appendMessageUseCase = AppendMessageUseCase(
+            repository: conversationRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
         let signOutUseCase = SignOutUseCase(repository: authRepository)
         let imageRepository = KingfisherImageRepository()
         let loadUserImageUseCase = LoadUserProfileImageUseCase(
@@ -73,6 +77,7 @@ final class AppCoordinator {
             sendChatMessageUseCase: sendChatUseCase,
             summarizeUseCase: summarizeUseCase,
             saveConversationUseCase: saveConversationUseCase,
+            appendMessageUseCase: appendMessageUseCase,
             signOutUseCase: signOutUseCase,
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase
