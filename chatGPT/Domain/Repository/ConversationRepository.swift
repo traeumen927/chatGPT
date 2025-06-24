@@ -12,4 +12,6 @@ protocol ConversationRepository {
                        role: RoleType,
                        text: String,
                        timestamp: Date) -> Single<Void>
+    func observeMessages(uid: String,
+                         conversationID: String) -> Observable<[ConversationMessage]>
 }

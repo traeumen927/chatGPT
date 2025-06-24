@@ -7,7 +7,6 @@
 
 import Foundation
 import RxSwift
-import RxRelay
 
 final class ChatViewModel {
     enum MessageType {
@@ -23,7 +22,10 @@ final class ChatViewModel {
     }
 
     // MARK: - Output
-    let messages = BehaviorRelay<[ChatMessage]>(value: [])
+    let conversationIDSubject = PublishSubject<String>()
+    var conversationIDObservable: Observable<String> {
+        conversationIDSubject.asObservable()
+    }
 
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
@@ -45,8 +47,7 @@ final class ChatViewModel {
     }
 
     func send(prompt: String, model: OpenAIModel) {
-        let isFirst = messages.value.isEmpty
-        appendMessage(ChatMessage(type: .user, text: prompt))
+        let isFirst = conversationID == nil
 
         if let id = conversationID {
             appendMessageUseCase.execute(conversationID: id,
@@ -61,8 +62,7 @@ final class ChatViewModel {
 
             switch result {
             case .success(let reply):
-                self.appendMessage(ChatMessage(type: .assistant, text: reply))
-                if let id = self.conversationID, !isFirst {
+                if let id = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: id,
                                                      role: .assistant,
                                                      text: reply)
@@ -75,7 +75,13 @@ final class ChatViewModel {
 
             case .failure(let error):
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
-                self.appendMessage(ChatMessage(type: .error, text: message))
+                if let id = self.conversationID {
+                    self.appendMessageUseCase.execute(conversationID: id,
+                                                     role: .error,
+                                                     text: message)
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
+                }
             }
         }
     }
@@ -92,15 +98,10 @@ final class ChatViewModel {
                 self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
                     .subscribe(onSuccess: { [weak self] id in
                         self?.conversationID = id
+                        self?.conversationIDSubject.onNext(id)
                     })
                     .disposed(by: self.disposeBag)
             }
         }
-    }
-
-    private func appendMessage(_ message: ChatMessage) {
-        var current = messages.value
-        current.append(message)
-        messages.accept(current)
     }
 }

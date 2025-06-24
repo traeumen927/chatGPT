@@ -20,6 +20,7 @@ final class MainViewController: UIViewController {
     private let signOutUseCase: SignOutUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
+    private let observeMessagesUseCase: ObserveConversationMessagesUseCase
     
     private let disposeBag = DisposeBag()
     
@@ -88,6 +89,7 @@ final class MainViewController: UIViewController {
         summarizeUseCase: SummarizeMessagesUseCase,
         saveConversationUseCase: SaveConversationUseCase,
         appendMessageUseCase: AppendMessageUseCase,
+        observeMessagesUseCase: ObserveConversationMessagesUseCase,
         signOutUseCase: SignOutUseCase,
         loadUserImageUseCase: LoadUserProfileImageUseCase,
         observeAuthStateUseCase: ObserveAuthStateUseCase) {
@@ -99,6 +101,7 @@ final class MainViewController: UIViewController {
         self.signOutUseCase = signOutUseCase
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
+        self.observeMessagesUseCase = observeMessagesUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -162,11 +165,25 @@ final class MainViewController: UIViewController {
             self.chatViewModel.send(prompt: text, model: self.selectedModel)
         }
         
-        // 메시지 상태 → UI 업데이트
         self.dataSource = createDataSource()
-        self.chatViewModel.messages
-            .asDriver(onErrorJustReturn: [])
-            .drive(onNext: { [weak self] messages in
+        self.chatViewModel.conversationIDObservable
+            .flatMapLatest { [weak self] id -> Observable<[ConversationMessage]> in
+                guard let self = self else { return .empty() }
+                return self.observeMessagesUseCase.execute(conversationID: id)
+            }
+            .map { messages -> [ChatViewModel.ChatMessage] in
+                messages.map { msg in
+                    let type: ChatViewModel.MessageType
+                    switch msg.role {
+                    case .user: type = .user
+                    case .assistant: type = .assistant
+                    default: type = .error
+                    }
+                    return ChatViewModel.ChatMessage(type: type, text: msg.text)
+                }
+            }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] messages in
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
