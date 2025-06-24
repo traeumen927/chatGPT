@@ -140,7 +140,7 @@ final class MenuViewController: UIViewController {
 }
 
 extension MenuViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    private func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         Section(rawValue: section)?.title
     }
 }
