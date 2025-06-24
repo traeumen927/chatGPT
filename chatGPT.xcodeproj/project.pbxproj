@@ -77,7 +77,8 @@
 		aa711a251b034678b1e8a5c7 /* KingfisherImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */; };
 		c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
 		ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
-		d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */; };
+                d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */; };
+                edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,7 +103,8 @@
 		79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendMessageUseCase.swift; sourceTree = "<group>"; };
 		7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingfisherImageRepository.swift; sourceTree = "<group>"; };
 		896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutUseCase.swift; sourceTree = "<group>"; };
-		9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserveAuthStateUseCase.swift; sourceTree = "<group>"; };
+                9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserveAuthStateUseCase.swift; sourceTree = "<group>"; };
+                3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserveConversationsUseCase.swift; sourceTree = "<group>"; };
 		A1D564E2F8AC41B39D235947 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		E1B9A0B12E00000100000000 /* RoleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleType.swift; sourceTree = "<group>"; };
 		F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModel.swift; sourceTree = "<group>"; };
@@ -354,9 +356,10 @@
 				f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */,
 				896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */,
 				eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */,
-				9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
-				79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
-			);
+                                9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
+                                79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
+                                3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */,
+                        );
 			path = UseCase;
 			sourceTree = "<group>";
 		};
@@ -620,8 +623,9 @@
 				98fe1440434d4c66ad46c0ca /* ImageRepository.swift in Sources */,
 				aa711a251b034678b1e8a5c7 /* KingfisherImageRepository.swift in Sources */,
 				65fb6a733717417aaec1ec5b /* LoadUserProfileImageUseCase.swift in Sources */,
-				d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */,
-				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
+                                d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */,
+                                edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */,
+                                F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
 				F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */,
 				F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */,
 				F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */,

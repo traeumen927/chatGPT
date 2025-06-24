@@ -4,6 +4,9 @@ import RxSwift
 
 final class FirestoreConversationRepository: ConversationRepository {
     private let db = Firestore.firestore()
+    private var listener: ListenerRegistration?
+    private var currentUID: String?
+    private let subject = BehaviorSubject<[ConversationSummary]>(value: [])
 
     func createConversation(uid: String,
                             title: String,
@@ -77,5 +80,29 @@ final class FirestoreConversationRepository: ConversationRepository {
             }
             return Disposables.create()
         }
+    }
+
+    func observeConversations(uid: String) -> Observable<[ConversationSummary]> {
+        if currentUID != uid {
+            listener?.remove()
+            currentUID = uid
+            listener = db.collection(uid).addSnapshotListener { [weak self] snapshot, error in
+                guard let self = self else { return }
+                if let docs = snapshot?.documents {
+                    let items = docs.compactMap { doc -> ConversationSummary? in
+                        guard let title = doc.data()["title"] as? String else { return nil }
+                        return ConversationSummary(id: doc.documentID, title: title)
+                    }
+                    self.subject.onNext(items)
+                } else if let error = error {
+                    self.subject.onError(error)
+                }
+            }
+        }
+        return subject.asObservable()
+    }
+
+    deinit {
+        listener?.remove()
     }
 }
