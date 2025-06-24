@@ -16,5 +16,8 @@ final class FetchConversationsUseCase {
             return .error(ConversationError.noUser)
         }
         return repository.fetchConversations(uid: user.uid)
+            .map { list in
+                list.sorted { $0.timestamp > $1.timestamp }
+            }
     }
 }

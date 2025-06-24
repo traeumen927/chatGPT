@@ -17,6 +17,7 @@ final class FirestoreConversationRepository: ConversationRepository {
             let conversationID = UUID().uuidString
             let data: [String: Any] = [
                 "title": title,
+                "timestamp": Timestamp(date: timestamp),
                 "messages": [
                     [
                         "role": "user",
@@ -73,7 +74,10 @@ final class FirestoreConversationRepository: ConversationRepository {
                 } else {
                     let conversations = snapshot?.documents.compactMap { doc -> ConversationSummary? in
                         guard let title = doc.data()["title"] as? String else { return nil }
-                        return ConversationSummary(id: doc.documentID, title: title)
+                        let timestamp = (doc.data()["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+                        return ConversationSummary(id: doc.documentID,
+                                                    title: title,
+                                                    timestamp: timestamp)
                     } ?? []
                     single(.success(conversations))
                 }
@@ -91,7 +95,10 @@ final class FirestoreConversationRepository: ConversationRepository {
                 if let docs = snapshot?.documents {
                     let items = docs.compactMap { doc -> ConversationSummary? in
                         guard let title = doc.data()["title"] as? String else { return nil }
-                        return ConversationSummary(id: doc.documentID, title: title)
+                        let timestamp = (doc.data()["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+                        return ConversationSummary(id: doc.documentID,
+                                                    title: title,
+                                                    timestamp: timestamp)
                     }
                     self.subject.onNext(items)
                 } else if let error = error {

@@ -16,6 +16,9 @@ final class ObserveConversationsUseCase {
             return .error(ConversationError.noUser)
         }
         return repository.observeConversations(uid: user.uid)
+            .map { list in
+                list.sorted { $0.timestamp > $1.timestamp }
+            }
     }
 }
 
