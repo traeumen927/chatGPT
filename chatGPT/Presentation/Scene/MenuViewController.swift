@@ -134,7 +134,7 @@ final class MenuViewController: UIViewController {
 }
 
 extension MenuViewController: UITableViewDelegate {
-    private func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         Section(rawValue: section)?.title
     }
 }
