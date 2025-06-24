@@ -6,25 +6,26 @@ import RxCocoa
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
         case history
-        case account
 
-        var title: String {
-            switch self {
-            case .history: return "과거 히스토리"
-            case .account: return "계정"
-            }
-        }
+        var title: String { "과거 히스토리" }
     }
 
     private enum Item: Hashable {
         case conversation(ConversationSummary)
-        case signOut
     }
 
     private let fetchConversationsUseCase: FetchConversationsUseCase
     private let signOutUseCase: SignOutUseCase
     private let currentConversationID: String?
     private let disposeBag = DisposeBag()
+
+
+    private lazy var signOutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("로그아웃", for: .normal)
+        button.setTitleColor(ThemeColor.label1, for: .normal)
+        return button
+    }()
 
     // 메뉴 닫기용 클로저
     var onClose: (() -> Void)?
@@ -34,7 +35,7 @@ final class MenuViewController: UIViewController {
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tv
     }()
-
+  
     private var dataSource: UITableViewDiffableDataSource<Section, Item>!
 
     init(fetchConversationsUseCase: FetchConversationsUseCase,
@@ -63,21 +64,38 @@ final class MenuViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 60))
+        footerView.addSubview(signOutButton)
+        signOutButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
+            make.height.equalTo(44)
+        }
+        tableView.tableFooterView = footerView
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if let footer = tableView.tableFooterView {
+            footer.frame.size.width = tableView.frame.width
+        }
     }
 
     private func bind() {
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
-                guard let self = self,
-                      let item = self.dataSource.itemIdentifier(for: indexPath) else { return }
-                self.tableView.deselectRow(at: indexPath, animated: true)
-                if case .signOut = item {
-                    do {
-                        try self.signOutUseCase.execute()
-                        self.onClose?()
-                    } catch {
-                        print("❌ Sign out failed: \(error.localizedDescription)")
-                    }
+                self?.tableView.deselectRow(at: indexPath, animated: true)
+            })
+            .disposed(by: disposeBag)
+
+        signOutButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                do {
+                    try self.signOutUseCase.execute()
+                    self.onClose?()
+                } catch {
+                    print("❌ Sign out failed: \(error.localizedDescription)")
                 }
             })
             .disposed(by: disposeBag)
@@ -94,7 +112,7 @@ final class MenuViewController: UIViewController {
     }
 
     private func createDataSource() -> UITableViewDiffableDataSource<Section, Item> {
-        UITableViewDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, item in
+        let ds = UITableViewDiffableDataSource<Section, Item>(tableView: tableView) { [weak self] tableView, indexPath, item in
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
 
             switch item {
@@ -103,28 +121,27 @@ final class MenuViewController: UIViewController {
                 let isSelected = convo.id == self?.currentConversationID
                 cell.accessoryType = isSelected ? .checkmark : .none
                 cell.selectionStyle = .default
-
-            case .signOut:
-                cell.textLabel?.text = "로그아웃"
-                cell.textLabel?.textColor = ThemeColor.label1
-                cell.textLabel?.textAlignment = .center
             }
 
             return cell
         }
-        dataSource.titleForHeaderInSection = { ds, index in
-            Section(rawValue: index)?.title
-        }
+        tableView.delegate = self
+        return ds
     }
 
     private func applySnapshot(_ items: [ConversationSummary]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections(Section.allCases)
         snapshot.appendItems(items.map { .conversation($0) }, toSection: .history)
-        snapshot.appendItems([.signOut], toSection: .account)
 
         let shouldAnimate = !dataSource.snapshot().itemIdentifiers.isEmpty
         dataSource.apply(snapshot, animatingDifferences: shouldAnimate)
+    }
+}
+
+extension MenuViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        Section(rawValue: section)?.title
     }
 }
 
