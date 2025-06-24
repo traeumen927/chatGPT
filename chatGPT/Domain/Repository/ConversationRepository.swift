@@ -12,4 +12,5 @@ protocol ConversationRepository {
                        role: RoleType,
                        text: String,
                        timestamp: Date) -> Single<Void>
+    func fetchConversations(uid: String) -> Single<[ConversationSummary]>
 }

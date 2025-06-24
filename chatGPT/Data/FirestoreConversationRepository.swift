@@ -61,4 +61,21 @@ final class FirestoreConversationRepository: ConversationRepository {
             return Disposables.create()
         }
     }
+
+    func fetchConversations(uid: String) -> Single<[ConversationSummary]> {
+        Single.create { single in
+            self.db.collection(uid).getDocuments { snapshot, error in
+                if let error = error {
+                    single(.failure(error))
+                } else {
+                    let conversations = snapshot?.documents.compactMap { doc -> ConversationSummary? in
+                        guard let title = doc.data()["title"] as? String else { return nil }
+                        return ConversationSummary(id: doc.documentID, title: title)
+                    } ?? []
+                    single(.success(conversations))
+                }
+            }
+            return Disposables.create()
+        }
+    }
 }
