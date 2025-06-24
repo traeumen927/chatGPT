@@ -18,7 +18,7 @@ final class SummarizeMessagesUseCase {
 
     func execute(messages: [Message], model: OpenAIModel, retry: Int = 0, completion: @escaping (Result<String, Error>) -> Void) {
         let text = messages.map { "\($0.role.rawValue): \($0.content)" }.joined(separator: "\n")
-        let prompt = "다음 대화를 간단히 요약해 줘.\n" + text
+        let prompt = "다음 대화를 15자 내외로 간결하고 직관적인 제목으로 요약해 줘.\n" + text
         let reqMessages = [Message(role: .system, content: prompt)]
         repository.sendChat(messages: reqMessages, model: model) { [weak self] result in
             switch result {
