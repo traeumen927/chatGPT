@@ -14,7 +14,7 @@ final class MenuViewController: UIViewController {
         case conversation(ConversationSummary)
     }
 
-    private let fetchConversationsUseCase: FetchConversationsUseCase
+    private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
     private let currentConversationID: String?
     private let disposeBag = DisposeBag()
@@ -38,11 +38,11 @@ final class MenuViewController: UIViewController {
   
     private var dataSource: UITableViewDiffableDataSource<Section, Item>!
 
-    init(fetchConversationsUseCase: FetchConversationsUseCase,
+    init(observeConversationsUseCase: ObserveConversationsUseCase,
          signOutUseCase: SignOutUseCase,
          currentConversationID: String?,
          onClose: (() -> Void)? = nil) {
-        self.fetchConversationsUseCase = fetchConversationsUseCase
+        self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
         self.currentConversationID = currentConversationID
         self.onClose = onClose
@@ -103,9 +103,9 @@ final class MenuViewController: UIViewController {
 
     private func load() {
         dataSource = createDataSource()
-        fetchConversationsUseCase.execute()
+        observeConversationsUseCase.execute()
             .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] list in
+            .subscribe(onNext: { [weak self] list in
                 self?.applySnapshot(list)
             })
             .disposed(by: disposeBag)
