@@ -1,7 +1,7 @@
 import Foundation
 import RxSwift
 
-final class FetchConversationsUseCase {
+final class ObserveConversationsUseCase {
     private let repository: ConversationRepository
     private let getCurrentUserUseCase: GetCurrentUserUseCase
 
@@ -11,13 +11,14 @@ final class FetchConversationsUseCase {
         self.getCurrentUserUseCase = getCurrentUserUseCase
     }
 
-    func execute() -> Single<[ConversationSummary]> {
+    func execute() -> Observable<[ConversationSummary]> {
         guard let user = getCurrentUserUseCase.execute() else {
             return .error(ConversationError.noUser)
         }
-        return repository.fetchConversations(uid: user.uid)
+        return repository.observeConversations(uid: user.uid)
             .map { list in
                 list.sorted { $0.timestamp > $1.timestamp }
             }
     }
 }
+
