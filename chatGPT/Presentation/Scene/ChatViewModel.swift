@@ -105,4 +105,9 @@ final class ChatViewModel {
         current.append(message)
         messages.accept(current)
     }
+
+    func startNewConversation() {
+        messages.accept([])
+        conversationIDRelay.accept(nil)
+    }
 }

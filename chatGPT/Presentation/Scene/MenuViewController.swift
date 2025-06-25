@@ -108,7 +108,13 @@ final class MenuViewController: UIViewController {
         observeConversationsUseCase.execute()
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] list in
-                self?.conversations = list
+                guard let self else { return }
+                var items = list
+                if self.currentConversationID == nil {
+                    let draft = ConversationSummary(id: "draft", title: "새로운 대화", timestamp: Date())
+                    items.insert(draft, at: 0)
+                }
+                self.conversations = items
                 self?.tableView.reloadData()
             })
             .disposed(by: disposeBag)
@@ -181,7 +187,12 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         case .history:
             let convo = conversations[indexPath.row]
             cell.textLabel?.text = convo.title
-            let isSelected = convo.id == currentConversationID
+            let isSelected: Bool
+            if currentConversationID == nil {
+                isSelected = convo.id == "draft"
+            } else {
+                isSelected = convo.id == currentConversationID
+            }
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
         case .account:
