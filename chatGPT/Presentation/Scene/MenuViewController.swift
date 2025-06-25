@@ -162,6 +162,7 @@ final class MenuViewController: UIViewController {
         }
     }
 
+
     private func showPicker() {
         guard !availableModels.isEmpty else { return }
         if let index = availableModels.firstIndex(of: selectedModel) {
