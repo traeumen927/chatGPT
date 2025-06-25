@@ -30,6 +30,7 @@
 		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
 		F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D12E0C034B006E81DD /* ConversationMessage.swift */; };
 		F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */; };
+		F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */; };
 		F1452D832E095F7D00795A9E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1452D822E095F7D00795A9E /* GoogleService-Info.plist */; };
 		F1452D852E09741500795A9E /* AuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1452D842E09741500795A9E /* AuthUser.swift */; };
 		F1452D872E09741F00795A9E /* GetCurrentUserUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1452D862E09741F00795A9E /* GetCurrentUserUseCase.swift */; };
@@ -125,6 +126,7 @@
 		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		F122E5D12E0C034B006E81DD /* ConversationMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
 		F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConversationMessagesUseCase.swift; sourceTree = "<group>"; };
+		F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Sanitize.swift"; sourceTree = "<group>"; };
 		F1452D822E095F7D00795A9E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F1452D842E09741500795A9E /* AuthUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUser.swift; sourceTree = "<group>"; };
 		F1452D862E09741F00795A9E /* GetCurrentUserUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCurrentUserUseCase.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 		F117E06F2E01586400D1C95F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */,
 				F117E0702E01587F00D1C95F /* String+Truncate.swift */,
 				F1EF04EE2E044EC5005D2CF9 /* UIColor+hex.swift */,
 				F1452D882E09796F00795A9E /* UIImage.swift */,
@@ -602,6 +605,7 @@
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F1EF04EF2E044EC5005D2CF9 /* UIColor+hex.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
+				F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */,
 				F1452D852E09741500795A9E /* AuthUser.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				E6BFBABECC6C47DA818A13E5 /* LoginViewController.swift in Sources */,
