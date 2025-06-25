@@ -16,10 +16,7 @@ final class MenuViewController: UIViewController {
         }
     }
 
-    private enum Item: Hashable {
-        case conversation(ConversationSummary)
-        case signOut
-    }
+    private var conversations: [ConversationSummary] = []
 
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
@@ -37,7 +34,6 @@ final class MenuViewController: UIViewController {
         return tv
     }()
   
-    private var dataSource: UITableViewDiffableDataSource<Section, Item>!
 
     init(observeConversationsUseCase: ObserveConversationsUseCase,
          signOutUseCase: SignOutUseCase,
@@ -62,6 +58,8 @@ final class MenuViewController: UIViewController {
     private func layout() {
         view.backgroundColor = ThemeColor.background1
         view.addSubview(tableView)
+        tableView.dataSource = self
+        tableView.delegate = self
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -74,16 +72,16 @@ final class MenuViewController: UIViewController {
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
                 self.tableView.deselectRow(at: indexPath, animated: true)
-                guard let item = self.dataSource.itemIdentifier(for: indexPath) else { return }
-                switch item {
-                case .signOut:
+
+                switch Section(rawValue: indexPath.section) {
+                case .account:
                     do {
                         try self.signOutUseCase.execute()
                         self.onClose?()
                     } catch {
                         print("❌ Sign out failed: \(error.localizedDescription)")
                     }
-                case .conversation:
+                case .history, .none:
                     break
                 }
             })
@@ -91,49 +89,49 @@ final class MenuViewController: UIViewController {
     }
 
     private func load() {
-        dataSource = createDataSource()
         observeConversationsUseCase.execute()
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] list in
-                self?.applySnapshot(list)
+                self?.conversations = list
+                self?.tableView.reloadData()
             })
             .disposed(by: disposeBag)
     }
 
-    private func createDataSource() -> UITableViewDiffableDataSource<Section, Item> {
-        let ds = UITableViewDiffableDataSource<Section, Item>(tableView: tableView) { [weak self] tableView, indexPath, item in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-
-            switch item {
-            case .conversation(let convo):
-                cell.textLabel?.text = convo.title
-                let isSelected = convo.id == self?.currentConversationID
-                cell.accessoryType = isSelected ? .checkmark : .none
-                cell.selectionStyle = .default
-            case .signOut:
-                cell.textLabel?.text = "로그아웃"
-                cell.accessoryType = .none
-                cell.selectionStyle = .default
-            }
-
-            return cell
-        }
-        tableView.delegate = self
-        return ds
-    }
-
-    private func applySnapshot(_ items: [ConversationSummary]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections(Section.allCases)
-        snapshot.appendItems(items.map { .conversation($0) }, toSection: .history)
-        snapshot.appendItems([.signOut], toSection: .account)
-
-        let shouldAnimate = !dataSource.snapshot().itemIdentifiers.isEmpty
-        dataSource.apply(snapshot, animatingDifferences: shouldAnimate)
-    }
 }
 
-extension MenuViewController: UITableViewDelegate {
+extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        Section.allCases.count
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch Section(rawValue: section) {
+        case .history: return conversations.count
+        case .account: return 1
+        case .none: return 0
+        }
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        switch Section(rawValue: indexPath.section) {
+        case .history:
+            let convo = conversations[indexPath.row]
+            cell.textLabel?.text = convo.title
+            let isSelected = convo.id == currentConversationID
+            cell.accessoryType = isSelected ? .checkmark : .none
+            cell.selectionStyle = .default
+        case .account:
+            cell.textLabel?.text = "로그아웃"
+            cell.accessoryType = .none
+            cell.selectionStyle = .default
+        case .none:
+            break
+        }
+        return cell
+    }
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         Section(rawValue: section)?.title
     }
