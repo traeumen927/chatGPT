@@ -135,8 +135,10 @@ final class MenuViewController: UIViewController {
                 self.tableView.reloadRows(at: [index], with: .automatic)
             }
             alert.addAction(action)
+        }
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         present(alert, animated: true)
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
@@ -175,13 +177,4 @@ final class MenuViewController: UIViewController {
     }
 }
 
-extension MenuViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        availableModels.count
-    }
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        availableModels[row].displayName
-    }
-}
 
