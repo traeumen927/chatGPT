@@ -47,12 +47,14 @@ final class MenuViewController: UIViewController {
          fetchModelsUseCase: FetchAvailableModelsUseCase,
          selectedModel: OpenAIModel,
          currentConversationID: String?,
+         availableModels: [OpenAIModel] = [],
          onClose: (() -> Void)? = nil) {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
         self.fetchModelsUseCase = fetchModelsUseCase
         self.selectedModel = selectedModel
         self.currentConversationID = currentConversationID
+        self.availableModels = availableModels
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
     }
@@ -118,6 +120,8 @@ final class MenuViewController: UIViewController {
             switch result {
             case .success(let models):
                 self.availableModels = models
+                let index = IndexSet(integer: Section.model.rawValue)
+                self.tableView.reloadSections(index, with: .automatic)
             case .failure(let error):
                 print("❌ 모델 로딩 실패: \(error.localizedDescription)")
             }
@@ -125,6 +129,13 @@ final class MenuViewController: UIViewController {
     }
 
     private func presentModelSelector() {
+        guard !availableModels.isEmpty else {
+            let alert = UIAlertController(title: nil, message: "모델을 불러오는 중입니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            present(alert, animated: true)
+            return
+        }
+
         let alert = UIAlertController(title: "모델 선택", message: nil, preferredStyle: .actionSheet)
         for model in availableModels {
             let action = UIAlertAction(title: model.displayName, style: .default) { [weak self] _ in
@@ -142,6 +153,9 @@ final class MenuViewController: UIViewController {
 }
 
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        Section.allCases.count
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .model: return 1
@@ -155,9 +169,15 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         switch Section(rawValue: indexPath.section) {
         case .model:
-            cell.textLabel?.text = selectedModel.displayName
-            cell.accessoryType = .disclosureIndicator
-            cell.selectionStyle = .default
+            if availableModels.isEmpty {
+                cell.textLabel?.text = "모델 불러오는 중..."
+                cell.accessoryType = .none
+                cell.selectionStyle = .none
+            } else {
+                cell.textLabel?.text = selectedModel.displayName
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+            }
         case .history:
             let convo = conversations[indexPath.row]
             cell.textLabel?.text = convo.title
