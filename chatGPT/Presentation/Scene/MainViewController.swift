@@ -105,6 +105,8 @@ final class MainViewController: UIViewController {
     
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
+
+    private var animateDifferences = true
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
@@ -195,6 +197,13 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
+
+        chatViewModel.conversationChanged
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                self?.animateDifferences = false
+            })
+            .disposed(by: disposeBag)
         
         menuBarButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
@@ -243,7 +252,8 @@ final class MainViewController: UIViewController {
         // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
         snapshot.appendItems(messages.reversed())
         
-        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource.apply(snapshot, animatingDifferences: animateDifferences)
+        animateDifferences = true
         
         if !messages.isEmpty {
             let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤

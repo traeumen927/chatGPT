@@ -24,6 +24,7 @@ final class ChatViewModel {
 
     // MARK: - Output
     let messages = BehaviorRelay<[ChatMessage]>(value: [])
+    let conversationChanged = PublishRelay<Void>()
 
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
@@ -118,6 +119,7 @@ final class ChatViewModel {
     }
 
     func startNewConversation() {
+        conversationChanged.accept(())
         draftMessages = []
         messages.accept([])
         conversationIDRelay.accept(nil)
@@ -125,6 +127,7 @@ final class ChatViewModel {
     }
 
     func resumeDraftConversation() {
+        conversationChanged.accept(())
         messages.accept(draftMessages ?? [])
         conversationIDRelay.accept(nil)
         sendMessageUseCase.clearContext()
@@ -141,6 +144,7 @@ final class ChatViewModel {
                 let chatMessages = list.map { item in
                     ChatMessage(type: item.role == .user ? .user : .assistant, text: item.text)
                 }
+                self.conversationChanged.accept(())
                 self.messages.accept(chatMessages)
                 self.conversationIDRelay.accept(id)
                 let msgs = list.map { Message(role: $0.role, content: $0.text) }
