@@ -74,7 +74,6 @@
 		F1EF04EF2E044EC5005D2CF9 /* UIColor+hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF04EE2E044EC5005D2CF9 /* UIColor+hex.swift */; };
 		FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */; };
                 a0d99ba381b44d72b54327f6 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9d37b25c97b401d97ce1732 /* MenuViewController.swift */; };
-                4a8544d8b91147c88053a9b2 /* ModelPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7a754426beca40e398688f99 /* ModelPickerViewController.swift */; };
                 aa711a251b034678b1e8a5c7 /* KingfisherImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */; };
 		c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
 		ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
@@ -162,7 +161,6 @@
 		c2820ff33be8404985358650 /* ImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRepository.swift; sourceTree = "<group>"; };
 		d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatContextRepositoryImpl.swift; sourceTree = "<group>"; };
                 e9d37b25c97b401d97ce1732 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
-                7a754426beca40e398688f99 /* ModelPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPickerViewController.swift; sourceTree = "<group>"; };
                 ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarizeMessagesUseCase.swift; sourceTree = "<group>"; };
 		eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUserProfileImageUseCase.swift; sourceTree = "<group>"; };
 		f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
@@ -390,7 +388,6 @@
 				F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
 				A1D564E2F8AC41B39D235947 /* LoginViewController.swift */,
                                 e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
-                                7a754426beca40e398688f99 /* ModelPickerViewController.swift */,
                                 F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
 				F117E07C2E018AF400D1C95F /* Cells */,
 			);
@@ -640,7 +637,6 @@
 				F1DF3B152DF9B09200D8445A /* AppCoordinator.swift in Sources */,
 				F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */,
                                 a0d99ba381b44d72b54327f6 /* MenuViewController.swift in Sources */,
-                                4a8544d8b91147c88053a9b2 /* ModelPickerViewController.swift in Sources */,
                                 F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

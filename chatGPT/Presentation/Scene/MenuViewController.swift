@@ -38,6 +38,10 @@ final class MenuViewController: UIViewController {
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tv
     }()
+
+    private let pickerContainer = UIView()
+    private let toolbar = UIToolbar()
+    private let pickerView = UIPickerView()
   
 
     var onModelSelected: ((OpenAIModel) -> Void)?
@@ -69,13 +73,47 @@ final class MenuViewController: UIViewController {
 
     private func layout() {
         view.backgroundColor = ThemeColor.background1
-        view.addSubview(tableView)
+        [tableView, pickerContainer].forEach(view.addSubview)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
+        pickerContainer.isHidden = true
+        pickerContainer.backgroundColor = ThemeColor.background1
+        pickerContainer.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+
+        pickerContainer.addSubview(toolbar)
+        pickerContainer.addSubview(pickerView)
+
+        toolbar.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+        }
+
+        pickerView.snp.makeConstraints { make in
+            make.top.equalTo(toolbar.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(216)
+        }
+
+        let cancel = UIBarButtonItem(title: "취소", style: .plain, target: nil, action: nil)
+        let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done = UIBarButtonItem(title: "선택", style: .done, target: nil, action: nil)
+        toolbar.setItems([cancel, flex, done], animated: false)
+
+        pickerView.dataSource = self
+        pickerView.delegate = self
+
+        cancel.rx.tap
+            .bind { [weak self] in self?.hidePicker() }
+            .disposed(by: disposeBag)
+
+        done.rx.tap
+            .bind { [weak self] in self?.confirmModelSelection() }
+            .disposed(by: disposeBag)
     }
 
 
@@ -87,7 +125,7 @@ final class MenuViewController: UIViewController {
 
                 switch Section(rawValue: indexPath.section) {
                 case .model:
-                    self.presentModelSelector()
+                    self.showPicker()
                 case .account:
                     do {
                         try self.signOutUseCase.execute()
@@ -124,18 +162,26 @@ final class MenuViewController: UIViewController {
         }
     }
 
-    private func presentModelSelector() {
+
+    private func showPicker() {
         guard !availableModels.isEmpty else { return }
-        let picker = ModelPickerViewController(models: availableModels, selected: selectedModel)
-        picker.onSelect = { [weak self] model in
-            guard let self else { return }
-            self.selectedModel = model
-            self.onModelSelected?(model)
-            let index = IndexPath(row: 0, section: Section.model.rawValue)
-            self.tableView.reloadRows(at: [index], with: .automatic)
+        if let index = availableModels.firstIndex(of: selectedModel) {
+            pickerView.selectRow(index, inComponent: 0, animated: false)
         }
-        picker.modalPresentationStyle = .pageSheet
-        present(picker, animated: true)
+        pickerContainer.isHidden = false
+    }
+
+    private func hidePicker() {
+        pickerContainer.isHidden = true
+    }
+
+    private func confirmModelSelection() {
+        let index = pickerView.selectedRow(inComponent: 0)
+        selectedModel = availableModels[index]
+        onModelSelected?(selectedModel)
+        let row = IndexPath(row: 0, section: Section.model.rawValue)
+        tableView.reloadRows(at: [row], with: .automatic)
+        hidePicker()
     }
 
 }
@@ -179,6 +225,16 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         Section(rawValue: section)?.title
+    }
+}
+
+extension MenuViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        availableModels.count
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        availableModels[row].displayName
     }
 }
 
