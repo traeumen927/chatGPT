@@ -62,6 +62,14 @@ final class MainViewController: UIViewController {
         menuVC.onModelSelected = { [weak self] model in
             self?.selectedModel = model
         }
+        menuVC.onConversationSelected = { [weak self] id in
+            guard let self else { return }
+            if let id {
+                self.chatViewModel.loadConversation(id: id)
+            } else {
+                self.chatViewModel.startNewConversation()
+            }
+        }
         menuVC.onClose = { [weak menuVC] in
             menuVC?.dismiss(animated: true)
         }
@@ -96,17 +104,21 @@ final class MainViewController: UIViewController {
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
-        saveConversationUseCase: SaveConversationUseCase,
-        appendMessageUseCase: AppendMessageUseCase,
-        observeConversationsUseCase: ObserveConversationsUseCase,
-        signOutUseCase: SignOutUseCase,
-        loadUserImageUseCase: LoadUserProfileImageUseCase,
-        observeAuthStateUseCase: ObserveAuthStateUseCase) {
+         saveConversationUseCase: SaveConversationUseCase,
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+         contextRepository: ChatContextRepository,
+         observeConversationsUseCase: ObserveConversationsUseCase,
+         signOutUseCase: SignOutUseCase,
+         loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
-                                           appendMessageUseCase: appendMessageUseCase)
+                                           appendMessageUseCase: appendMessageUseCase,
+                                           fetchMessagesUseCase: fetchConversationMessagesUseCase,
+                                           contextRepository: contextRepository)
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
         self.loadUserImageUseCase = loadUserImageUseCase

@@ -64,6 +64,10 @@ final class AppCoordinator {
             repository: conversationRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
+        let fetchConversationMessagesUseCase = FetchConversationMessagesUseCase(
+            repository: conversationRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
         let observeConversationsUseCase = ObserveConversationsUseCase(
             repository: conversationRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
@@ -85,6 +89,8 @@ final class AppCoordinator {
             summarizeUseCase: summarizeUseCase,
             saveConversationUseCase: saveConversationUseCase,
             appendMessageUseCase: appendMessageUseCase,
+            fetchConversationMessagesUseCase: fetchConversationMessagesUseCase,
+            contextRepository: contextRepository,
             observeConversationsUseCase: observeConversationsUseCase,
             signOutUseCase: signOutUseCase,
             loadUserImageUseCase: loadUserImageUseCase,

@@ -23,6 +23,11 @@ final class ChatContextRepositoryImpl: ChatContextRepository {
         self.summary = summary
     }
 
+    func replace(messages: [Message], summary: String?) {
+        self.storedMessages = messages
+        self.summary = summary
+    }
+
     func trim(to maxCount: Int) {
         if storedMessages.count > maxCount {
             storedMessages = Array(storedMessages.suffix(maxCount))

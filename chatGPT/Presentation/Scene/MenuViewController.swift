@@ -25,13 +25,14 @@ final class MenuViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
     private let fetchModelsUseCase: FetchAvailableModelsUseCase
-    private let currentConversationID: String?
+    private var currentConversationID: String?
     private let disposeBag = DisposeBag()
 
 
 
     // 메뉴 닫기용 클로저
     var onClose: (() -> Void)?
+    var onConversationSelected: ((String?) -> Void)?
 
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
@@ -97,7 +98,12 @@ final class MenuViewController: UIViewController {
                     } catch {
                         print("❌ Sign out failed: \(error.localizedDescription)")
                     }
-                case .history, .none:
+                case .history:
+                    let convo = self.conversations[indexPath.row]
+                    self.currentConversationID = convo.id == "draft" ? nil : convo.id
+                    self.onConversationSelected?(self.currentConversationID)
+                    self.onClose?()
+                case .none:
                     break
                 }
             })
