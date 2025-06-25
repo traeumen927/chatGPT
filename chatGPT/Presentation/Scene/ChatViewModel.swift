@@ -102,7 +102,8 @@ final class ChatViewModel {
         summarizeUseCase.execute(messages: history, model: model) { [weak self] result in
             guard let self = self else { return }
             if case .success(let title) = result {
-                self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
+                let cleanTitle = title.removingQuotes()
+                self.saveConversationUseCase.execute(title: cleanTitle, question: question, answer: answer)
                     .subscribe(onSuccess: { [weak self] id in
                         self?.conversationIDRelay.accept(id)
                         self?.draftMessages = nil
