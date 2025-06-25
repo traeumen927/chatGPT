@@ -21,21 +21,22 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
-    
+
     private let disposeBag = DisposeBag()
+
+    private var availableModels: [OpenAIModel] = []
     
     
     // MARK: 선택된 chatGPT 모델
     private var selectedModel: OpenAIModel = ModelPreference.current {
         didSet {
             ModelPreference.save(selectedModel)
-            self.updateModelButton()
         }
     }
-    
-    // MARK: 모델 선택 버튼
-    private lazy var modelButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
+
+    // MARK: 새 대화 버튼
+    private lazy var newChatButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
         return button
     }()
     
@@ -54,11 +55,26 @@ final class MainViewController: UIViewController {
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
             selectedModel: selectedModel,
-            currentConversationID: chatViewModel.conversationID
+            currentConversationID: chatViewModel.conversationID,
+            draftExists: chatViewModel.hasDraft,
+            availableModels: availableModels
         )
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onModelSelected = { [weak self] model in
             self?.selectedModel = model
+        }
+        menuVC.onConversationSelected = { [weak self] id in
+            guard let self else { return }
+            self.animateDifferences = false
+            if let id {
+                self.chatViewModel.loadConversation(id: id)
+            } else {
+                if self.chatViewModel.hasDraft {
+                    self.chatViewModel.resumeDraftConversation()
+                } else {
+                    self.chatViewModel.startNewConversation()
+                }
+            }
         }
         menuVC.onClose = { [weak menuVC] in
             menuVC?.dismiss(animated: true)
@@ -90,21 +106,27 @@ final class MainViewController: UIViewController {
     
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
+
+    private var animateDifferences = true
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
-        saveConversationUseCase: SaveConversationUseCase,
-        appendMessageUseCase: AppendMessageUseCase,
-        observeConversationsUseCase: ObserveConversationsUseCase,
-        signOutUseCase: SignOutUseCase,
-        loadUserImageUseCase: LoadUserProfileImageUseCase,
-        observeAuthStateUseCase: ObserveAuthStateUseCase) {
+         saveConversationUseCase: SaveConversationUseCase,
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+         contextRepository: ChatContextRepository,
+         observeConversationsUseCase: ObserveConversationsUseCase,
+         signOutUseCase: SignOutUseCase,
+         loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
-                                           appendMessageUseCase: appendMessageUseCase)
+                                           appendMessageUseCase: appendMessageUseCase,
+                                           fetchMessagesUseCase: fetchConversationMessagesUseCase,
+                                           contextRepository: contextRepository)
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
         self.loadUserImageUseCase = loadUserImageUseCase
@@ -123,18 +145,16 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.layout()
         self.bind()
+        self.preloadModels()
     }
     
     private func layout() {
         self.navigationItem.title = "ChatGPT"
-        self.navigationItem.rightBarButtonItem = modelButton
+        self.navigationItem.rightBarButtonItem = nil
         self.navigationItem.leftBarButtonItem = menuBarButton
-        
-        // MARK: 모델 버튼 초기 설정
-        self.updateModelButton()
         
         self.view.backgroundColor = ThemeColor.background1
         
@@ -178,6 +198,13 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
+
+        chatViewModel.conversationChanged
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                self?.animateDifferences = false
+            })
+            .disposed(by: disposeBag)
         
         menuBarButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
@@ -185,15 +212,28 @@ final class MainViewController: UIViewController {
                 self?.presentMenu()
             })
             .disposed(by: disposeBag)
+
+        chatViewModel.conversationIDObservable
+            .distinctUntilChanged { $0 == $1 }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] id in
+                self?.navigationItem.rightBarButtonItem = id == nil ? nil : self?.newChatButton
+            })
+            .disposed(by: disposeBag)
+
+        newChatButton.rx.tap
+            .bind(onNext: { [weak self] in
+                self?.chatViewModel.startNewConversation()
+            })
+            .disposed(by: disposeBag)
         
     }
     
-    private func updateModelButton() {
-        
-        // MARK: 모델명이 너무 긴 경우를 대비하여 truncate
-        modelButton.title = selectedModel.displayName.truncated(limit: 13)
-        
-        modelButton.menu = nil
+    private func preloadModels() {
+        fetchModelsUseCase.execute { [weak self] result in
+            guard case let .success(models) = result else { return }
+            self?.availableModels = models
+        }
     }
     
     
@@ -213,12 +253,26 @@ final class MainViewController: UIViewController {
         // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
         snapshot.appendItems(messages.reversed())
         
-        dataSource.apply(snapshot, animatingDifferences: true)
-        
-        if !messages.isEmpty {
-            let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        let shouldAnimate = animateDifferences
+
+        if shouldAnimate {
+            dataSource.apply(snapshot, animatingDifferences: true)
+            if !messages.isEmpty {
+                let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        } else {
+            UIView.performWithoutAnimation {
+                dataSource.apply(snapshot, animatingDifferences: false)
+                if !messages.isEmpty {
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                    tableView.layoutIfNeeded()
+                }
+            }
         }
+
+        animateDifferences = true
     }
     
     private func loadUserImage() {

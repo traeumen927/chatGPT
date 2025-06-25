@@ -109,6 +109,29 @@ final class FirestoreConversationRepository: ConversationRepository {
         return subject.asObservable()
     }
 
+    func fetchMessages(uid: String, conversationID: String) -> Single<[ConversationMessage]> {
+        Single.create { single in
+            self.db.collection(uid).document(conversationID).getDocument { document, error in
+                if let data = document?.data(),
+                   let rawMessages = data["messages"] as? [[String: Any]] {
+                    let messages = rawMessages.compactMap { dict -> ConversationMessage? in
+                        guard let roleStr = dict["role"] as? String,
+                              let role = RoleType(rawValue: roleStr),
+                              let text = dict["text"] as? String else { return nil }
+                        let timestamp = (dict["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+                        return ConversationMessage(role: role, text: text, timestamp: timestamp)
+                    }
+                    single(.success(messages))
+                } else if let error = error {
+                    single(.failure(error))
+                } else {
+                    single(.success([]))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+
     deinit {
         listener?.remove()
     }

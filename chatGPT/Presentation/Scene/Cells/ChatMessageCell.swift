@@ -21,8 +21,6 @@ final class ChatMessageCell: UITableViewCell {
         return label
     }()
 
-    private var bubbleLeading: Constraint!
-    private var bubbleTrailing: Constraint!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -45,8 +43,8 @@ final class ChatMessageCell: UITableViewCell {
 
         bubbleView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8)
-            self.bubbleLeading = make.leading.equalToSuperview().inset(16).constraint
-            self.bubbleTrailing = make.trailing.equalToSuperview().inset(16).constraint
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
         }
 
         messageLabel.snp.makeConstraints { make in
@@ -64,18 +62,12 @@ final class ChatMessageCell: UITableViewCell {
         switch message.type {
         case .user:
             bubbleView.backgroundColor = UIColor.systemBlue
-            bubbleLeading.deactivate()
-            bubbleTrailing.activate()
 
         case .assistant:
             bubbleView.backgroundColor = UIColor.systemGreen
-            bubbleTrailing.deactivate()
-            bubbleLeading.activate()
 
         case .error:
             bubbleView.backgroundColor = UIColor.systemRed
-            bubbleTrailing.deactivate()
-            bubbleLeading.activate()
         }
         
         self.bubbleView.snp.remakeConstraints { make in

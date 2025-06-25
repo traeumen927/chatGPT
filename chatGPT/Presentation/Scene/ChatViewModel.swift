@@ -24,13 +24,20 @@ final class ChatViewModel {
 
     // MARK: - Output
     let messages = BehaviorRelay<[ChatMessage]>(value: [])
+    let conversationChanged = PublishRelay<Void>()
 
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
     private let summarizeUseCase: SummarizeMessagesUseCase
     private let saveConversationUseCase: SaveConversationUseCase
     private let appendMessageUseCase: AppendMessageUseCase
+    private let fetchMessagesUseCase: FetchConversationMessagesUseCase
+    private let contextRepository: ChatContextRepository
     private let disposeBag = DisposeBag()
+
+    private var draftMessages: [ChatMessage]? = nil
+
+    var hasDraft: Bool { draftMessages != nil }
 
     private let conversationIDRelay = BehaviorRelay<String?>(value: nil)
     var conversationID: String? { conversationIDRelay.value }
@@ -39,11 +46,15 @@ final class ChatViewModel {
     init(sendMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-         appendMessageUseCase: AppendMessageUseCase) {
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchMessagesUseCase: FetchConversationMessagesUseCase,
+         contextRepository: ChatContextRepository) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
         self.appendMessageUseCase = appendMessageUseCase
+        self.fetchMessagesUseCase = fetchMessagesUseCase
+        self.contextRepository = contextRepository
     }
 
     func send(prompt: String, model: OpenAIModel) {
@@ -91,9 +102,11 @@ final class ChatViewModel {
         summarizeUseCase.execute(messages: history, model: model) { [weak self] result in
             guard let self = self else { return }
             if case .success(let title) = result {
-                self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
+                let cleanTitle = title.removingQuotes()
+                self.saveConversationUseCase.execute(title: cleanTitle, question: question, answer: answer)
                     .subscribe(onSuccess: { [weak self] id in
                         self?.conversationIDRelay.accept(id)
+                        self?.draftMessages = nil
                     })
                     .disposed(by: self.disposeBag)
             }
@@ -104,5 +117,40 @@ final class ChatViewModel {
         var current = messages.value
         current.append(message)
         messages.accept(current)
+    }
+
+    func startNewConversation() {
+        conversationChanged.accept(())
+        draftMessages = []
+        messages.accept([])
+        conversationIDRelay.accept(nil)
+        sendMessageUseCase.clearContext()
+    }
+
+    func resumeDraftConversation() {
+        conversationChanged.accept(())
+        messages.accept(draftMessages ?? [])
+        conversationIDRelay.accept(nil)
+        sendMessageUseCase.clearContext()
+    }
+
+    func loadConversation(id: String) {
+        if conversationID == nil {
+            draftMessages = messages.value
+        }
+        fetchMessagesUseCase.execute(conversationID: id)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] list in
+                guard let self else { return }
+                let chatMessages = list.map { item in
+                    ChatMessage(type: item.role == .user ? .user : .assistant, text: item.text)
+                }
+                self.conversationChanged.accept(())
+                self.messages.accept(chatMessages)
+                self.conversationIDRelay.accept(id)
+                let msgs = list.map { Message(role: $0.role, content: $0.text) }
+                self.contextRepository.replace(messages: msgs, summary: nil)
+            })
+            .disposed(by: disposeBag)
     }
 }

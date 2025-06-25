@@ -13,5 +13,6 @@ protocol ConversationRepository {
                        text: String,
                        timestamp: Date) -> Single<Void>
     func fetchConversations(uid: String) -> Single<[ConversationSummary]>
+    func fetchMessages(uid: String, conversationID: String) -> Single<[ConversationMessage]>
     func observeConversations(uid: String) -> Observable<[ConversationSummary]>
 }
