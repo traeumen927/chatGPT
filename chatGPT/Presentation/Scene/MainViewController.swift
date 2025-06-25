@@ -31,13 +31,12 @@ final class MainViewController: UIViewController {
     private var selectedModel: OpenAIModel = ModelPreference.current {
         didSet {
             ModelPreference.save(selectedModel)
-            self.updateModelButton()
         }
     }
-    
-    // MARK: 모델 선택 버튼
-    private lazy var modelButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "", primaryAction: nil, menu: nil)
+
+    // MARK: 새 대화 버튼
+    private lazy var newChatButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
         return button
     }()
     
@@ -134,11 +133,8 @@ final class MainViewController: UIViewController {
     
     private func layout() {
         self.navigationItem.title = "ChatGPT"
-        self.navigationItem.rightBarButtonItem = modelButton
+        self.navigationItem.rightBarButtonItem = nil
         self.navigationItem.leftBarButtonItem = menuBarButton
-        
-        // MARK: 모델 버튼 초기 설정
-        self.updateModelButton()
         
         self.view.backgroundColor = ThemeColor.background1
         
@@ -189,17 +185,23 @@ final class MainViewController: UIViewController {
                 self?.presentMenu()
             })
             .disposed(by: disposeBag)
+
+        chatViewModel.conversationIDObservable
+            .distinctUntilChanged { $0 == $1 }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] id in
+                self?.navigationItem.rightBarButtonItem = id == nil ? nil : self?.newChatButton
+            })
+            .disposed(by: disposeBag)
+
+        newChatButton.rx.tap
+            .bind(onNext: { [weak self] in
+                self?.chatViewModel.startNewConversation()
+            })
+            .disposed(by: disposeBag)
         
     }
     
-    private func updateModelButton() {
-        
-        // MARK: 모델명이 너무 긴 경우를 대비하여 truncate
-        modelButton.title = selectedModel.displayName.truncated(limit: 13)
-        
-        modelButton.menu = nil
-    }
-
     private func preloadModels() {
         fetchModelsUseCase.execute { [weak self] result in
             guard case let .success(models) = result else { return }
