@@ -56,6 +56,7 @@ final class MainViewController: UIViewController {
             fetchModelsUseCase: fetchModelsUseCase,
             selectedModel: selectedModel,
             currentConversationID: chatViewModel.conversationID,
+            draftExists: chatViewModel.hasDraft,
             availableModels: availableModels
         )
         menuVC.modalPresentationStyle = .formSheet
@@ -67,7 +68,11 @@ final class MainViewController: UIViewController {
             if let id {
                 self.chatViewModel.loadConversation(id: id)
             } else {
-                self.chatViewModel.startNewConversation()
+                if self.chatViewModel.hasDraft {
+                    self.chatViewModel.resumeDraftConversation()
+                } else {
+                    self.chatViewModel.startNewConversation()
+                }
             }
         }
         menuVC.onClose = { [weak menuVC] in
