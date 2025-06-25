@@ -21,8 +21,10 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
-    
+
     private let disposeBag = DisposeBag()
+
+    private var availableModels: [OpenAIModel] = []
     
     
     // MARK: 선택된 chatGPT 모델
@@ -54,7 +56,8 @@ final class MainViewController: UIViewController {
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
             selectedModel: selectedModel,
-            currentConversationID: chatViewModel.conversationID
+            currentConversationID: chatViewModel.conversationID,
+            availableModels: availableModels
         )
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onModelSelected = { [weak self] model in
@@ -123,9 +126,10 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.layout()
         self.bind()
+        self.preloadModels()
     }
     
     private func layout() {
@@ -194,6 +198,13 @@ final class MainViewController: UIViewController {
         modelButton.title = selectedModel.displayName.truncated(limit: 13)
         
         modelButton.menu = nil
+    }
+
+    private func preloadModels() {
+        fetchModelsUseCase.execute { [weak self] result in
+            guard case let .success(models) = result else { return }
+            self?.availableModels = models
+        }
     }
     
     
