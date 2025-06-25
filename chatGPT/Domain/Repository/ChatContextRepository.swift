@@ -12,6 +12,7 @@ protocol ChatContextRepository {
     var summary: String? { get }
     func append(role: RoleType, content: String)
     func updateSummary(_ summary: String)
+    func replace(messages: [Message], summary: String?)
     func trim(to maxCount: Int)
     func clear()
 }

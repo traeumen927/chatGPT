@@ -30,6 +30,8 @@ final class ChatViewModel {
     private let summarizeUseCase: SummarizeMessagesUseCase
     private let saveConversationUseCase: SaveConversationUseCase
     private let appendMessageUseCase: AppendMessageUseCase
+    private let fetchMessagesUseCase: FetchConversationMessagesUseCase
+    private let contextRepository: ChatContextRepository
     private let disposeBag = DisposeBag()
 
     private let conversationIDRelay = BehaviorRelay<String?>(value: nil)
@@ -39,11 +41,15 @@ final class ChatViewModel {
     init(sendMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-         appendMessageUseCase: AppendMessageUseCase) {
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchMessagesUseCase: FetchConversationMessagesUseCase,
+         contextRepository: ChatContextRepository) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
         self.appendMessageUseCase = appendMessageUseCase
+        self.fetchMessagesUseCase = fetchMessagesUseCase
+        self.contextRepository = contextRepository
     }
 
     func send(prompt: String, model: OpenAIModel) {
@@ -110,5 +116,21 @@ final class ChatViewModel {
         messages.accept([])
         conversationIDRelay.accept(nil)
         sendMessageUseCase.clearContext()
+    }
+
+    func loadConversation(id: String) {
+        fetchMessagesUseCase.execute(conversationID: id)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] list in
+                guard let self else { return }
+                let chatMessages = list.map { item in
+                    ChatMessage(type: item.role == .user ? .user : .assistant, text: item.text)
+                }
+                self.messages.accept(chatMessages)
+                self.conversationIDRelay.accept(id)
+                let msgs = list.map { Message(role: $0.role, content: $0.text) }
+                self.contextRepository.replace(messages: msgs, summary: nil)
+            })
+            .disposed(by: disposeBag)
     }
 }
