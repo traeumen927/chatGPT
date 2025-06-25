@@ -65,6 +65,7 @@ final class MainViewController: UIViewController {
         }
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
+            self.animateDifferences = false
             if let id {
                 self.chatViewModel.loadConversation(id: id)
             } else {
@@ -252,13 +253,26 @@ final class MainViewController: UIViewController {
         // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
         snapshot.appendItems(messages.reversed())
         
-        dataSource.apply(snapshot, animatingDifferences: animateDifferences)
-        animateDifferences = true
-        
-        if !messages.isEmpty {
-            let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        let shouldAnimate = animateDifferences
+
+        if shouldAnimate {
+            dataSource.apply(snapshot, animatingDifferences: true)
+            if !messages.isEmpty {
+                let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        } else {
+            UIView.performWithoutAnimation {
+                dataSource.apply(snapshot, animatingDifferences: false)
+                if !messages.isEmpty {
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                    tableView.layoutIfNeeded()
+                }
+            }
         }
+
+        animateDifferences = true
     }
     
     private func loadUserImage() {
