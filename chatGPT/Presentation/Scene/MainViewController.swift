@@ -252,12 +252,13 @@ final class MainViewController: UIViewController {
         // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
         snapshot.appendItems(messages.reversed())
         
-        dataSource.apply(snapshot, animatingDifferences: animateDifferences)
+        let shouldAnimate = animateDifferences
+        dataSource.apply(snapshot, animatingDifferences: shouldAnimate)
         animateDifferences = true
-        
+
         if !messages.isEmpty {
             let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            tableView.scrollToRow(at: indexPath, at: .top, animated: shouldAnimate)
         }
     }
     
