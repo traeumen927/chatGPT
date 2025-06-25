@@ -5,11 +5,13 @@ import RxCocoa
 
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
+        case model
         case history
         case account
 
         var title: String {
             switch self {
+            case .model: return "모델"
             case .history: return "대화 히스토리"
             case .account: return "계정"
             }
@@ -17,9 +19,12 @@ final class MenuViewController: UIViewController {
     }
 
     private var conversations: [ConversationSummary] = []
+    private var availableModels: [OpenAIModel] = []
+    private var selectedModel: OpenAIModel
 
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
+    private let fetchModelsUseCase: FetchAvailableModelsUseCase
     private let currentConversationID: String?
     private let disposeBag = DisposeBag()
 
@@ -29,18 +34,24 @@ final class MenuViewController: UIViewController {
     var onClose: (() -> Void)?
 
     private lazy var tableView: UITableView = {
-        let tv = UITableView(frame: .zero, style: .insetGrouped)
+        let tv = UITableView(frame: .zero, style: .grouped)
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tv
     }()
   
 
+    var onModelSelected: ((OpenAIModel) -> Void)?
+
     init(observeConversationsUseCase: ObserveConversationsUseCase,
          signOutUseCase: SignOutUseCase,
+         fetchModelsUseCase: FetchAvailableModelsUseCase,
+         selectedModel: OpenAIModel,
          currentConversationID: String?,
          onClose: (() -> Void)? = nil) {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
+        self.fetchModelsUseCase = fetchModelsUseCase
+        self.selectedModel = selectedModel
         self.currentConversationID = currentConversationID
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
@@ -53,6 +64,7 @@ final class MenuViewController: UIViewController {
         layout()
         bind()
         load()
+        loadModels()
     }
 
     private func layout() {
@@ -74,6 +86,8 @@ final class MenuViewController: UIViewController {
                 self.tableView.deselectRow(at: indexPath, animated: true)
 
                 switch Section(rawValue: indexPath.section) {
+                case .model:
+                    self.presentModelSelector()
                 case .account:
                     do {
                         try self.signOutUseCase.execute()
@@ -98,6 +112,34 @@ final class MenuViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 
+    private func loadModels() {
+        fetchModelsUseCase.execute { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let models):
+                self.availableModels = models
+            case .failure(let error):
+                print("❌ 모델 로딩 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func presentModelSelector() {
+        let alert = UIAlertController(title: "모델 선택", message: nil, preferredStyle: .actionSheet)
+        for model in availableModels {
+            let action = UIAlertAction(title: model.displayName, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.selectedModel = model
+                self.onModelSelected?(model)
+                let index = IndexPath(row: 0, section: Section.model.rawValue)
+                self.tableView.reloadRows(at: [index], with: .automatic)
+            }
+            alert.addAction(action)
+        }
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
+    }
+
 }
 
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
@@ -107,6 +149,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
+        case .model: return 1
         case .history: return conversations.count
         case .account: return 1
         case .none: return 0
@@ -116,6 +159,10 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         switch Section(rawValue: indexPath.section) {
+        case .model:
+            cell.textLabel?.text = selectedModel.displayName
+            cell.accessoryType = .disclosureIndicator
+            cell.selectionStyle = .default
         case .history:
             let convo = conversations[indexPath.row]
             cell.textLabel?.text = convo.title
