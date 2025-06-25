@@ -49,6 +49,10 @@ final class SendChatWithContextUseCase {
         }
     }
 
+    func clearContext() {
+        contextRepository.clear()
+    }
+
     private func summarizeIfNeeded(model: OpenAIModel) {
         let count = contextRepository.messages.count
         guard count > summaryTrigger else { return }
