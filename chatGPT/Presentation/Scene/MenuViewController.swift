@@ -125,19 +125,17 @@ final class MenuViewController: UIViewController {
     }
 
     private func presentModelSelector() {
-        let alert = UIAlertController(title: "모델 선택", message: nil, preferredStyle: .actionSheet)
-        for model in availableModels {
-            let action = UIAlertAction(title: model.displayName, style: .default) { [weak self] _ in
-                guard let self else { return }
-                self.selectedModel = model
-                self.onModelSelected?(model)
-                let index = IndexPath(row: 0, section: Section.model.rawValue)
-                self.tableView.reloadRows(at: [index], with: .automatic)
-            }
-            alert.addAction(action)
+        guard !availableModels.isEmpty else { return }
+        let picker = ModelPickerViewController(models: availableModels, selected: selectedModel)
+        picker.onSelect = { [weak self] model in
+            guard let self else { return }
+            self.selectedModel = model
+            self.onModelSelected?(model)
+            let index = IndexPath(row: 0, section: Section.model.rawValue)
+            self.tableView.reloadRows(at: [index], with: .automatic)
         }
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        present(alert, animated: true)
+        picker.modalPresentationStyle = .pageSheet
+        present(picker, animated: true)
     }
 
 }
