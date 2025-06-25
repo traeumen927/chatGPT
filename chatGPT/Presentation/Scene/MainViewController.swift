@@ -253,13 +253,25 @@ final class MainViewController: UIViewController {
         snapshot.appendItems(messages.reversed())
         
         let shouldAnimate = animateDifferences
-        dataSource.apply(snapshot, animatingDifferences: shouldAnimate)
-        animateDifferences = true
 
-        if !messages.isEmpty {
-            let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
-            tableView.scrollToRow(at: indexPath, at: .top, animated: shouldAnimate)
+        if shouldAnimate {
+            dataSource.apply(snapshot, animatingDifferences: true)
+            if !messages.isEmpty {
+                let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        } else {
+            UIView.performWithoutAnimation {
+                dataSource.apply(snapshot, animatingDifferences: false)
+                if !messages.isEmpty {
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                    tableView.layoutIfNeeded()
+                }
+            }
         }
+
+        animateDifferences = true
     }
     
     private func loadUserImage() {
