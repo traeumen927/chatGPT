@@ -26,6 +26,7 @@ final class MenuViewController: UIViewController {
     private let signOutUseCase: SignOutUseCase
     private let fetchModelsUseCase: FetchAvailableModelsUseCase
     private var currentConversationID: String?
+    private let draftExists: Bool
     private let disposeBag = DisposeBag()
 
 
@@ -48,6 +49,7 @@ final class MenuViewController: UIViewController {
          fetchModelsUseCase: FetchAvailableModelsUseCase,
          selectedModel: OpenAIModel,
          currentConversationID: String?,
+         draftExists: Bool,
          availableModels: [OpenAIModel] = [],
          onClose: (() -> Void)? = nil) {
         self.observeConversationsUseCase = observeConversationsUseCase
@@ -55,6 +57,7 @@ final class MenuViewController: UIViewController {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.selectedModel = selectedModel
         self.currentConversationID = currentConversationID
+        self.draftExists = draftExists
         self.availableModels = availableModels
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
@@ -116,7 +119,7 @@ final class MenuViewController: UIViewController {
             .subscribe(onNext: { [weak self] list in
                 guard let self else { return }
                 var items = list
-                if self.currentConversationID == nil {
+                if self.currentConversationID == nil || self.draftExists {
                     let draft = ConversationSummary(id: "draft", title: "새로운 대화", timestamp: Date())
                     items.insert(draft, at: 0)
                 }

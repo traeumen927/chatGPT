@@ -34,6 +34,10 @@ final class ChatViewModel {
     private let contextRepository: ChatContextRepository
     private let disposeBag = DisposeBag()
 
+    private var draftMessages: [ChatMessage]? = nil
+
+    var hasDraft: Bool { draftMessages != nil }
+
     private let conversationIDRelay = BehaviorRelay<String?>(value: nil)
     var conversationID: String? { conversationIDRelay.value }
     var conversationIDObservable: Observable<String?> { conversationIDRelay.asObservable() }
@@ -100,6 +104,7 @@ final class ChatViewModel {
                 self.saveConversationUseCase.execute(title: title, question: question, answer: answer)
                     .subscribe(onSuccess: { [weak self] id in
                         self?.conversationIDRelay.accept(id)
+                        self?.draftMessages = nil
                     })
                     .disposed(by: self.disposeBag)
             }
@@ -113,12 +118,22 @@ final class ChatViewModel {
     }
 
     func startNewConversation() {
+        draftMessages = []
         messages.accept([])
         conversationIDRelay.accept(nil)
         sendMessageUseCase.clearContext()
     }
 
+    func resumeDraftConversation() {
+        messages.accept(draftMessages ?? [])
+        conversationIDRelay.accept(nil)
+        sendMessageUseCase.clearContext()
+    }
+
     func loadConversation(id: String) {
+        if conversationID == nil {
+            draftMessages = messages.value
+        }
         fetchMessagesUseCase.execute(conversationID: id)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] list in
