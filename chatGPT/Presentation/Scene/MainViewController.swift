@@ -24,8 +24,6 @@ final class MainViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     
-    // MARK: 사용 가능한 chatGPT 모델
-    private var availableModels: [OpenAIModel] = []
     
     // MARK: 선택된 chatGPT 모델
     private var selectedModel: OpenAIModel = ModelPreference.current {
@@ -54,9 +52,14 @@ final class MainViewController: UIViewController {
         let menuVC = MenuViewController(
             observeConversationsUseCase: observeConversationsUseCase,
             signOutUseCase: signOutUseCase,
+            fetchModelsUseCase: fetchModelsUseCase,
+            selectedModel: selectedModel,
             currentConversationID: chatViewModel.conversationID
         )
         menuVC.modalPresentationStyle = .formSheet
+        menuVC.onModelSelected = { [weak self] model in
+            self?.selectedModel = model
+        }
         menuVC.onClose = { [weak menuVC] in
             menuVC?.dismiss(animated: true)
         }
@@ -160,8 +163,6 @@ final class MainViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // MARK: 사용가능한 모델 fetch
-        self.fetchAvailableModels()
         
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
@@ -192,38 +193,9 @@ final class MainViewController: UIViewController {
         // MARK: 모델명이 너무 긴 경우를 대비하여 truncate
         modelButton.title = selectedModel.displayName.truncated(limit: 13)
         
-        modelButton.menu = UIMenu(
-            title: "모델 선택",
-            options: .displayInline,
-            children: availableModels.map { model in
-                UIAction(title: model.displayName,
-                         state: model == selectedModel ? .on : .off) { [weak self] _ in
-                    self?.selectedModel = model
-                }
-            }
-        )
+        modelButton.menu = nil
     }
     
-    // MARK: 사용 가능 모델 조회
-    private func fetchAvailableModels() {
-        fetchModelsUseCase.execute { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let models):
-                self.availableModels = models
-                
-                if !models.contains(self.selectedModel) {
-                    self.selectedModel = models.first ?? OpenAIModel(id: "unknown")
-                }
-                
-                self.updateModelButton()
-                
-            case .failure(let error):
-                print("❌ 모델 로딩 실패: \(error.localizedDescription)")
-            }
-        }
-    }
     
     // MARK: TableView Helpers
     private func createDataSource() -> UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage> {
