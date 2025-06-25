@@ -65,6 +65,7 @@ final class MainViewController: UIViewController {
         }
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
+            self.animateDifferences = false
             if let id {
                 self.chatViewModel.loadConversation(id: id)
             } else {
