@@ -115,7 +115,7 @@ final class MenuViewController: UIViewController {
                     items.insert(draft, at: 0)
                 }
                 self.conversations = items
-                self?.tableView.reloadData()
+                self.tableView.reloadData()
             })
             .disposed(by: disposeBag)
     }
