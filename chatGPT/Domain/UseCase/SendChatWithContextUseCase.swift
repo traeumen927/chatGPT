@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 final class SendChatWithContextUseCase {
     private let openAIRepository: OpenAIRepository
@@ -47,6 +48,24 @@ final class SendChatWithContextUseCase {
                 completion(.failure(error))
             }
         }
+    }
+
+    func stream(prompt: String, model: OpenAIModel) -> Observable<String> {
+        var messages = [Message]()
+        if let summary = contextRepository.summary {
+            messages.append(Message(role: .system, content: summary))
+        }
+        messages += contextRepository.messages
+        messages.append(Message(role: .user, content: prompt))
+
+        return openAIRepository.sendChatStream(messages: messages, model: model)
+    }
+
+    func finalize(prompt: String, reply: String, model: OpenAIModel) {
+        contextRepository.append(role: .user, content: prompt)
+        contextRepository.append(role: .assistant, content: reply)
+        contextRepository.trim(to: maxHistory)
+        summarizeIfNeeded(model: model)
     }
 
     func clearContext() {
