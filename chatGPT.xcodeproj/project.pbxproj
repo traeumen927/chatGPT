@@ -27,7 +27,8 @@
 		F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */; };
 		F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */; };
 		F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* ChatViewModel.swift */; };
-		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
+               F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
+               0054C5FB7E5540DC8695DB6B /* StreamToggleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D64F3141B541D0BD80EE52 /* StreamToggleCell.swift */; };
 		F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D12E0C034B006E81DD /* ConversationMessage.swift */; };
 		F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */; };
 		F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */; };
@@ -123,7 +124,8 @@
 		F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRepositoryImpl.swift; sourceTree = "<group>"; };
 		F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatMessageUseCase.swift; sourceTree = "<group>"; };
 		F117E07A2E0188F200D1C95F /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
-		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
+               F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
+               06D64F3141B541D0BD80EE52 /* StreamToggleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamToggleCell.swift; sourceTree = "<group>"; };
 		F122E5D12E0C034B006E81DD /* ConversationMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
 		F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConversationMessagesUseCase.swift; sourceTree = "<group>"; };
 		F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Sanitize.swift"; sourceTree = "<group>"; };
@@ -245,10 +247,11 @@
 		F117E07C2E018AF400D1C95F /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */,
-			);
-			path = Cells;
-			sourceTree = "<group>";
+                               F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */,
+                               06D64F3141B541D0BD80EE52 /* StreamToggleCell.swift */,
+                       );
+                       path = Cells;
+                       sourceTree = "<group>";
 		};
 		F16563BF2DF9A30F001CDF3B = {
 			isa = PBXGroup;
@@ -625,8 +628,9 @@
 				F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */,
 				F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */,
 				F15BC4F82E0A957300F25923 /* ConversationRepository.swift in Sources */,
-				F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */,
-				7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */,
+                               F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */,
+                               0054C5FB7E5540DC8695DB6B /* StreamToggleCell.swift in Sources */,
+                               7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */,
 				0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
 				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
 				F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */,
