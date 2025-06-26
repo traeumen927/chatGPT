@@ -228,6 +228,8 @@ final class MainViewController: UIViewController {
                     cell.update(text: message.text)
                     self.tableView.beginUpdates()
                     self.tableView.endUpdates()
+                } else {
+                    self.tableView.reloadRows(at: [indexPath], with: .none)
                 }
             })
             .disposed(by: disposeBag)
