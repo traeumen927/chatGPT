@@ -108,7 +108,6 @@ final class MainViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.keyboardDismissMode = .interactive
-        tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
         return tableView
     }()
     
@@ -222,8 +221,7 @@ final class MainViewController: UIViewController {
             .subscribe(onNext: { [weak self] message in
                 guard let self else { return }
                 guard let index = self.chatViewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
-                let row = self.chatViewModel.messages.value.count - 1 - index
-                let indexPath = IndexPath(row: row, section: 0)
+                let indexPath = IndexPath(row: index, section: 0)
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
                     cell.update(text: message.text)
                     self.tableView.beginUpdates()
@@ -277,46 +275,42 @@ final class MainViewController: UIViewController {
             cell.configure(with: message)
             return cell
         }
-        // 최신 메시지가 아래에서 위로 밀어올리도록 애니메이션 설정
-        dataSource.defaultRowAnimation = .top
+        // 새 메시지가 아래에 추가되도록 애니메이션 설정
+        dataSource.defaultRowAnimation = .bottom
         return dataSource
     }
     
     private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
         let shouldAnimate = animateDifferences
 
-        // 새 메시지가 하나만 추가된 경우에는 이전 셀 이동 애니메이션을 방지하기 위해
-        // 기존 스냅샷에 항목을 삽입하는 방식으로 업데이트한다.
+        // 새 메시지가 하나만 추가된 경우에는 셀 이동 애니메이션을 방지하기 위해
+        // 기존 스냅샷에 항목을 추가하는 방식으로 업데이트한다.
         if shouldAnimate, messages.count == lastMessageCount + 1, let newMessage = messages.last {
             var snapshot = dataSource.snapshot()
             if snapshot.sectionIdentifiers.isEmpty { snapshot.appendSections([0]) }
-            if let first = snapshot.itemIdentifiers.first {
-                snapshot.insertItems([newMessage], beforeItem: first)
-            } else {
-                snapshot.appendItems([newMessage])
-            }
+            snapshot.appendItems([newMessage])
             dataSource.apply(snapshot, animatingDifferences: true)
             if !messages.isEmpty {
-                let indexPath = IndexPath(row: 0, section: 0)
-                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         } else {
             var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
             snapshot.appendSections([0])
-            snapshot.appendItems(messages.reversed())
+            snapshot.appendItems(messages)
 
             if shouldAnimate {
                 dataSource.apply(snapshot, animatingDifferences: true)
                 if !messages.isEmpty {
-                    let indexPath = IndexPath(row: 0, section: 0)
-                    tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                    tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
                 }
             } else {
                 UIView.performWithoutAnimation {
                     dataSource.apply(snapshot, animatingDifferences: false)
                     if !messages.isEmpty {
-                        let indexPath = IndexPath(row: 0, section: 0)
-                        tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                        let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                        tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
                         tableView.layoutIfNeeded()
                     }
                 }
