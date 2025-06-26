@@ -188,6 +188,11 @@ final class ChatViewModel {
         if conversationID == nil {
             draftMessages = messages.value
         }
+
+        conversationChanged.accept(())
+        messages.accept([])
+        conversationIDRelay.accept(id)
+
         fetchMessagesUseCase.execute(conversationID: id)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] list in
@@ -195,9 +200,7 @@ final class ChatViewModel {
                 let chatMessages = list.map { item in
                     ChatMessage(type: item.role == .user ? .user : .assistant, text: item.text)
                 }
-                self.conversationChanged.accept(())
                 self.messages.accept(chatMessages)
-                self.conversationIDRelay.accept(id)
                 let msgs = list.map { Message(role: $0.role, content: $0.text) }
                 self.contextRepository.replace(messages: msgs, summary: nil)
             })
