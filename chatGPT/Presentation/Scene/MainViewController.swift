@@ -119,6 +119,7 @@ final class MainViewController: UIViewController {
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
 
     private var animateDifferences = true
+    private var lastMessageCount = 0
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
@@ -208,7 +209,26 @@ final class MainViewController: UIViewController {
         self.chatViewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] messages in
-                self?.applySnapshot(messages)
+                guard let self else { return }
+                if messages.count != self.lastMessageCount {
+                    self.applySnapshot(messages)
+                    self.lastMessageCount = messages.count
+                }
+            })
+            .disposed(by: disposeBag)
+
+        chatViewModel.streamingMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] message in
+                guard let self else { return }
+                guard let index = self.chatViewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
+                let row = self.chatViewModel.messages.value.count - 1 - index
+                let indexPath = IndexPath(row: row, section: 0)
+                if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
+                    cell.update(text: message.text)
+                    self.tableView.beginUpdates()
+                    self.tableView.endUpdates()
+                }
             })
             .disposed(by: disposeBag)
 

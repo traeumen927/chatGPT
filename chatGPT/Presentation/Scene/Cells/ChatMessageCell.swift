@@ -53,9 +53,9 @@ final class ChatMessageCell: UITableViewCell {
     }
 
     func configure(with message: ChatViewModel.ChatMessage) {
-        
+
         self.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
-        
+
         messageLabel.text = message.text
         
 
@@ -83,5 +83,10 @@ final class ChatMessageCell: UITableViewCell {
             }
         }
 
+    }
+
+    func update(text: String) {
+        messageLabel.text = text
+        layoutIfNeeded()
     }
 }
