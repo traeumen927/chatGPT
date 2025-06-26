@@ -108,6 +108,8 @@ final class MainViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.keyboardDismissMode = .interactive
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
         return tableView
     }()
     
