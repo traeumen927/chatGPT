@@ -19,6 +19,7 @@ struct OpenAIModel: Equatable, Hashable {
 // MARK: UserDefaults를 활용한 chatGPT model 저장
 struct ModelPreference {
     private static let key = "selectedChatModel"
+    private static let streamKey = "chatStreamEnabled"
 
     static var current: OpenAIModel {
         if let id = UserDefaults.standard.string(forKey: key) {
@@ -33,5 +34,13 @@ struct ModelPreference {
 
     static func save(_ model: OpenAIModel) {
         UserDefaults.standard.set(model.id, forKey: key)
+    }
+
+    static var streamEnabled: Bool {
+        UserDefaults.standard.bool(forKey: streamKey)
+    }
+
+    static func saveStreamEnabled(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: streamKey)
     }
 }

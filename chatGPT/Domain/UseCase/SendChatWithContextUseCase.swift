@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 final class SendChatWithContextUseCase {
     private let openAIRepository: OpenAIRepository
@@ -26,7 +27,7 @@ final class SendChatWithContextUseCase {
         self.summaryTrigger = summaryTrigger
     }
 
-    func execute(prompt: String, model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void) {
+    func execute(prompt: String, model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
         var messages = [Message]()
         if let summary = contextRepository.summary {
             messages.append(Message(role: .system, content: summary))
@@ -34,7 +35,7 @@ final class SendChatWithContextUseCase {
         messages += contextRepository.messages
         messages.append(Message(role: .user, content: prompt))
 
-        openAIRepository.sendChat(messages: messages, model: model) { [weak self] result in
+        openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let reply):
@@ -47,6 +48,24 @@ final class SendChatWithContextUseCase {
                 completion(.failure(error))
             }
         }
+    }
+
+    func stream(prompt: String, model: OpenAIModel) -> Observable<String> {
+        var messages = [Message]()
+        if let summary = contextRepository.summary {
+            messages.append(Message(role: .system, content: summary))
+        }
+        messages += contextRepository.messages
+        messages.append(Message(role: .user, content: prompt))
+
+        return openAIRepository.sendChatStream(messages: messages, model: model)
+    }
+
+    func finalize(prompt: String, reply: String, model: OpenAIModel) {
+        contextRepository.append(role: .user, content: prompt)
+        contextRepository.append(role: .assistant, content: reply)
+        contextRepository.trim(to: maxHistory)
+        summarizeIfNeeded(model: model)
     }
 
     func clearContext() {

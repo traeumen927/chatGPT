@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 final class OpenAIRepositoryImpl: OpenAIRepository {
     private let service: OpenAIService
@@ -15,8 +16,8 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     }
     
     /// 채팅전송
-    func sendChat(messages: [Message], model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void) {
-        service.request(.chat(messages: messages, model: model, stream: false)) { (result: Result<OpenAIResponse, Error>) in
+    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+        service.request(.chat(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
                 let reply = decoded.choices.first?.message.content ?? ""
@@ -25,6 +26,10 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
                 completion(.failure(error))
             }
         }
+    }
+
+    func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> {
+        service.requestStream(.chat(messages: messages, model: model, stream: true))
     }
     
     /// 사용가능한 모델 조회

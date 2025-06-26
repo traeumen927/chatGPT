@@ -34,6 +34,13 @@ final class MainViewController: UIViewController {
         }
     }
 
+    private var streamEnabled: Bool = ModelPreference.streamEnabled {
+        didSet {
+            guard oldValue != streamEnabled else { return }
+            ModelPreference.saveStreamEnabled(streamEnabled)
+        }
+    }
+
     // MARK: 새 대화 버튼
     private lazy var newChatButton: UIBarButtonItem = {
         let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
@@ -55,6 +62,7 @@ final class MainViewController: UIViewController {
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
             selectedModel: selectedModel,
+            streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
             draftExists: chatViewModel.hasDraft,
             availableModels: availableModels
@@ -62,6 +70,9 @@ final class MainViewController: UIViewController {
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onModelSelected = { [weak self] model in
             self?.selectedModel = model
+        }
+        menuVC.onStreamChanged = { [weak self] isOn in
+            self?.streamEnabled = isOn
         }
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
@@ -108,6 +119,7 @@ final class MainViewController: UIViewController {
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
 
     private var animateDifferences = true
+    private var lastMessageCount = 0
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
@@ -187,7 +199,9 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
-            self.chatViewModel.send(prompt: text, model: self.selectedModel)
+            self.chatViewModel.send(prompt: text,
+                                   model: self.selectedModel,
+                                   stream: self.streamEnabled)
         }
         
         // 메시지 상태 → UI 업데이트
@@ -195,7 +209,26 @@ final class MainViewController: UIViewController {
         self.chatViewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] messages in
-                self?.applySnapshot(messages)
+                guard let self else { return }
+                if messages.count != self.lastMessageCount {
+                    self.applySnapshot(messages)
+                    self.lastMessageCount = messages.count
+                }
+            })
+            .disposed(by: disposeBag)
+
+        chatViewModel.streamingMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] message in
+                guard let self else { return }
+                guard let index = self.chatViewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
+                let row = self.chatViewModel.messages.value.count - 1 - index
+                let indexPath = IndexPath(row: row, section: 0)
+                if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
+                    cell.update(text: message.text)
+                    self.tableView.beginUpdates()
+                    self.tableView.endUpdates()
+                }
             })
             .disposed(by: disposeBag)
 
