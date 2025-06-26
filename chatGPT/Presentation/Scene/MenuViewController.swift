@@ -39,10 +39,9 @@ final class MenuViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tv.register(StreamToggleCell.self, forCellReuseIdentifier: "StreamToggleCell")
         return tv
     }()
-
-    private let streamSwitch = UISwitch()
   
 
     var onModelSelected: ((OpenAIModel) -> Void)?
@@ -120,13 +119,6 @@ final class MenuViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        streamSwitch.rx.controlEvent(.valueChanged)
-            .withLatestFrom(streamSwitch.rx.isOn)
-            .subscribe(onNext: { [weak self] isOn in
-                self?.streamEnabled = isOn
-                self?.onStreamChanged?(isOn)
-            })
-            .disposed(by: disposeBag)
     }
 
     private func load() {
@@ -211,10 +203,15 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.selectionStyle = .default
                 }
             } else {
-                cell.textLabel?.text = "스트림"
-                cell.selectionStyle = .none
-                streamSwitch.isOn = streamEnabled
-                cell.accessoryView = streamSwitch
+                guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
+                    return UITableViewCell()
+                }
+                toggleCell.configure(isOn: streamEnabled)
+                toggleCell.onToggle = { [weak self] isOn in
+                    self?.streamEnabled = isOn
+                    self?.onStreamChanged?(isOn)
+                }
+                return toggleCell
             }
         case .history:
             let convo = conversations[indexPath.row]

@@ -36,6 +36,7 @@ final class MainViewController: UIViewController {
 
     private var streamEnabled: Bool = ModelPreference.streamEnabled {
         didSet {
+            guard oldValue != streamEnabled else { return }
             ModelPreference.saveStreamEnabled(streamEnabled)
         }
     }
