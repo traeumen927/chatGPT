@@ -11,6 +11,7 @@ import SnapKit
 final class ChatMessageCell: UITableViewCell {
 
     private let bubbleView = UIView()
+    private var currentLineCount: Int = 0
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
@@ -85,8 +86,14 @@ final class ChatMessageCell: UITableViewCell {
 
     }
 
-    func update(text: String) {
+    /// 텍스트 업데이트 후 줄 수 변화 여부 반환
+    /// - Parameter text: 표시할 문자열
+    /// - Returns: 줄 수가 변경되면 true
+    func update(text: String) -> Bool {
+        let prev = currentLineCount
         messageLabel.text = text
         layoutIfNeeded()
+        currentLineCount = messageLabel.lineCount
+        return prev != currentLineCount
     }
 }

@@ -108,6 +108,8 @@ final class MainViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.keyboardDismissMode = .interactive
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 44
         tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
         return tableView
     }()
@@ -225,9 +227,12 @@ final class MainViewController: UIViewController {
                 let row = self.chatViewModel.messages.value.count - 1 - index
                 let indexPath = IndexPath(row: row, section: 0)
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
-                    cell.update(text: message.text)
-                    self.tableView.beginUpdates()
-                    self.tableView.endUpdates()
+                    let needsResize = cell.update(text: message.text)
+                    guard needsResize else { return }
+                    UIView.performWithoutAnimation {
+                        self.tableView.beginUpdates()
+                        self.tableView.endUpdates()
+                    }
                 }
             })
             .disposed(by: disposeBag)
