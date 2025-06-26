@@ -41,13 +41,13 @@ final class ChatMessageCell: UITableViewCell {
         bubbleView.addSubview(messageLabel)
 
         bubbleView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(8)
+            make.top.bottom.equalToSuperview().inset(8).priority(999)
             make.leading.equalToSuperview().inset(16)
             make.trailing.equalToSuperview().inset(16)
         }
 
         messageLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(12)
+            make.edges.equalToSuperview().inset(12).priority(999)
         }
     }
 
@@ -63,10 +63,10 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.layer.cornerRadius = 16
             messageLabel.textColor = .white
             messageLabel.snp.remakeConstraints { make in
-                make.edges.equalToSuperview().inset(12)
+                make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
-                make.top.bottom.equalToSuperview().inset(8)
+                make.top.bottom.equalToSuperview().inset(8).priority(999)
                 make.trailing.equalToSuperview().inset(16)
                 make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
             }
@@ -77,10 +77,10 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.layer.cornerRadius = 0
             messageLabel.textColor = .label
             messageLabel.snp.remakeConstraints { make in
-                make.edges.equalToSuperview()
+                make.edges.equalToSuperview().priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
-                make.top.bottom.equalToSuperview().inset(8)
+                make.top.bottom.equalToSuperview().inset(8).priority(999)
                 make.leading.trailing.equalToSuperview().inset(16)
             }
 
@@ -90,10 +90,10 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.layer.cornerRadius = 16
             messageLabel.textColor = .white
             messageLabel.snp.remakeConstraints { make in
-                make.edges.equalToSuperview().inset(12)
+                make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
-                make.top.bottom.equalToSuperview().inset(8)
+                make.top.bottom.equalToSuperview().inset(8).priority(999)
                 make.leading.equalToSuperview().inset(16)
                 make.trailing.lessThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
             }
