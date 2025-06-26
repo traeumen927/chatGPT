@@ -280,8 +280,8 @@ final class MainViewController: UIViewController {
             cell.configure(with: message)
             return cell
         }
-        // 새 메시지가 아래에 추가되도록 애니메이션 설정
-        dataSource.defaultRowAnimation = .bottom
+        // 셀이 자연스럽게 나타나도록 페이드 애니메이션 사용
+        dataSource.defaultRowAnimation = .fade
         return dataSource
     }
     
