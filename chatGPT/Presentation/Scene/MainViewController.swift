@@ -272,11 +272,14 @@ final class MainViewController: UIViewController {
     
     // MARK: TableView Helpers
     private func createDataSource() -> UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage> {
-        UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, message in
+        let dataSource = UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>(tableView: tableView) { tableView, indexPath, message in
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageCell
             cell.configure(with: message)
             return cell
         }
+        // 최신 메시지가 아래에서 위로 밀어올리도록 애니메이션 설정
+        dataSource.defaultRowAnimation = .top
+        return dataSource
     }
     
     private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
