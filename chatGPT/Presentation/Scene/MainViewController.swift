@@ -123,6 +123,7 @@ final class MainViewController: UIViewController {
     private var lastMessageCount = 0
 
     // MARK: Scroll state
+    private var isUserDragging = false
     private var isNearBottom: Bool {
         let offsetY = tableView.contentOffset.y + tableView.adjustedContentInset.top
         let visibleHeight = tableView.bounds.height - tableView.adjustedContentInset.top - tableView.adjustedContentInset.bottom
@@ -180,13 +181,15 @@ final class MainViewController: UIViewController {
         self.view.backgroundColor = ThemeColor.background1
         
         [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
-        
+
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(composerView.snp.top)
         }
-        
+
+        self.tableView.delegate = self
+
         self.composerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
@@ -245,7 +248,7 @@ final class MainViewController: UIViewController {
                         self.tableView.endUpdates()
                     }
 
-                    if self.isNearBottom {
+                    if self.isNearBottom && !self.isUserDragging {
                         self.scrollToBottom(animated: false)
                     }
                 }
@@ -371,6 +374,25 @@ final class MainViewController: UIViewController {
     private func defaultProfileImage() -> UIImage {
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
         return UIImage(systemName: "person.circle.fill", withConfiguration: config) ?? UIImage()
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension MainViewController: UITableViewDelegate {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isUserDragging = true
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            isUserDragging = false
+            if isNearBottom { scrollToBottom(animated: true) }
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        isUserDragging = false
+        if isNearBottom { scrollToBottom(animated: true) }
     }
 }
 
