@@ -226,10 +226,14 @@ final class MainViewController: UIViewController {
                 let indexPath = IndexPath(row: index, section: 0)
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
                     cell.update(text: message.text)
-                    self.tableView.beginUpdates()
-                    self.tableView.endUpdates()
+                    UIView.performWithoutAnimation {
+                        self.tableView.beginUpdates()
+                        self.tableView.endUpdates()
+                    }
                 } else {
-                    self.tableView.reloadRows(at: [indexPath], with: .none)
+                    UIView.performWithoutAnimation {
+                        self.tableView.reloadRows(at: [indexPath], with: .none)
+                    }
                 }
             })
             .disposed(by: disposeBag)
