@@ -122,14 +122,6 @@ final class MainViewController: UIViewController {
     private var animateDifferences = true
     private var lastMessageCount = 0
 
-    // MARK: Scroll state
-    private var isUserDragging = false
-    private var isNearBottom: Bool {
-        let offsetY = tableView.contentOffset.y + tableView.adjustedContentInset.top
-        let visibleHeight = tableView.bounds.height - tableView.adjustedContentInset.top - tableView.adjustedContentInset.bottom
-        let distance = tableView.contentSize.height - offsetY - visibleHeight
-        return distance <= 20
-    }
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
@@ -188,7 +180,6 @@ final class MainViewController: UIViewController {
             make.bottom.equalTo(composerView.snp.top)
         }
 
-        self.tableView.delegate = self
 
         self.composerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -248,9 +239,6 @@ final class MainViewController: UIViewController {
                         self.tableView.endUpdates()
                     }
 
-                    if self.isNearBottom && !self.isUserDragging {
-                        self.scrollToBottom(animated: false)
-                    }
                 }
             })
             .disposed(by: disposeBag)
@@ -316,9 +304,7 @@ final class MainViewController: UIViewController {
             if snapshot.sectionIdentifiers.isEmpty { snapshot.appendSections([0]) }
             snapshot.appendItems([newMessage])
             dataSource.apply(snapshot, animatingDifferences: true)
-            if !messages.isEmpty {
-                scrollToBottom(animated: true)
-            }
+            
         } else {
             var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
             snapshot.appendSections([0])
@@ -326,14 +312,11 @@ final class MainViewController: UIViewController {
             
             if shouldAnimate {
                 dataSource.apply(snapshot, animatingDifferences: true)
-                if !messages.isEmpty {
-                    scrollToBottom(animated: true)
-                }
+                
             } else {
                 UIView.performWithoutAnimation {
                     dataSource.apply(snapshot, animatingDifferences: false)
                     if !messages.isEmpty {
-                        scrollToBottom(animated: false)
                         tableView.layoutIfNeeded()
                     }
                 }
@@ -345,12 +328,6 @@ final class MainViewController: UIViewController {
         }
     }
 
-    private func scrollToBottom(animated: Bool) {
-        let row = tableView.numberOfRows(inSection: 0) - 1
-        guard row >= 0 else { return }
-        let indexPath = IndexPath(row: row, section: 0)
-        tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
-    }
     
     private func loadUserImage() {
         loadUserImageUseCase.execute()
@@ -377,24 +354,6 @@ final class MainViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDelegate
-extension MainViewController: UITableViewDelegate {
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        isUserDragging = true
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            isUserDragging = false
-            if isNearBottom { scrollToBottom(animated: true) }
-        }
-    }
-
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        isUserDragging = false
-        if isNearBottom { scrollToBottom(animated: true) }
-    }
-}
 
 // MARK: - Place for extension with KeyboardAdjustable
 extension MainViewController: KeyboardAdjustable {
