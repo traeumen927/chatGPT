@@ -238,6 +238,7 @@ final class MainViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
                 self?.animateDifferences = false
+                self?.lastMessageCount = 0
             })
             .disposed(by: disposeBag)
         
@@ -321,7 +322,9 @@ final class MainViewController: UIViewController {
             }
         }
 
-        animateDifferences = true
+        if !messages.isEmpty {
+            animateDifferences = true
+        }
     }
     
     private func loadUserImage() {
