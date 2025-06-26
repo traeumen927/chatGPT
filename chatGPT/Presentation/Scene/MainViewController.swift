@@ -211,7 +211,7 @@ final class MainViewController: UIViewController {
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] messages in
                 guard let self else { return }
-                if messages.count != self.lastMessageCount {
+                if messages.count != self.lastMessageCount || !self.animateDifferences {
                     self.applySnapshot(messages)
                     self.lastMessageCount = messages.count
                 }
