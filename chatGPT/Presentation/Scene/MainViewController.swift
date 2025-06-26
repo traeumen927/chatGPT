@@ -283,27 +283,42 @@ final class MainViewController: UIViewController {
     }
     
     private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
-        snapshot.appendSections([0])
-        
-        // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
-        snapshot.appendItems(messages.reversed())
-        
         let shouldAnimate = animateDifferences
 
-        if shouldAnimate {
+        // 새 메시지가 하나만 추가된 경우에는 이전 셀 이동 애니메이션을 방지하기 위해
+        // 기존 스냅샷에 항목을 삽입하는 방식으로 업데이트한다.
+        if shouldAnimate, messages.count == lastMessageCount + 1, let newMessage = messages.last {
+            var snapshot = dataSource.snapshot()
+            if snapshot.sectionIdentifiers.isEmpty { snapshot.appendSections([0]) }
+            if let first = snapshot.itemIdentifiers.first {
+                snapshot.insertItems([newMessage], beforeItem: first)
+            } else {
+                snapshot.appendItems([newMessage])
+            }
             dataSource.apply(snapshot, animatingDifferences: true)
             if !messages.isEmpty {
-                let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
+                let indexPath = IndexPath(row: 0, section: 0)
                 tableView.scrollToRow(at: indexPath, at: .top, animated: true)
             }
         } else {
-            UIView.performWithoutAnimation {
-                dataSource.apply(snapshot, animatingDifferences: false)
+            var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
+            snapshot.appendSections([0])
+            snapshot.appendItems(messages.reversed())
+
+            if shouldAnimate {
+                dataSource.apply(snapshot, animatingDifferences: true)
                 if !messages.isEmpty {
                     let indexPath = IndexPath(row: 0, section: 0)
-                    tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-                    tableView.layoutIfNeeded()
+                    tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                }
+            } else {
+                UIView.performWithoutAnimation {
+                    dataSource.apply(snapshot, animatingDifferences: false)
+                    if !messages.isEmpty {
+                        let indexPath = IndexPath(row: 0, section: 0)
+                        tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                        tableView.layoutIfNeeded()
+                    }
                 }
             }
         }
