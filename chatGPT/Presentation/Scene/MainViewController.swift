@@ -326,6 +326,14 @@ final class MainViewController: UIViewController {
         if !messages.isEmpty {
             animateDifferences = true
         }
+        scrollToBottom(animated: shouldAnimate)
+    }
+
+    private func scrollToBottom(animated: Bool) {
+        guard !chatViewModel.messages.value.isEmpty else { return }
+        let lastRow = chatViewModel.messages.value.count - 1
+        let indexPath = IndexPath(row: lastRow, section: 0)
+        tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
     }
 
     
