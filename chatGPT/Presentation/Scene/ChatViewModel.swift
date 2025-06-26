@@ -31,6 +31,8 @@ final class ChatViewModel {
     // MARK: - Output
     let messages = BehaviorRelay<[ChatMessage]>(value: [])
     let conversationChanged = PublishRelay<Void>()
+    private let streamingMessageRelay = PublishRelay<ChatMessage>()
+    var streamingMessage: Observable<ChatMessage> { streamingMessageRelay.asObservable() }
 
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
@@ -164,6 +166,7 @@ final class ChatViewModel {
         let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
         current[index] = newMsg
         messages.accept(current)
+        streamingMessageRelay.accept(newMsg)
     }
 
     func startNewConversation() {
