@@ -16,15 +16,23 @@ final class ChatViewModel {
         case error
     }
     
-    struct ChatMessage: Hashable, Identifiable {
+    final class ChatMessage: Hashable, Identifiable {
         let id: UUID
-        let type: MessageType
-        let text: String
-        
+        var type: MessageType
+        var text: String
+
         init(id: UUID = UUID(), type: MessageType, text: String) {
             self.id = id
             self.type = type
             self.text = text
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+
+        static func == (lhs: ChatMessage, rhs: ChatMessage) -> Bool {
+            return lhs.id == rhs.id
         }
     }
     
@@ -161,13 +169,10 @@ final class ChatViewModel {
     
     private func updateMessage(id: UUID, text: String, type: MessageType? = nil) {
         guard let index = messages.value.firstIndex(where: { $0.id == id }) else { return }
-        var current = messages.value
-        let old = current[index]
-        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
-
-        current[index] = newMsg
-        messages.accept(current)
-        streamingMessageRelay.accept(newMsg)
+        let message = messages.value[index]
+        message.text = text
+        if let type = type { message.type = type }
+        streamingMessageRelay.accept(message)
     }
     
     func startNewConversation() {
