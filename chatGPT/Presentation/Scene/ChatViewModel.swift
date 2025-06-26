@@ -17,9 +17,15 @@ final class ChatViewModel {
     }
 
     struct ChatMessage: Hashable, Identifiable {
-        let id = UUID()
+        let id: UUID
         let type: MessageType
         let text: String
+
+        init(id: UUID = UUID(), type: MessageType, text: String) {
+            self.id = id
+            self.type = type
+            self.text = text
+        }
     }
 
     // MARK: - Output
@@ -69,28 +75,60 @@ final class ChatViewModel {
                 .disposed(by: disposeBag)
         }
 
-        sendMessageUseCase.execute(prompt: prompt, model: model, stream: stream) { [weak self] result in
-            guard let self = self else { return }
+        guard stream else {
+            sendMessageUseCase.execute(prompt: prompt, model: model, stream: false) { [weak self] result in
+                guard let self = self else { return }
 
-            switch result {
-            case .success(let reply):
-                self.appendMessage(ChatMessage(type: .assistant, text: reply))
+                switch result {
+                case .success(let reply):
+                    self.appendMessage(ChatMessage(type: .assistant, text: reply))
+                    if let id = self.conversationID, !isFirst {
+                        self.appendMessageUseCase.execute(conversationID: id,
+                                                         role: .assistant,
+                                                         text: reply)
+                            .subscribe()
+                            .disposed(by: self.disposeBag)
+                    }
+                    if isFirst {
+                        self.saveFirstConversation(question: prompt, answer: reply, model: model)
+                    }
+
+                case .failure(let error):
+                    let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
+                    self.appendMessage(ChatMessage(type: .error, text: message))
+                }
+            }
+            return
+        }
+
+        let assistantID = UUID()
+        appendMessage(ChatMessage(id: assistantID, type: .assistant, text: ""))
+        var fullText = ""
+
+        sendMessageUseCase.stream(prompt: prompt, model: model)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] chunk in
+                guard let self else { return }
+                fullText += chunk
+                self.updateMessage(id: assistantID, text: fullText)
+            }, onError: { [weak self] error in
+                let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
+                self?.updateMessage(id: assistantID, text: message, type: .error)
+            }, onCompleted: { [weak self] in
+                guard let self else { return }
+                self.sendMessageUseCase.finalize(prompt: prompt, reply: fullText, model: model)
                 if let id = self.conversationID, !isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
                                                      role: .assistant,
-                                                     text: reply)
+                                                     text: fullText)
                         .subscribe()
                         .disposed(by: self.disposeBag)
                 }
                 if isFirst {
-                    self.saveFirstConversation(question: prompt, answer: reply, model: model)
+                    self.saveFirstConversation(question: prompt, answer: fullText, model: model)
                 }
-
-            case .failure(let error):
-                let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
-                self.appendMessage(ChatMessage(type: .error, text: message))
-            }
-        }
+            })
+            .disposed(by: disposeBag)
     }
 
     private func saveFirstConversation(question: String, answer: String, model: OpenAIModel) {
@@ -116,6 +154,15 @@ final class ChatViewModel {
     private func appendMessage(_ message: ChatMessage) {
         var current = messages.value
         current.append(message)
+        messages.accept(current)
+    }
+
+    private func updateMessage(id: UUID, text: String, type: MessageType? = nil) {
+        var current = messages.value
+        guard let index = current.firstIndex(where: { $0.id == id }) else { return }
+        let old = current[index]
+        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
+        current[index] = newMsg
         messages.accept(current)
     }
 
