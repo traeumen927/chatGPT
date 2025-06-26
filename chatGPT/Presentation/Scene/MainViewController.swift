@@ -221,6 +221,7 @@ final class MainViewController: UIViewController {
             .disposed(by: disposeBag)
         
         chatViewModel.streamingMessage
+            .throttle(.milliseconds(50), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] message in
                 guard let self else { return }
