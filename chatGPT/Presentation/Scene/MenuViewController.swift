@@ -120,8 +120,8 @@ final class MenuViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        streamSwitch.rx.isOn
-            .skip(1)
+        streamSwitch.rx.controlEvent(.valueChanged)
+            .withLatestFrom(streamSwitch.rx.isOn)
             .subscribe(onNext: { [weak self] isOn in
                 self?.streamEnabled = isOn
                 self?.onStreamChanged?(isOn)
