@@ -121,6 +121,14 @@ final class MainViewController: UIViewController {
     
     private var animateDifferences = true
     private var lastMessageCount = 0
+
+    // MARK: Scroll state
+    private var isNearBottom: Bool {
+        let offsetY = tableView.contentOffset.y + tableView.adjustedContentInset.top
+        let visibleHeight = tableView.bounds.height - tableView.adjustedContentInset.top - tableView.adjustedContentInset.bottom
+        let distance = tableView.contentSize.height - offsetY - visibleHeight
+        return distance <= 20
+    }
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
@@ -230,11 +238,15 @@ final class MainViewController: UIViewController {
                 // 셀을 찾아 직접 업데이트
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
                     cell.update(text: message.text)
-                    
+
                     // 셀의 높이가 변할 수 있으므로 레이아웃 갱신
                     UIView.performWithoutAnimation {
                         self.tableView.beginUpdates()
                         self.tableView.endUpdates()
+                    }
+
+                    if self.isNearBottom {
+                        self.scrollToBottom(animated: false)
                     }
                 }
             })
@@ -302,8 +314,7 @@ final class MainViewController: UIViewController {
             snapshot.appendItems([newMessage])
             dataSource.apply(snapshot, animatingDifferences: true)
             if !messages.isEmpty {
-                let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                scrollToBottom(animated: true)
             }
         } else {
             var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
@@ -313,15 +324,13 @@ final class MainViewController: UIViewController {
             if shouldAnimate {
                 dataSource.apply(snapshot, animatingDifferences: true)
                 if !messages.isEmpty {
-                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                    tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    scrollToBottom(animated: true)
                 }
             } else {
                 UIView.performWithoutAnimation {
                     dataSource.apply(snapshot, animatingDifferences: false)
                     if !messages.isEmpty {
-                        let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                        tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                        scrollToBottom(animated: false)
                         tableView.layoutIfNeeded()
                     }
                 }
@@ -331,6 +340,13 @@ final class MainViewController: UIViewController {
         if !messages.isEmpty {
             animateDifferences = true
         }
+    }
+
+    private func scrollToBottom(animated: Bool) {
+        let row = tableView.numberOfRows(inSection: 0) - 1
+        guard row >= 0 else { return }
+        let indexPath = IndexPath(row: row, section: 0)
+        tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
     }
     
     private func loadUserImage() {
