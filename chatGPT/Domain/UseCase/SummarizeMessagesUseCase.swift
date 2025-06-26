@@ -20,7 +20,7 @@ final class SummarizeMessagesUseCase {
         let text = messages.map { "\($0.role.rawValue): \($0.content)" }.joined(separator: "\n")
         let prompt = "다음 대화를 15자 내외로 간결하고 직관적인 제목으로 요약해 줘.\n" + text
         let reqMessages = [Message(role: .system, content: prompt)]
-        repository.sendChat(messages: reqMessages, model: model) { [weak self] result in
+        repository.sendChat(messages: reqMessages, model: model, stream: false) { [weak self] result in
             switch result {
             case .success(let summary):
                 completion(.success(summary))

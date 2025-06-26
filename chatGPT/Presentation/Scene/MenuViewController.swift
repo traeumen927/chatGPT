@@ -21,6 +21,7 @@ final class MenuViewController: UIViewController {
     private var conversations: [ConversationSummary] = []
     private var availableModels: [OpenAIModel] = []
     private var selectedModel: OpenAIModel
+    private var streamEnabled: Bool
 
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
@@ -40,14 +41,18 @@ final class MenuViewController: UIViewController {
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tv
     }()
+
+    private let streamSwitch = UISwitch()
   
 
     var onModelSelected: ((OpenAIModel) -> Void)?
+    var onStreamChanged: ((Bool) -> Void)?
 
     init(observeConversationsUseCase: ObserveConversationsUseCase,
          signOutUseCase: SignOutUseCase,
          fetchModelsUseCase: FetchAvailableModelsUseCase,
          selectedModel: OpenAIModel,
+         streamEnabled: Bool,
          currentConversationID: String?,
          draftExists: Bool,
          availableModels: [OpenAIModel] = [],
@@ -56,6 +61,7 @@ final class MenuViewController: UIViewController {
         self.signOutUseCase = signOutUseCase
         self.fetchModelsUseCase = fetchModelsUseCase
         self.selectedModel = selectedModel
+        self.streamEnabled = streamEnabled
         self.currentConversationID = currentConversationID
         self.draftExists = draftExists
         self.availableModels = availableModels
@@ -93,7 +99,9 @@ final class MenuViewController: UIViewController {
 
                 switch Section(rawValue: indexPath.section) {
                 case .model:
-                    self.presentModelSelector()
+                    if indexPath.row == 0 {
+                        self.presentModelSelector()
+                    }
                 case .account:
                     do {
                         try self.signOutUseCase.execute()
@@ -109,6 +117,14 @@ final class MenuViewController: UIViewController {
                 case .none:
                     break
                 }
+            })
+            .disposed(by: disposeBag)
+
+        streamSwitch.rx.isOn
+            .skip(1)
+            .subscribe(onNext: { [weak self] isOn in
+                self?.streamEnabled = isOn
+                self?.onStreamChanged?(isOn)
             })
             .disposed(by: disposeBag)
     }
@@ -173,7 +189,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
-        case .model: return 1
+        case .model: return 2
         case .history: return conversations.count
         case .account: return 1
         case .none: return 0
@@ -184,14 +200,21 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         switch Section(rawValue: indexPath.section) {
         case .model:
-            if availableModels.isEmpty {
-                cell.textLabel?.text = "모델 불러오는 중..."
-                cell.accessoryType = .none
-                cell.selectionStyle = .none
+            if indexPath.row == 0 {
+                if availableModels.isEmpty {
+                    cell.textLabel?.text = "모델 불러오는 중..."
+                    cell.accessoryType = .none
+                    cell.selectionStyle = .none
+                } else {
+                    cell.textLabel?.text = selectedModel.displayName
+                    cell.accessoryType = .disclosureIndicator
+                    cell.selectionStyle = .default
+                }
             } else {
-                cell.textLabel?.text = selectedModel.displayName
-                cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .default
+                cell.textLabel?.text = "스트림"
+                cell.selectionStyle = .none
+                streamSwitch.isOn = streamEnabled
+                cell.accessoryView = streamSwitch
             }
         case .history:
             let convo = conversations[indexPath.row]

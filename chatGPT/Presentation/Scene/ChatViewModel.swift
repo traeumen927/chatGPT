@@ -57,7 +57,7 @@ final class ChatViewModel {
         self.contextRepository = contextRepository
     }
 
-    func send(prompt: String, model: OpenAIModel) {
+    func send(prompt: String, model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
 
@@ -69,7 +69,7 @@ final class ChatViewModel {
                 .disposed(by: disposeBag)
         }
 
-        sendMessageUseCase.execute(prompt: prompt, model: model) { [weak self] result in
+        sendMessageUseCase.execute(prompt: prompt, model: model, stream: stream) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
