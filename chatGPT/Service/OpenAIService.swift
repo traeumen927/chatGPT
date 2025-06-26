@@ -64,7 +64,9 @@ final class OpenAIService {
     }
 
     func requestStream(_ endpoint: OpenAIEndpoint) -> Observable<String> {
-        Observable.create { observer in
+        Observable.create { [weak self] observer in
+            guard let self = self else { return Disposables.create() }
+            
             guard let apiKey = apiKeyRepository.fetchKey() else {
                 observer.onError(OpenAIError.missingAPIKey)
                 return Disposables.create()
