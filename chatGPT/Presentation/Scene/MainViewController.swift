@@ -21,9 +21,9 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
-
+    
     private let disposeBag = DisposeBag()
-
+    
     private var availableModels: [OpenAIModel] = []
     
     
@@ -33,14 +33,14 @@ final class MainViewController: UIViewController {
             ModelPreference.save(selectedModel)
         }
     }
-
+    
     private var streamEnabled: Bool = ModelPreference.streamEnabled {
         didSet {
             guard oldValue != streamEnabled else { return }
             ModelPreference.saveStreamEnabled(streamEnabled)
         }
     }
-
+    
     // MARK: 새 대화 버튼
     private lazy var newChatButton: UIBarButtonItem = {
         let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
@@ -118,7 +118,7 @@ final class MainViewController: UIViewController {
     
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
-
+    
     private var animateDifferences = true
     private var lastMessageCount = 0
     
@@ -158,7 +158,7 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.layout()
         self.bind()
         self.preloadModels()
@@ -201,8 +201,8 @@ final class MainViewController: UIViewController {
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
             self.chatViewModel.send(prompt: text,
-                                   model: self.selectedModel,
-                                   stream: self.streamEnabled)
+                                    model: self.selectedModel,
+                                    stream: self.streamEnabled)
         }
         
         // 메시지 상태 → UI 업데이트
@@ -217,27 +217,29 @@ final class MainViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
-
+        
         chatViewModel.streamingMessage
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] message in
                 guard let self else { return }
+                
+                // 메시지가 변경된 인덱스 탐색
                 guard let index = self.chatViewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
                 let indexPath = IndexPath(row: index, section: 0)
+                
+                // 셀을 찾아 직접 업데이트
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
                     cell.update(text: message.text)
+                    
+                    // 셀의 높이가 변할 수 있으므로 레이아웃 갱신
                     UIView.performWithoutAnimation {
                         self.tableView.beginUpdates()
                         self.tableView.endUpdates()
                     }
-                } else {
-                    UIView.performWithoutAnimation {
-                        self.tableView.reloadRows(at: [indexPath], with: .none)
-                    }
                 }
             })
             .disposed(by: disposeBag)
-
+        
         chatViewModel.conversationChanged
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
@@ -252,7 +254,7 @@ final class MainViewController: UIViewController {
                 self?.presentMenu()
             })
             .disposed(by: disposeBag)
-
+        
         chatViewModel.conversationIDObservable
             .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.instance)
@@ -260,7 +262,7 @@ final class MainViewController: UIViewController {
                 self?.navigationItem.rightBarButtonItem = id == nil ? nil : self?.newChatButton
             })
             .disposed(by: disposeBag)
-
+        
         newChatButton.rx.tap
             .bind(onNext: { [weak self] in
                 self?.chatViewModel.startNewConversation()
@@ -291,7 +293,7 @@ final class MainViewController: UIViewController {
     
     private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
         let shouldAnimate = animateDifferences
-
+        
         // 새 메시지가 하나만 추가된 경우에는 셀 이동 애니메이션을 방지하기 위해
         // 기존 스냅샷에 항목을 추가하는 방식으로 업데이트한다.
         if shouldAnimate, messages.count == lastMessageCount + 1, let newMessage = messages.last {
@@ -307,7 +309,7 @@ final class MainViewController: UIViewController {
             var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
             snapshot.appendSections([0])
             snapshot.appendItems(messages)
-
+            
             if shouldAnimate {
                 dataSource.apply(snapshot, animatingDifferences: true)
                 if !messages.isEmpty {
@@ -325,7 +327,7 @@ final class MainViewController: UIViewController {
                 }
             }
         }
-
+        
         if !messages.isEmpty {
             animateDifferences = true
         }
