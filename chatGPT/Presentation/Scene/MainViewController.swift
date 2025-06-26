@@ -34,6 +34,12 @@ final class MainViewController: UIViewController {
         }
     }
 
+    private var streamEnabled: Bool = ModelPreference.streamEnabled {
+        didSet {
+            ModelPreference.saveStreamEnabled(streamEnabled)
+        }
+    }
+
     // MARK: 새 대화 버튼
     private lazy var newChatButton: UIBarButtonItem = {
         let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
@@ -55,6 +61,7 @@ final class MainViewController: UIViewController {
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
             selectedModel: selectedModel,
+            streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
             draftExists: chatViewModel.hasDraft,
             availableModels: availableModels
@@ -62,6 +69,9 @@ final class MainViewController: UIViewController {
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onModelSelected = { [weak self] model in
             self?.selectedModel = model
+        }
+        menuVC.onStreamChanged = { [weak self] isOn in
+            self?.streamEnabled = isOn
         }
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
@@ -187,7 +197,9 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
-            self.chatViewModel.send(prompt: text, model: self.selectedModel)
+            self.chatViewModel.send(prompt: text,
+                                   model: self.selectedModel,
+                                   stream: self.streamEnabled)
         }
         
         // 메시지 상태 → UI 업데이트
