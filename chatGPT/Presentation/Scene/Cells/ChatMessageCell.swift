@@ -17,7 +17,7 @@ final class ChatMessageCell: UITableViewCell {
         label.numberOfLines = 0
         label.textColor = .white
         label.lineBreakMode = .byCharWrapping
-        
+
         return label
     }()
 
@@ -35,7 +35,6 @@ final class ChatMessageCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
 
-        bubbleView.layer.cornerRadius = 16
         bubbleView.clipsToBounds = true
 
         contentView.addSubview(bubbleView)
@@ -61,23 +60,42 @@ final class ChatMessageCell: UITableViewCell {
 
         switch message.type {
         case .user:
+            bubbleView.isHidden = false
             bubbleView.backgroundColor = UIColor.systemBlue
-
-        case .assistant:
-            bubbleView.backgroundColor = UIColor.systemGreen
-
-        case .error:
-            bubbleView.backgroundColor = UIColor.systemRed
-        }
-        
-        self.bubbleView.snp.remakeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(8)
-
-            switch message.type {
-            case .user:
+            bubbleView.layer.cornerRadius = 16
+            messageLabel.textColor = .white
+            messageLabel.snp.remakeConstraints { make in
+                make.edges.equalToSuperview().inset(12)
+            }
+            bubbleView.snp.remakeConstraints { make in
+                make.top.bottom.equalToSuperview().inset(8)
                 make.trailing.equalToSuperview().inset(16)
                 make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
-            case .assistant, .error:
+            }
+
+        case .assistant:
+            bubbleView.isHidden = false
+            bubbleView.backgroundColor = .clear
+            bubbleView.layer.cornerRadius = 0
+            messageLabel.textColor = .label
+            messageLabel.snp.remakeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+            bubbleView.snp.remakeConstraints { make in
+                make.top.bottom.equalToSuperview().inset(8)
+                make.leading.trailing.equalToSuperview().inset(16)
+            }
+
+        case .error:
+            bubbleView.isHidden = false
+            bubbleView.backgroundColor = UIColor.systemRed
+            bubbleView.layer.cornerRadius = 16
+            messageLabel.textColor = .white
+            messageLabel.snp.remakeConstraints { make in
+                make.edges.equalToSuperview().inset(12)
+            }
+            bubbleView.snp.remakeConstraints { make in
+                make.top.bottom.equalToSuperview().inset(8)
                 make.leading.equalToSuperview().inset(16)
                 make.trailing.lessThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
             }
