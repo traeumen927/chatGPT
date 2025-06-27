@@ -112,16 +112,12 @@ final class ChatViewModel {
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
                 fullText += chunk
-                self.streamMessage(id: assistantID, text: fullText)
+                self.updateMessage(id: assistantID, text: fullText)
             }, onError: { [weak self] error in
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
-                self?.commitMessage(id: assistantID,
-                                   text: message,
-                                   type: .error)
+                self?.updateMessage(id: assistantID, text: message, type: .error)
             }, onCompleted: { [weak self] in
                 guard let self else { return }
-                self.commitMessage(id: assistantID,
-                                   text: fullText)
                 self.sendMessageUseCase.finalize(prompt: prompt, reply: fullText, model: model)
                 if let id = self.conversationID, !isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
@@ -163,24 +159,14 @@ final class ChatViewModel {
         messages.accept(current)
     }
     
-    private func streamMessage(id: UUID,
-                               text: String,
-                               type: MessageType? = nil) {
-        guard let index = messages.value.firstIndex(where: { $0.id == id }) else { return }
-        let old = messages.value[index]
-        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
-        streamingMessageRelay.accept(newMsg)
-    }
-
-    private func commitMessage(id: UUID,
-                               text: String,
-                               type: MessageType? = nil) {
-        guard let index = messages.value.firstIndex(where: { $0.id == id }) else { return }
-        let old = messages.value[index]
-        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
+    private func updateMessage(id: UUID, text: String, type: MessageType? = nil) {
         var current = messages.value
+        guard let index = current.firstIndex(where: { $0.id == id }) else { return }
+        let old = current[index]
+        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
         current[index] = newMsg
         messages.accept(current)
+        streamingMessageRelay.accept(newMsg)
     }
     
     func startNewConversation() {
@@ -202,11 +188,6 @@ final class ChatViewModel {
         if conversationID == nil {
             draftMessages = messages.value
         }
-        
-        conversationChanged.accept(())
-        messages.accept([])
-        conversationIDRelay.accept(id)
-        
         fetchMessagesUseCase.execute(conversationID: id)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] list in
@@ -214,7 +195,9 @@ final class ChatViewModel {
                 let chatMessages = list.map { item in
                     ChatMessage(type: item.role == .user ? .user : .assistant, text: item.text)
                 }
+                self.conversationChanged.accept(())
                 self.messages.accept(chatMessages)
+                self.conversationIDRelay.accept(id)
                 let msgs = list.map { Message(role: $0.role, content: $0.text) }
                 self.contextRepository.replace(messages: msgs, summary: nil)
             })
