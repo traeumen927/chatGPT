@@ -35,7 +35,7 @@ final class MenuViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("로그아웃", for: .normal)
         button.setTitleColor(ThemeColor.nagative, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         return button
     }()
 
@@ -271,7 +271,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        Section(rawValue: section) == .model ? 60 : .leastNormalMagnitude
+        Section(rawValue: section) == .model ? 40 : .leastNormalMagnitude
     }
 }
 
