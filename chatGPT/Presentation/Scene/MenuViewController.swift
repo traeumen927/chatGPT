@@ -5,15 +5,13 @@ import RxCocoa
 
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
-        case model
+        case setting
         case history
-        case account
 
         var title: String {
             switch self {
-            case .model: return "모델"
-            case .history: return "대화 히스토리"
-            case .account: return "계정"
+            case .setting: return "설정"
+            case .history: return "지난 대화"
             }
         }
     }
@@ -30,6 +28,14 @@ final class MenuViewController: UIViewController {
     private let draftExists: Bool
     private let disposeBag = DisposeBag()
 
+    private let logoutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("로그아웃", for: .normal)
+        button.setTitleColor(ThemeColor.nagative, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        return button
+    }()
+
 
 
     // 메뉴 닫기용 클로저
@@ -39,6 +45,7 @@ final class MenuViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tv.register(ModelSelectCell.self, forCellReuseIdentifier: "ModelSelectCell")
         tv.register(StreamToggleCell.self, forCellReuseIdentifier: "StreamToggleCell")
         return tv
     }()
@@ -97,16 +104,13 @@ final class MenuViewController: UIViewController {
                 self.tableView.deselectRow(at: indexPath, animated: false)
 
                 switch Section(rawValue: indexPath.section) {
-                case .model:
+                case .setting:
                     if indexPath.row == 0 {
-                        self.presentModelSelector()
-                    }
-                case .account:
-                    do {
-                        try self.signOutUseCase.execute()
-                        self.onClose?()
-                    } catch {
-                        print("❌ Sign out failed: \(error.localizedDescription)")
+                        if let cell = self.tableView.cellForRow(at: indexPath) as? ModelSelectCell {
+                            cell.showMenu()
+                        }
+                    } else if indexPath.row == 1 {
+                        return
                     }
                 case .history:
                     let convo = self.conversations[indexPath.row]
@@ -117,6 +121,19 @@ final class MenuViewController: UIViewController {
                     break
                 }
             })
+            .disposed(by: disposeBag)
+
+        logoutButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .bind { [weak self] in
+                guard let self else { return }
+                do {
+                    try self.signOutUseCase.execute()
+                    self.onClose?()
+                } catch {
+                    print("❌ Sign out failed: \(error.localizedDescription)")
+                }
+            }
             .disposed(by: disposeBag)
 
     }
@@ -143,7 +160,7 @@ final class MenuViewController: UIViewController {
             switch result {
             case .success(let models):
                 self.availableModels = models
-                let index = IndexSet(integer: Section.model.rawValue)
+                let index = IndexSet(integer: Section.setting.rawValue)
                 self.tableView.reloadSections(index, with: .none)
             case .failure(let error):
                 print("❌ 모델 로딩 실패: \(error.localizedDescription)")
@@ -151,28 +168,20 @@ final class MenuViewController: UIViewController {
         }
     }
 
-    private func presentModelSelector() {
-        guard !availableModels.isEmpty else {
-            let alert = UIAlertController(title: nil, message: "모델을 불러오는 중입니다.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default))
-            present(alert, animated: true)
-            return
-        }
-
-        let alert = UIAlertController(title: "모델 선택", message: nil, preferredStyle: .actionSheet)
-        for model in availableModels {
-            let action = UIAlertAction(title: model.displayName, style: .default) { [weak self] _ in
+    private func makeModelMenu() -> UIMenu? {
+        guard !availableModels.isEmpty else { return nil }
+        let actions = availableModels.map { model in
+            UIAction(title: model.displayName, state: model == selectedModel ? .on : .off) { [weak self] _ in
                 guard let self else { return }
                 self.selectedModel = model
                 self.onModelSelected?(model)
-                let index = IndexPath(row: 0, section: Section.model.rawValue)
+                let index = IndexPath(row: 0, section: Section.setting.rawValue)
                 self.tableView.reloadRows(at: [index], with: .none)
             }
-            alert.addAction(action)
         }
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        present(alert, animated: true)
+        return UIMenu(title: "", options: .displayInline, children: actions)
     }
+
 }
 
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
@@ -181,27 +190,28 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
-        case .model: return 2
+        case .setting: return 3
         case .history: return conversations.count
-        case .account: return 1
         case .none: return 0
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         switch Section(rawValue: indexPath.section) {
-        case .model:
+        case .setting:
             if indexPath.row == 0 {
-                if availableModels.isEmpty {
-                    cell.textLabel?.text = "모델 불러오는 중..."
-                    cell.accessoryType = .none
-                    cell.selectionStyle = .none
-                } else {
-                    cell.textLabel?.text = selectedModel.displayName
-                    cell.accessoryType = .disclosureIndicator
-                    cell.selectionStyle = .default
+                guard let modelCell = tableView.dequeueReusableCell(withIdentifier: "ModelSelectCell", for: indexPath) as? ModelSelectCell else {
+                    return UITableViewCell()
                 }
+                let menu = makeModelMenu()
+                modelCell.configure(title: "모델", modelName: selectedModel.displayName, loading: availableModels.isEmpty, menu: menu)
+                return modelCell
+            } else if indexPath.row == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+                cell.textLabel?.text = "맞춤 설정"
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+                return cell
             } else {
                 guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
                     return UITableViewCell()
@@ -215,6 +225,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             }
         case .history:
             let convo = conversations[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
             cell.textLabel?.text = convo.title
             let isSelected: Bool
             if currentConversationID == nil {
@@ -224,18 +235,28 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
-        case .account:
-            cell.textLabel?.text = "로그아웃"
-            cell.accessoryType = .none
-            cell.selectionStyle = .default
+            return cell
         case .none:
-            break
+            return UITableViewCell()
         }
-        return cell
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         Section(rawValue: section)?.title
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard Section(rawValue: section) == .setting else { return nil }
+        let footer = UIView()
+        footer.addSubview(logoutButton)
+        logoutButton.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        return footer
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        Section(rawValue: section) == .setting ? 40 : .leastNormalMagnitude
     }
 }
 

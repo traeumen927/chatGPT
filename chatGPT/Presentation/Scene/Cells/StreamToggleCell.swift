@@ -4,7 +4,6 @@ import RxSwift
 import RxCocoa
 
 final class StreamToggleCell: UITableViewCell {
-    private let titleLabel = UILabel()
     private let toggleSwitch = UISwitch()
     private let disposeBag = DisposeBag()
 
@@ -22,15 +21,9 @@ final class StreamToggleCell: UITableViewCell {
 
     private func layout() {
         selectionStyle = .none
-        titleLabel.text = "스트림"
+        textLabel?.text = "스트림"
 
-        [titleLabel, toggleSwitch].forEach(contentView.addSubview)
-
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.top.bottom.equalToSuperview().inset(8)
-        }
-
+        contentView.addSubview(toggleSwitch)
         toggleSwitch.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
