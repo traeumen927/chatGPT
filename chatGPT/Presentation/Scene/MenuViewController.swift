@@ -5,13 +5,13 @@ import RxCocoa
 
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
-        case model
+        case setting
         case history
 
         var title: String {
             switch self {
-            case .model: return "대화 설정"
-            case .history: return "대화 히스토리"
+            case .setting: return "설정"
+            case .history: return "지난 대화"
             }
         }
     }
@@ -104,7 +104,7 @@ final class MenuViewController: UIViewController {
                 self.tableView.deselectRow(at: indexPath, animated: false)
 
                 switch Section(rawValue: indexPath.section) {
-                case .model:
+                case .setting:
                     if indexPath.row == 0 {
                         if let cell = self.tableView.cellForRow(at: indexPath) as? ModelSelectCell {
                             cell.showMenu()
@@ -158,7 +158,7 @@ final class MenuViewController: UIViewController {
             switch result {
             case .success(let models):
                 self.availableModels = models
-                let index = IndexSet(integer: Section.model.rawValue)
+                let index = IndexSet(integer: Section.setting.rawValue)
                 self.tableView.reloadSections(index, with: .none)
             case .failure(let error):
                 print("❌ 모델 로딩 실패: \(error.localizedDescription)")
@@ -173,7 +173,7 @@ final class MenuViewController: UIViewController {
                 guard let self else { return }
                 self.selectedModel = model
                 self.onModelSelected?(model)
-                let index = IndexPath(row: 0, section: Section.model.rawValue)
+                let index = IndexPath(row: 0, section: Section.setting.rawValue)
                 self.tableView.reloadRows(at: [index], with: .none)
             }
         }
@@ -188,7 +188,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
-        case .model: return 2
+        case .setting: return 2
         case .history: return conversations.count
         case .none: return 0
         }
@@ -196,7 +196,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch Section(rawValue: indexPath.section) {
-        case .model:
+        case .setting:
             if indexPath.row == 0 {
                 guard let modelCell = tableView.dequeueReusableCell(withIdentifier: "ModelSelectCell", for: indexPath) as? ModelSelectCell else {
                     return UITableViewCell()
@@ -238,7 +238,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard Section(rawValue: section) == .model else { return nil }
+        guard Section(rawValue: section) == .setting else { return nil }
         let footer = UIView()
         footer.addSubview(logoutButton)
         logoutButton.snp.makeConstraints { make in
@@ -248,7 +248,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        Section(rawValue: section) == .model ? 40 : .leastNormalMagnitude
+        Section(rawValue: section) == .setting ? 40 : .leastNormalMagnitude
     }
 }
 
