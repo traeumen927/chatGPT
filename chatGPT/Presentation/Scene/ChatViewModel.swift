@@ -115,9 +115,15 @@ final class ChatViewModel {
                 self.updateMessage(id: assistantID, text: fullText)
             }, onError: { [weak self] error in
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
-                self?.updateMessage(id: assistantID, text: message, type: .error)
+                self?.updateMessage(id: assistantID,
+                                   text: message,
+                                   type: .error,
+                                   commit: true)
             }, onCompleted: { [weak self] in
                 guard let self else { return }
+                self.updateMessage(id: assistantID,
+                                   text: fullText,
+                                   commit: true)
                 self.sendMessageUseCase.finalize(prompt: prompt, reply: fullText, model: model)
                 if let id = self.conversationID, !isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
@@ -159,12 +165,21 @@ final class ChatViewModel {
         messages.accept(current)
     }
     
-    private func updateMessage(id: UUID, text: String, type: MessageType? = nil) {
+    private func updateMessage(id: UUID,
+                               text: String,
+                               type: MessageType? = nil,
+                               commit: Bool = false) {
         guard let index = messages.value.firstIndex(where: { $0.id == id }) else { return }
         let old = messages.value[index]
         let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
-        
-        streamingMessageRelay.accept(newMsg)
+
+        if commit {
+            var current = messages.value
+            current[index] = newMsg
+            messages.accept(current)
+        } else {
+            streamingMessageRelay.accept(newMsg)
+        }
     }
     
     func startNewConversation() {
