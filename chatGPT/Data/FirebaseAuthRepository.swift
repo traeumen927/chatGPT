@@ -9,7 +9,6 @@ final class FirebaseAuthRepository: AuthRepository {
                 if let user = user {
                     observer.onNext(AuthUser(uid: user.uid,
                                             displayName: user.displayName,
-                                            email: user.email,
                                             photoURL: user.photoURL))
                 } else {
                     observer.onNext(nil)
@@ -25,7 +24,6 @@ final class FirebaseAuthRepository: AuthRepository {
         guard let user = Auth.auth().currentUser else { return nil }
         return AuthUser(uid: user.uid,
                         displayName: user.displayName,
-                        email: user.email,
                         photoURL: user.photoURL)
     }
 

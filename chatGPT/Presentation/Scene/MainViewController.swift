@@ -21,9 +21,9 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
-    
+
     private let disposeBag = DisposeBag()
-    
+
     private var availableModels: [OpenAIModel] = []
     
     
