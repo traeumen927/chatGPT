@@ -231,14 +231,13 @@ final class MainViewController: UIViewController {
                 
                 // 셀을 찾아 직접 업데이트
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
-                    cell.update(text: message.text)
-
-                    // 셀의 높이가 변할 수 있으므로 레이아웃 갱신
-                    UIView.performWithoutAnimation {
-                        self.tableView.beginUpdates()
-                        self.tableView.endUpdates()
+                    let heightChanged = cell.update(text: message.text)
+                    if heightChanged {
+                        UIView.performWithoutAnimation {
+                            self.tableView.beginUpdates()
+                            self.tableView.endUpdates()
+                        }
                     }
-
                 }
             })
             .disposed(by: disposeBag)
