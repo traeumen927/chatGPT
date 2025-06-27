@@ -106,7 +106,9 @@ final class MenuViewController: UIViewController {
                 switch Section(rawValue: indexPath.section) {
                 case .model:
                     if indexPath.row == 0 {
-                        self.presentModelSelector()
+                        if let cell = self.tableView.cellForRow(at: indexPath) as? ModelSelectCell {
+                            cell.showMenu()
+                        }
                     }
                 case .history:
                     let convo = self.conversations[indexPath.row]
@@ -164,27 +166,20 @@ final class MenuViewController: UIViewController {
         }
     }
 
-    private func presentModelSelector() {
-        guard !availableModels.isEmpty else {
-            let alert = UIAlertController(title: nil, message: "모델을 불러오는 중입니다.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default))
-            present(alert, animated: true)
-            return
+    private func makeModelMenu() -> UIMenu? {
+        guard !availableModels.isEmpty else { return nil }
+        let actions = availableModels.map { model in
+            UIAction(title: model.displayName, state: model == selectedModel ? .on : .off) { [weak self] _ in
+                guard let self else { return }
+                self.selectedModel = model
+                self.onModelSelected?(model)
+                let index = IndexPath(row: 0, section: Section.model.rawValue)
+                self.tableView.reloadRows(at: [index], with: .none)
+            }
         }
-
-        let picker = ModelPickerViewController(models: availableModels, selected: selectedModel)
-        picker.onSelect = { [weak self] model in
-            guard let self else { return }
-            self.selectedModel = model
-            self.onModelSelected?(model)
-            let index = IndexPath(row: 0, section: Section.model.rawValue)
-            self.tableView.reloadRows(at: [index], with: .none)
-        }
-        if let sheet = picker.sheetPresentationController {
-            sheet.detents = [.medium()]
-        }
-        present(picker, animated: true)
+        return UIMenu(title: "", options: .displayInline, children: actions)
     }
+
 }
 
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
@@ -206,7 +201,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let modelCell = tableView.dequeueReusableCell(withIdentifier: "ModelSelectCell", for: indexPath) as? ModelSelectCell else {
                     return UITableViewCell()
                 }
-                modelCell.configure(title: "모델", modelName: selectedModel.displayName, loading: availableModels.isEmpty)
+                let menu = makeModelMenu()
+                modelCell.configure(title: "모델", modelName: selectedModel.displayName, loading: availableModels.isEmpty, menu: menu)
                 return modelCell
             } else {
                 guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
