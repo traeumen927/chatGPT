@@ -3,7 +3,12 @@ import SnapKit
 
 final class ModelSelectCell: UITableViewCell {
     private let titleLabel = UILabel()
-    private let valueLabel = UILabel()
+    private let valueButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitleColor(.label, for: .normal)
+        button.contentHorizontalAlignment = .right
+        return button
+    }()
     private let arrowImageView = UIImageView(image: UIImage(systemName: "chevron.right"))
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -16,11 +21,11 @@ final class ModelSelectCell: UITableViewCell {
     }
 
     private func layout() {
-        [titleLabel, valueLabel, arrowImageView].forEach(contentView.addSubview)
+        [titleLabel, valueButton, arrowImageView].forEach(contentView.addSubview)
         selectionStyle = .default
 
         titleLabel.font = .systemFont(ofSize: 16)
-        valueLabel.font = .systemFont(ofSize: 16)
+        valueButton.titleLabel?.font = .systemFont(ofSize: 16)
         arrowImageView.tintColor = .systemGray3
 
         titleLabel.snp.makeConstraints { make in
@@ -32,16 +37,24 @@ final class ModelSelectCell: UITableViewCell {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(12)
         }
-        valueLabel.snp.makeConstraints { make in
+        valueButton.snp.makeConstraints { make in
             make.trailing.equalTo(arrowImageView.snp.leading).offset(-4)
             make.centerY.equalToSuperview()
         }
     }
 
-    func configure(title: String, modelName: String, loading: Bool) {
+    func configure(title: String, modelName: String, loading: Bool, menu: UIMenu?) {
         titleLabel.text = title
-        valueLabel.text = loading ? "모델 불러오는 중..." : modelName
-        arrowImageView.isHidden = loading
+        valueButton.setTitle(loading ? "모델 불러오는 중..." : modelName, for: .normal)
+        valueButton.isEnabled = !loading
+        valueButton.menu = menu
+        valueButton.showsMenuAsPrimaryAction = menu != nil
+        arrowImageView.isHidden = loading || menu == nil
         selectionStyle = loading ? .none : .default
+    }
+
+    func showMenu() {
+        guard valueButton.menu != nil else { return }
+        valueButton.sendActions(for: .touchUpInside)
     }
 }
