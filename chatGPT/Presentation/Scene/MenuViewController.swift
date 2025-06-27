@@ -31,6 +31,14 @@ final class MenuViewController: UIViewController {
     private let draftExists: Bool
     private let disposeBag = DisposeBag()
 
+    private let logoutButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("로그아웃", for: .normal)
+        button.setTitleColor(ThemeColor.nagative, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        return button
+    }()
+
 
 
     // 메뉴 닫기용 클로저
@@ -105,14 +113,7 @@ final class MenuViewController: UIViewController {
                         self.presentModelSelector()
                     }
                 case .account:
-                    if indexPath.row == 1 {
-                        do {
-                            try self.signOutUseCase.execute()
-                            self.onClose?()
-                        } catch {
-                            print("❌ Sign out failed: \(error.localizedDescription)")
-                        }
-                    }
+                    break
                 case .history:
                     let convo = self.conversations[indexPath.row]
                     self.currentConversationID = convo.id == "draft" ? nil : convo.id
@@ -122,6 +123,19 @@ final class MenuViewController: UIViewController {
                     break
                 }
             })
+            .disposed(by: disposeBag)
+
+        logoutButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .bind { [weak self] in
+                guard let self else { return }
+                do {
+                    try self.signOutUseCase.execute()
+                    self.onClose?()
+                } catch {
+                    print("❌ Sign out failed: \(error.localizedDescription)")
+                }
+            }
             .disposed(by: disposeBag)
 
     }
@@ -187,7 +201,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .model: return 2
-        case .account: return 2
+        case .account: return 1
         case .history: return conversations.count
         case .none: return 0
         }
@@ -230,18 +244,12 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
         case .account:
-            if indexPath.row == 0 {
-                let emailCell = tableView.dequeueReusableCell(withIdentifier: "EmailCell") ??
-                    UITableViewCell(style: .value1, reuseIdentifier: "EmailCell")
-                emailCell.selectionStyle = .none
-                emailCell.textLabel?.text = "이메일"
-                emailCell.detailTextLabel?.text = userEmail
-                return emailCell
-            } else {
-                cell.textLabel?.text = "로그아웃"
-                cell.accessoryType = .none
-                cell.selectionStyle = .default
-            }
+            let emailCell = tableView.dequeueReusableCell(withIdentifier: "EmailCell") ??
+                UITableViewCell(style: .value1, reuseIdentifier: "EmailCell")
+            emailCell.selectionStyle = .none
+            emailCell.textLabel?.text = "이메일"
+            emailCell.detailTextLabel?.text = userEmail
+            return emailCell
         case .none:
             break
         }
@@ -250,6 +258,20 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         Section(rawValue: section)?.title
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard Section(rawValue: section) == .model else { return nil }
+        let footer = UIView()
+        footer.addSubview(logoutButton)
+        logoutButton.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        return footer
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        Section(rawValue: section) == .model ? 60 : .leastNormalMagnitude
     }
 }
 
