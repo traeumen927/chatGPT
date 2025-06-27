@@ -21,10 +21,11 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
-    
+
     private let disposeBag = DisposeBag()
-    
+
     private var availableModels: [OpenAIModel] = []
+    private var currentUserEmail: String?
     
     
     // MARK: 선택된 chatGPT 모델
@@ -65,7 +66,8 @@ final class MainViewController: UIViewController {
             streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
             draftExists: chatViewModel.hasDraft,
-            availableModels: availableModels
+            availableModels: availableModels,
+            userEmail: currentUserEmail
         )
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onModelSelected = { [weak self] model in
@@ -189,7 +191,8 @@ final class MainViewController: UIViewController {
         self.addKeyboardObservers()
         
         observeAuthStateUseCase.execute()
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] user in
+                self?.currentUserEmail = user?.email
                 self?.loadUserImage()
             })
             .disposed(by: disposeBag)

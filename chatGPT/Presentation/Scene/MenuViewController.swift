@@ -6,8 +6,8 @@ import RxCocoa
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
         case model
-        case history
         case account
+        case history
 
         var title: String {
             switch self {
@@ -22,6 +22,7 @@ final class MenuViewController: UIViewController {
     private var availableModels: [OpenAIModel] = []
     private var selectedModel: OpenAIModel
     private var streamEnabled: Bool
+    private let userEmail: String?
 
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
@@ -55,6 +56,7 @@ final class MenuViewController: UIViewController {
          currentConversationID: String?,
          draftExists: Bool,
          availableModels: [OpenAIModel] = [],
+         userEmail: String?,
          onClose: (() -> Void)? = nil) {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
@@ -64,6 +66,7 @@ final class MenuViewController: UIViewController {
         self.currentConversationID = currentConversationID
         self.draftExists = draftExists
         self.availableModels = availableModels
+        self.userEmail = userEmail
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
     }
@@ -102,11 +105,13 @@ final class MenuViewController: UIViewController {
                         self.presentModelSelector()
                     }
                 case .account:
-                    do {
-                        try self.signOutUseCase.execute()
-                        self.onClose?()
-                    } catch {
-                        print("❌ Sign out failed: \(error.localizedDescription)")
+                    if indexPath.row == 1 {
+                        do {
+                            try self.signOutUseCase.execute()
+                            self.onClose?()
+                        } catch {
+                            print("❌ Sign out failed: \(error.localizedDescription)")
+                        }
                     }
                 case .history:
                     let convo = self.conversations[indexPath.row]
@@ -182,8 +187,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .model: return 2
+        case .account: return 2
         case .history: return conversations.count
-        case .account: return 1
         case .none: return 0
         }
     }
@@ -225,9 +230,18 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
         case .account:
-            cell.textLabel?.text = "로그아웃"
-            cell.accessoryType = .none
-            cell.selectionStyle = .default
+            if indexPath.row == 0 {
+                let emailCell = tableView.dequeueReusableCell(withIdentifier: "EmailCell") ??
+                    UITableViewCell(style: .value1, reuseIdentifier: "EmailCell")
+                emailCell.selectionStyle = .none
+                emailCell.textLabel?.text = "이메일"
+                emailCell.detailTextLabel?.text = userEmail
+                return emailCell
+            } else {
+                cell.textLabel?.text = "로그아웃"
+                cell.accessoryType = .none
+                cell.selectionStyle = .default
+            }
         case .none:
             break
         }
