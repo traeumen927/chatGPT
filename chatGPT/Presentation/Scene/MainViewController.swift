@@ -76,7 +76,6 @@ final class MainViewController: UIViewController {
         }
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
-            self.animateDifferences = false
             if let id {
                 self.chatViewModel.loadConversation(id: id)
             } else {
@@ -118,9 +117,6 @@ final class MainViewController: UIViewController {
     
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
-    
-    private var animateDifferences = true
-    private var lastMessageCount = 0
 
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
@@ -212,11 +208,7 @@ final class MainViewController: UIViewController {
         self.chatViewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] messages in
-                guard let self else { return }
-                if messages.count != self.lastMessageCount || !self.animateDifferences {
-                    self.applySnapshot(messages)
-                    self.lastMessageCount = messages.count
-                }
+                self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
         
@@ -242,13 +234,7 @@ final class MainViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        chatViewModel.conversationChanged
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in
-                self?.animateDifferences = false
-                self?.lastMessageCount = 0
-            })
-            .disposed(by: disposeBag)
+
         
         menuBarButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
@@ -288,51 +274,28 @@ final class MainViewController: UIViewController {
             cell.configure(with: message)
             return cell
         }
-        // 셀이 자연스럽게 나타나도록 페이드 애니메이션 사용
-        dataSource.defaultRowAnimation = .fade
+        dataSource.defaultRowAnimation = .none
         return dataSource
     }
-    
+
     private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
-        let shouldAnimate = animateDifferences
-        
-        // 새 메시지가 하나만 추가된 경우에는 셀 이동 애니메이션을 방지하기 위해
-        // 기존 스냅샷에 항목을 추가하는 방식으로 업데이트한다.
-        if shouldAnimate, messages.count == lastMessageCount + 1, let newMessage = messages.last {
-            var snapshot = dataSource.snapshot()
-            if snapshot.sectionIdentifiers.isEmpty { snapshot.appendSections([0]) }
-            snapshot.appendItems([newMessage])
-            dataSource.apply(snapshot, animatingDifferences: true)
-            
-        } else {
-            var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
-            snapshot.appendSections([0])
-            snapshot.appendItems(messages)
-            
-            if shouldAnimate {
-                dataSource.apply(snapshot, animatingDifferences: true)
-                
-            } else {
-                UIView.performWithoutAnimation {
-                    dataSource.apply(snapshot, animatingDifferences: false)
-                    if !messages.isEmpty {
-                        tableView.layoutIfNeeded()
-                    }
-                }
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(messages)
+        UIView.performWithoutAnimation {
+            dataSource.apply(snapshot, animatingDifferences: false)
+            if !messages.isEmpty {
+                tableView.layoutIfNeeded()
             }
         }
-        
-        if !messages.isEmpty {
-            animateDifferences = true
-        }
-        scrollToBottom(animated: shouldAnimate)
+        scrollToBottom()
     }
 
-    private func scrollToBottom(animated: Bool) {
+    private func scrollToBottom() {
         guard !chatViewModel.messages.value.isEmpty else { return }
         let lastRow = chatViewModel.messages.value.count - 1
         let indexPath = IndexPath(row: lastRow, section: 0)
-        tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
+        tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }
 
     
