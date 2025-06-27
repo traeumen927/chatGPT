@@ -109,7 +109,6 @@ final class ChatViewModel {
         
         sendMessageUseCase.stream(prompt: prompt, model: model)
             .observe(on: MainScheduler.instance)
-            .throttle(.milliseconds(100), scheduler: MainScheduler.instance, latest: true)
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
                 fullText += chunk
