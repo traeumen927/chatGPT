@@ -27,7 +27,7 @@ final class ModelSelectCell: UITableViewCell {
 
         valueButton.snp.makeConstraints { make in
             // 32 is roughly the width of disclosure indicator area
-            make.trailing.equalToSuperview().inset(32)
+            make.trailing.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
         }
     }
