@@ -6,14 +6,12 @@ import RxCocoa
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
         case model
-        case account
         case history
 
         var title: String {
             switch self {
             case .model: return "모델"
             case .history: return "대화 히스토리"
-            case .account: return "계정"
             }
         }
     }
@@ -22,7 +20,6 @@ final class MenuViewController: UIViewController {
     private var availableModels: [OpenAIModel] = []
     private var selectedModel: OpenAIModel
     private var streamEnabled: Bool
-    private let userEmail: String?
 
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
@@ -64,7 +61,6 @@ final class MenuViewController: UIViewController {
          currentConversationID: String?,
          draftExists: Bool,
          availableModels: [OpenAIModel] = [],
-         userEmail: String?,
          onClose: (() -> Void)? = nil) {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
@@ -74,7 +70,6 @@ final class MenuViewController: UIViewController {
         self.currentConversationID = currentConversationID
         self.draftExists = draftExists
         self.availableModels = availableModels
-        self.userEmail = userEmail
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
     }
@@ -112,8 +107,6 @@ final class MenuViewController: UIViewController {
                     if indexPath.row == 0 {
                         self.presentModelSelector()
                     }
-                case .account:
-                    break
                 case .history:
                     let convo = self.conversations[indexPath.row]
                     self.currentConversationID = convo.id == "draft" ? nil : convo.id
@@ -201,7 +194,6 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .model: return 2
-        case .account: return 1
         case .history: return conversations.count
         case .none: return 0
         }
@@ -243,13 +235,6 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
-        case .account:
-            let emailCell = tableView.dequeueReusableCell(withIdentifier: "EmailCell") ??
-                UITableViewCell(style: .value1, reuseIdentifier: "EmailCell")
-            emailCell.selectionStyle = .none
-            emailCell.textLabel?.text = "이메일"
-            emailCell.detailTextLabel?.text = userEmail
-            return emailCell
         case .none:
             break
         }
