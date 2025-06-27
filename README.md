@@ -97,8 +97,8 @@ func execute(prompt: String, model: OpenAIModel, completion: @escaping (Result<S
 <br>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/fde1240b-12ac-4e07-9a95-6d3a30d0d07c" width="30%">
   <img src="https://github.com/user-attachments/assets/18f041a2-094f-4777-8607-b172687db73e" width="30%">
+  <img src="https://github.com/user-attachments/assets/fde1240b-12ac-4e07-9a95-6d3a30d0d07c" width="30%">
 </p>
 
 > 이 기능을 통해 긴 대화 속에서도 동일한 주제를 자연스럽게 이어갈 수 있으며,  
