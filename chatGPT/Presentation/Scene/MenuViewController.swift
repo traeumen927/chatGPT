@@ -10,7 +10,7 @@ final class MenuViewController: UIViewController {
 
         var title: String {
             switch self {
-            case .model: return "모델"
+            case .model: return "대화 설정"
             case .history: return "대화 히스토리"
             }
         }
@@ -45,6 +45,7 @@ final class MenuViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tv.register(ModelSelectCell.self, forCellReuseIdentifier: "ModelSelectCell")
         tv.register(StreamToggleCell.self, forCellReuseIdentifier: "StreamToggleCell")
         return tv
     }()
@@ -171,19 +172,18 @@ final class MenuViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: "모델 선택", message: nil, preferredStyle: .actionSheet)
-        for model in availableModels {
-            let action = UIAlertAction(title: model.displayName, style: .default) { [weak self] _ in
-                guard let self else { return }
-                self.selectedModel = model
-                self.onModelSelected?(model)
-                let index = IndexPath(row: 0, section: Section.model.rawValue)
-                self.tableView.reloadRows(at: [index], with: .none)
-            }
-            alert.addAction(action)
+        let picker = ModelPickerViewController(models: availableModels, selected: selectedModel)
+        picker.onSelect = { [weak self] model in
+            guard let self else { return }
+            self.selectedModel = model
+            self.onModelSelected?(model)
+            let index = IndexPath(row: 0, section: Section.model.rawValue)
+            self.tableView.reloadRows(at: [index], with: .none)
         }
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        present(alert, animated: true)
+        if let sheet = picker.sheetPresentationController {
+            sheet.detents = [.medium()]
+        }
+        present(picker, animated: true)
     }
 }
 
@@ -200,19 +200,14 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         switch Section(rawValue: indexPath.section) {
         case .model:
             if indexPath.row == 0 {
-                if availableModels.isEmpty {
-                    cell.textLabel?.text = "모델 불러오는 중..."
-                    cell.accessoryType = .none
-                    cell.selectionStyle = .none
-                } else {
-                    cell.textLabel?.text = selectedModel.displayName
-                    cell.accessoryType = .disclosureIndicator
-                    cell.selectionStyle = .default
+                guard let modelCell = tableView.dequeueReusableCell(withIdentifier: "ModelSelectCell", for: indexPath) as? ModelSelectCell else {
+                    return UITableViewCell()
                 }
+                modelCell.configure(title: "모델", modelName: selectedModel.displayName, loading: availableModels.isEmpty)
+                return modelCell
             } else {
                 guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
                     return UITableViewCell()
@@ -226,6 +221,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             }
         case .history:
             let convo = conversations[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
             cell.textLabel?.text = convo.title
             let isSelected: Bool
             if currentConversationID == nil {
@@ -235,10 +231,10 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
+            return cell
         case .none:
-            break
+            return UITableViewCell()
         }
-        return cell
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
