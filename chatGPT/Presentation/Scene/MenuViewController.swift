@@ -109,6 +109,8 @@ final class MenuViewController: UIViewController {
                         if let cell = self.tableView.cellForRow(at: indexPath) as? ModelSelectCell {
                             cell.showMenu()
                         }
+                    } else if indexPath.row == 1 {
+                        return
                     }
                 case .history:
                     let convo = self.conversations[indexPath.row]
@@ -188,7 +190,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
-        case .setting: return 2
+        case .setting: return 3
         case .history: return conversations.count
         case .none: return 0
         }
@@ -204,6 +206,12 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                 let menu = makeModelMenu()
                 modelCell.configure(title: "모델", modelName: selectedModel.displayName, loading: availableModels.isEmpty, menu: menu)
                 return modelCell
+            } else if indexPath.row == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+                cell.textLabel?.text = "맞춤 설정"
+                cell.accessoryType = .disclosureIndicator
+                cell.selectionStyle = .default
+                return cell
             } else {
                 guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
                     return UITableViewCell()
