@@ -21,9 +21,9 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
-
+    
     private let disposeBag = DisposeBag()
-
+    
     private var availableModels: [OpenAIModel] = []
     
     
@@ -33,7 +33,14 @@ final class MainViewController: UIViewController {
             ModelPreference.save(selectedModel)
         }
     }
-
+    
+    private var streamEnabled: Bool = ModelPreference.streamEnabled {
+        didSet {
+            guard oldValue != streamEnabled else { return }
+            ModelPreference.saveStreamEnabled(streamEnabled)
+        }
+    }
+    
     // MARK: 새 대화 버튼
     private lazy var newChatButton: UIBarButtonItem = {
         let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
@@ -55,6 +62,7 @@ final class MainViewController: UIViewController {
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
             selectedModel: selectedModel,
+            streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
             draftExists: chatViewModel.hasDraft,
             availableModels: availableModels
@@ -63,9 +71,11 @@ final class MainViewController: UIViewController {
         menuVC.onModelSelected = { [weak self] model in
             self?.selectedModel = model
         }
+        menuVC.onStreamChanged = { [weak self] isOn in
+            self?.streamEnabled = isOn
+        }
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
-            self.animateDifferences = false
             if let id {
                 self.chatViewModel.loadConversation(id: id)
             } else {
@@ -97,7 +107,8 @@ final class MainViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: "ChatMessageCell")
         tableView.keyboardDismissMode = .interactive
-        tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
         return tableView
     }()
     
@@ -107,7 +118,6 @@ final class MainViewController: UIViewController {
     // MARK: 채팅 dataSource
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
 
-    private var animateDifferences = true
     
     init(fetchModelsUseCase: FetchAvailableModelsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
@@ -145,7 +155,7 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.layout()
         self.bind()
         self.preloadModels()
@@ -159,13 +169,14 @@ final class MainViewController: UIViewController {
         self.view.backgroundColor = ThemeColor.background1
         
         [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
-        
+
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(composerView.snp.top)
         }
-        
+
+
         self.composerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
@@ -187,7 +198,9 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
-            self.chatViewModel.send(prompt: text, model: self.selectedModel)
+            self.chatViewModel.send(prompt: text,
+                                    model: self.selectedModel,
+                                    stream: self.streamEnabled)
         }
         
         // 메시지 상태 → UI 업데이트
@@ -198,13 +211,30 @@ final class MainViewController: UIViewController {
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
-
-        chatViewModel.conversationChanged
+        
+        chatViewModel.streamingMessage
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in
-                self?.animateDifferences = false
+            .subscribe(onNext: { [weak self] message in
+                guard let self else { return }
+                
+                // 메시지가 변경된 인덱스 탐색
+                guard let index = self.chatViewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
+                let indexPath = IndexPath(row: index, section: 0)
+                
+                // 셀을 찾아 직접 업데이트
+                if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
+                    let heightChanged = cell.update(text: message.text)
+                    if heightChanged {
+                        UIView.performWithoutAnimation {
+                            self.tableView.beginUpdates()
+                            self.tableView.endUpdates()
+                        }
+                    }
+                }
             })
             .disposed(by: disposeBag)
+        
+
         
         menuBarButton.rx.tap
             .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
@@ -212,7 +242,7 @@ final class MainViewController: UIViewController {
                 self?.presentMenu()
             })
             .disposed(by: disposeBag)
-
+        
         chatViewModel.conversationIDObservable
             .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.instance)
@@ -220,7 +250,7 @@ final class MainViewController: UIViewController {
                 self?.navigationItem.rightBarButtonItem = id == nil ? nil : self?.newChatButton
             })
             .disposed(by: disposeBag)
-
+        
         newChatButton.rx.tap
             .bind(onNext: { [weak self] in
                 self?.chatViewModel.startNewConversation()
@@ -239,41 +269,35 @@ final class MainViewController: UIViewController {
     
     // MARK: TableView Helpers
     private func createDataSource() -> UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage> {
-        UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, message in
+        let dataSource = UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>(tableView: tableView) { tableView, indexPath, message in
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageCell
             cell.configure(with: message)
             return cell
         }
+        dataSource.defaultRowAnimation = .none
+        return dataSource
     }
-    
+
     private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
         snapshot.appendSections([0])
-        
-        // 💡 transform이 적용된 상태에서는 reversed된 순서로 추가해야 아래부터 쌓임
-        snapshot.appendItems(messages.reversed())
-        
-        let shouldAnimate = animateDifferences
-
-        if shouldAnimate {
-            dataSource.apply(snapshot, animatingDifferences: true)
+        snapshot.appendItems(messages)
+        UIView.performWithoutAnimation {
+            dataSource.apply(snapshot, animatingDifferences: false)
             if !messages.isEmpty {
-                let indexPath = IndexPath(row: 0, section: 0) // ⬅️ 가장 아래쪽 셀로 스크롤
-                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-            }
-        } else {
-            UIView.performWithoutAnimation {
-                dataSource.apply(snapshot, animatingDifferences: false)
-                if !messages.isEmpty {
-                    let indexPath = IndexPath(row: 0, section: 0)
-                    tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-                    tableView.layoutIfNeeded()
-                }
+                tableView.layoutIfNeeded()
             }
         }
-
-        animateDifferences = true
+        scrollToBottom()
     }
+
+    private func scrollToBottom() {
+        guard !chatViewModel.messages.value.isEmpty else { return }
+        let lastRow = chatViewModel.messages.value.count - 1
+        let indexPath = IndexPath(row: lastRow, section: 0)
+        tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+    }
+
     
     private func loadUserImage() {
         loadUserImageUseCase.execute()
@@ -299,6 +323,7 @@ final class MainViewController: UIViewController {
         return UIImage(systemName: "person.circle.fill", withConfiguration: config) ?? UIImage()
     }
 }
+
 
 // MARK: - Place for extension with KeyboardAdjustable
 extension MainViewController: KeyboardAdjustable {

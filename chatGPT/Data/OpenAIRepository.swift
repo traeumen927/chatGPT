@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol OpenAIRepository {
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void)
-    func sendChat(messages: [Message], model: OpenAIModel, completion: @escaping (Result<String, Error>) -> Void)
+    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void)
+    func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String>
 }
