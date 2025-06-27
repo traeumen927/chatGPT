@@ -9,7 +9,6 @@ final class ModelSelectCell: UITableViewCell {
         button.contentHorizontalAlignment = .right
         return button
     }()
-    private let arrowImageView = UIImageView(image: UIImage(systemName: "chevron.right"))
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,24 +20,20 @@ final class ModelSelectCell: UITableViewCell {
     }
 
     private func layout() {
-        [titleLabel, valueButton, arrowImageView].forEach(contentView.addSubview)
+        [titleLabel, valueButton].forEach(contentView.addSubview)
         selectionStyle = .default
 
         titleLabel.font = .systemFont(ofSize: 16)
         valueButton.titleLabel?.font = .systemFont(ofSize: 16)
-        arrowImageView.tintColor = .systemGray3
 
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
         }
-        arrowImageView.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(12)
-        }
+
         valueButton.snp.makeConstraints { make in
-            make.trailing.equalTo(arrowImageView.snp.leading).offset(-4)
+            // 32 is roughly the width of disclosure indicator area
+            make.trailing.equalToSuperview().inset(32)
             make.centerY.equalToSuperview()
         }
     }
@@ -49,7 +44,7 @@ final class ModelSelectCell: UITableViewCell {
         valueButton.isEnabled = !loading
         valueButton.menu = menu
         valueButton.showsMenuAsPrimaryAction = menu != nil
-        arrowImageView.isHidden = loading || menu == nil
+        accessoryType = (loading || menu == nil) ? .none : .disclosureIndicator
         selectionStyle = loading ? .none : .default
     }
 
