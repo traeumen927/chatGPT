@@ -49,6 +49,7 @@
 		F166CA1F2DF9A3A500AAB5B0 /* chatGPTUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */; };
 		F166CA202DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */; };
 		F16D6E2D2E0D2F6200E0718A /* OpenAIStreamResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16D6E2C2E0D2F6200E0718A /* OpenAIStreamResponse.swift */; };
+		F16D6E2F2E0D3DCA00E0718A /* UIColor+Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */; };
 		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
@@ -151,6 +152,7 @@
 		F166CA1C2DF9A3A500AAB5B0 /* chatGPTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITests.swift; sourceTree = "<group>"; };
 		F166CA1D2DF9A3A500AAB5B0 /* chatGPTUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatGPTUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		F16D6E2C2E0D2F6200E0718A /* OpenAIStreamResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIStreamResponse.swift; sourceTree = "<group>"; };
+		F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Dynamic.swift"; sourceTree = "<group>"; };
 		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 		F117E06F2E01586400D1C95F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */,
 				F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */,
 				F117E0702E01587F00D1C95F /* String+Truncate.swift */,
 				F1EF04EE2E044EC5005D2CF9 /* UIColor+hex.swift */,
@@ -609,6 +612,7 @@
 				F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
 				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
+				F16D6E2F2E0D3DCA00E0718A /* UIColor+Dynamic.swift in Sources */,
 				F1EF04EF2E044EC5005D2CF9 /* UIColor+hex.swift in Sources */,
 				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
 				F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */,

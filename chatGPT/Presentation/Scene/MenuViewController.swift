@@ -94,7 +94,7 @@ final class MenuViewController: UIViewController {
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
-                self.tableView.deselectRow(at: indexPath, animated: true)
+                self.tableView.deselectRow(at: indexPath, animated: false)
 
                 switch Section(rawValue: indexPath.section) {
                 case .model:
@@ -144,7 +144,7 @@ final class MenuViewController: UIViewController {
             case .success(let models):
                 self.availableModels = models
                 let index = IndexSet(integer: Section.model.rawValue)
-                self.tableView.reloadSections(index, with: .automatic)
+                self.tableView.reloadSections(index, with: .none)
             case .failure(let error):
                 print("❌ 모델 로딩 실패: \(error.localizedDescription)")
             }
@@ -166,7 +166,7 @@ final class MenuViewController: UIViewController {
                 self.selectedModel = model
                 self.onModelSelected?(model)
                 let index = IndexPath(row: 0, section: Section.model.rawValue)
-                self.tableView.reloadRows(at: [index], with: .automatic)
+                self.tableView.reloadRows(at: [index], with: .none)
             }
             alert.addAction(action)
         }

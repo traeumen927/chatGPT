@@ -15,25 +15,25 @@ final class ChatViewModel {
         case assistant
         case error
     }
-
+    
     struct ChatMessage: Hashable, Identifiable {
         let id: UUID
         let type: MessageType
         let text: String
-
+        
         init(id: UUID = UUID(), type: MessageType, text: String) {
             self.id = id
             self.type = type
             self.text = text
         }
     }
-
+    
     // MARK: - Output
     let messages = BehaviorRelay<[ChatMessage]>(value: [])
     let conversationChanged = PublishRelay<Void>()
     private let streamingMessageRelay = PublishRelay<ChatMessage>()
     var streamingMessage: Observable<ChatMessage> { streamingMessageRelay.asObservable() }
-
+    
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
     private let summarizeUseCase: SummarizeMessagesUseCase
@@ -42,15 +42,15 @@ final class ChatViewModel {
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
     private let contextRepository: ChatContextRepository
     private let disposeBag = DisposeBag()
-
+    
     private var draftMessages: [ChatMessage]? = nil
-
+    
     var hasDraft: Bool { draftMessages != nil }
-
+    
     private let conversationIDRelay = BehaviorRelay<String?>(value: nil)
     var conversationID: String? { conversationIDRelay.value }
     var conversationIDObservable: Observable<String?> { conversationIDRelay.asObservable() }
-
+    
     init(sendMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
@@ -64,37 +64,37 @@ final class ChatViewModel {
         self.fetchMessagesUseCase = fetchMessagesUseCase
         self.contextRepository = contextRepository
     }
-
+    
     func send(prompt: String, model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
-
+        
         if let id = conversationID {
             appendMessageUseCase.execute(conversationID: id,
-                                        role: .user,
-                                        text: prompt)
-                .subscribe()
-                .disposed(by: disposeBag)
+                                         role: .user,
+                                         text: prompt)
+            .subscribe()
+            .disposed(by: disposeBag)
         }
-
+        
         guard stream else {
             sendMessageUseCase.execute(prompt: prompt, model: model, stream: false) { [weak self] result in
                 guard let self = self else { return }
-
+                
                 switch result {
                 case .success(let reply):
                     self.appendMessage(ChatMessage(type: .assistant, text: reply))
                     if let id = self.conversationID, !isFirst {
                         self.appendMessageUseCase.execute(conversationID: id,
-                                                         role: .assistant,
-                                                         text: reply)
-                            .subscribe()
-                            .disposed(by: self.disposeBag)
+                                                          role: .assistant,
+                                                          text: reply)
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
                     }
                     if isFirst {
                         self.saveFirstConversation(question: prompt, answer: reply, model: model)
                     }
-
+                    
                 case .failure(let error):
                     let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                     self.appendMessage(ChatMessage(type: .error, text: message))
@@ -102,11 +102,11 @@ final class ChatViewModel {
             }
             return
         }
-
+        
         let assistantID = UUID()
         appendMessage(ChatMessage(id: assistantID, type: .assistant, text: ""))
         var fullText = ""
-
+        
         sendMessageUseCase.stream(prompt: prompt, model: model)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
@@ -121,10 +121,10 @@ final class ChatViewModel {
                 self.sendMessageUseCase.finalize(prompt: prompt, reply: fullText, model: model)
                 if let id = self.conversationID, !isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
-                                                     role: .assistant,
-                                                     text: fullText)
-                        .subscribe()
-                        .disposed(by: self.disposeBag)
+                                                      role: .assistant,
+                                                      text: fullText)
+                    .subscribe()
+                    .disposed(by: self.disposeBag)
                 }
                 if isFirst {
                     self.saveFirstConversation(question: prompt, answer: fullText, model: model)
@@ -132,13 +132,13 @@ final class ChatViewModel {
             })
             .disposed(by: disposeBag)
     }
-
+    
     private func saveFirstConversation(question: String, answer: String, model: OpenAIModel) {
         let history = [
             Message(role: .user, content: question),
             Message(role: .assistant, content: answer)
         ]
-
+        
         summarizeUseCase.execute(messages: history, model: model) { [weak self] result in
             guard let self = self else { return }
             if case .success(let title) = result {
@@ -152,13 +152,13 @@ final class ChatViewModel {
             }
         }
     }
-
+    
     private func appendMessage(_ message: ChatMessage) {
         var current = messages.value
         current.append(message)
         messages.accept(current)
     }
-
+    
     private func updateMessage(id: UUID, text: String, type: MessageType? = nil) {
         var current = messages.value
         guard let index = current.firstIndex(where: { $0.id == id }) else { return }
@@ -168,7 +168,7 @@ final class ChatViewModel {
         messages.accept(current)
         streamingMessageRelay.accept(newMsg)
     }
-
+    
     func startNewConversation() {
         conversationChanged.accept(())
         draftMessages = []
@@ -176,14 +176,14 @@ final class ChatViewModel {
         conversationIDRelay.accept(nil)
         sendMessageUseCase.clearContext()
     }
-
+    
     func resumeDraftConversation() {
         conversationChanged.accept(())
         messages.accept(draftMessages ?? [])
         conversationIDRelay.accept(nil)
         sendMessageUseCase.clearContext()
     }
-
+    
     func loadConversation(id: String) {
         if conversationID == nil {
             draftMessages = messages.value

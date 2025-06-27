@@ -28,7 +28,7 @@ final class StreamToggleCell: UITableViewCell {
 
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(8)
         }
 
         toggleSwitch.snp.makeConstraints { make in
