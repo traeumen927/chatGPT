@@ -10,8 +10,6 @@ import SnapKit
 
 final class ChatMessageCell: UITableViewCell {
 
-    private var lastHeight: CGFloat = 0
-
     private let bubbleView = UIView()
     private let messageLabel: UILabel = {
         let label = UILabel()
@@ -37,6 +35,7 @@ final class ChatMessageCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
 
+        bubbleView.layer.cornerRadius = 16
         bubbleView.clipsToBounds = true
 
         contentView.addSubview(bubbleView)
@@ -54,6 +53,8 @@ final class ChatMessageCell: UITableViewCell {
     }
 
     func configure(with message: ChatViewModel.ChatMessage) {
+
+        self.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
 
         messageLabel.text = message.text
 
@@ -101,17 +102,10 @@ final class ChatMessageCell: UITableViewCell {
             }
         }
 
-        layoutIfNeeded()
-        lastHeight = messageLabel.bounds.height
-
     }
 
-    @discardableResult
-    func update(text: String) -> Bool {
+    func update(text: String) {
         messageLabel.text = text
         layoutIfNeeded()
-        let newHeight = messageLabel.bounds.height
-        defer { lastHeight = newHeight }
-        return newHeight != lastHeight
     }
 }
