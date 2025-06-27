@@ -2,7 +2,6 @@ import UIKit
 import SnapKit
 
 final class ModelSelectCell: UITableViewCell {
-    private let titleLabel = UILabel()
     private let valueButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitleColor(.label, for: .normal)
@@ -20,16 +19,11 @@ final class ModelSelectCell: UITableViewCell {
     }
 
     private func layout() {
-        [titleLabel, valueButton].forEach(contentView.addSubview)
+        contentView.addSubview(valueButton)
         selectionStyle = .default
 
-        titleLabel.font = .systemFont(ofSize: 16)
+        textLabel?.font = .systemFont(ofSize: 16)
         valueButton.titleLabel?.font = .systemFont(ofSize: 16)
-
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
-        }
 
         valueButton.snp.makeConstraints { make in
             // 32 is roughly the width of disclosure indicator area
@@ -39,7 +33,7 @@ final class ModelSelectCell: UITableViewCell {
     }
 
     func configure(title: String, modelName: String, loading: Bool, menu: UIMenu?) {
-        titleLabel.text = title
+        textLabel?.text = title
         valueButton.setTitle(loading ? "모델 불러오는 중..." : modelName, for: .normal)
         valueButton.isEnabled = !loading
         valueButton.menu = menu
