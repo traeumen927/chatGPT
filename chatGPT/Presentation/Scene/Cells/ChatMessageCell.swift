@@ -55,6 +55,11 @@ final class ChatMessageCell: UITableViewCell {
         }
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        messageView.addAttachmentViews()
+    }
+
     func configure(with message: ChatViewModel.ChatMessage,
                    parser: ParseMarkdownUseCase) {
 
@@ -65,6 +70,7 @@ final class ChatMessageCell: UITableViewCell {
             messageView.text = message.text
             messageView.font = .systemFont(ofSize: 16)
         }
+        messageView.addAttachmentViews()
 
 
         switch message.type {
@@ -118,9 +124,11 @@ final class ChatMessageCell: UITableViewCell {
     @discardableResult
     func update(text: String, parser: ParseMarkdownUseCase) -> Bool {
         messageView.attributedText = parser.execute(markdown: text)
+        messageView.addAttachmentViews()
         layoutIfNeeded()
         let newHeight = messageView.contentSize.height
         defer { lastHeight = newHeight }
         return newHeight != lastHeight
     }
+
 }
