@@ -2,8 +2,40 @@ import UIKit
 import Down
 
 final class DownMarkdownRepository: MarkdownRepository {
+    private let codeRegex = try! NSRegularExpression(pattern: "```(.*?)\\n([\\s\\S]*?)```", options: [])
+
     func parse(_ markdown: String) -> NSAttributedString {
-        // 마크다운을 HTML로 변환 후 스타일을 입혀 NSAttributedString으로 반환
+        let matches = codeRegex.matches(in: markdown, options: [], range: NSRange(location: 0, length: markdown.utf16.count))
+
+        var parts: [NSAttributedString] = []
+        var currentLocation = markdown.startIndex
+
+        for match in matches {
+            guard let range = Range(match.range, in: markdown) else { continue }
+            let beforeText = String(markdown[currentLocation..<range.lowerBound])
+            if !beforeText.isEmpty {
+                parts.append(htmlToAttributed(beforeText))
+            }
+
+            let codeRange = Range(match.range(at: 2), in: markdown)!
+            let code = String(markdown[codeRange])
+            let attachment = CodeBlockAttachment(code: code)
+            parts.append(NSAttributedString(attachment: attachment))
+
+            currentLocation = range.upperBound
+        }
+
+        let remaining = String(markdown[currentLocation...])
+        if !remaining.isEmpty {
+            parts.append(htmlToAttributed(remaining))
+        }
+
+        let result = NSMutableAttributedString()
+        parts.forEach { result.append($0) }
+        return result
+    }
+
+    private func htmlToAttributed(_ markdown: String) -> NSAttributedString {
         guard let html = try? Down(markdownString: markdown).toHTML() else {
             return NSAttributedString(string: markdown)
         }
@@ -14,20 +46,6 @@ final class DownMarkdownRepository: MarkdownRepository {
         <meta name=\"color-scheme\" content=\"light dark\">
         <style>
         body { font-family: -apple-system; font-size: 16px; }
-        pre {
-            background-color: #f6f8fa;
-            color: #24292e;
-            padding: 12px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-        @media (prefers-color-scheme: dark) {
-            pre {
-                background-color: #2d333b;
-                color: #dcdcdc;
-            }
-        }
-        code { font-family: Menlo; }
         </style>
         </head>
         <body>\(html)</body>
@@ -46,7 +64,6 @@ final class DownMarkdownRepository: MarkdownRepository {
         if let attributed = try? NSAttributedString(data: data, options: options, documentAttributes: nil) {
             return attributed
         }
-
         return NSAttributedString(string: markdown)
     }
 }
