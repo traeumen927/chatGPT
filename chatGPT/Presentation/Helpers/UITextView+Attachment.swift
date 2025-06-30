@@ -11,14 +11,16 @@ extension UITextView {
         attributed.enumerateAttribute(.attachment, in: fullRange) { value, range, _ in
             guard let attachment = value as? CodeBlockAttachment else { return }
             let rect = self.boundingRect(forCharacterRange: range)
+            guard !rect.isNull, !rect.isInfinite, !rect.isEmpty else { return }
             attachment.view.frame = rect
             addSubview(attachment.view)
         }
     }
 
     private func boundingRect(forCharacterRange range: NSRange) -> CGRect {
-        guard let textRange = textRange(from: position(from: beginningOfDocument, offset: range.location)!,
-                                         to: position(from: beginningOfDocument, offset: range.location + range.length)!) else {
+        guard let start = position(from: beginningOfDocument, offset: range.location),
+              let end = position(from: beginningOfDocument, offset: range.location + range.length),
+              let textRange = textRange(from: start, to: end) else {
             return .zero
         }
         let rect = firstRect(for: textRange)
