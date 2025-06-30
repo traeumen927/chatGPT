@@ -229,8 +229,7 @@ final class MainViewController: UIViewController {
                     let heightChanged = cell.update(text: message.text, parser: self.parseMarkdownUseCase)
                     if heightChanged {
                         UIView.performWithoutAnimation {
-                            self.tableView.beginUpdates()
-                            self.tableView.endUpdates()
+                            self.tableView.performBatchUpdates(nil, completion: nil)
                         }
                     }
                 }
