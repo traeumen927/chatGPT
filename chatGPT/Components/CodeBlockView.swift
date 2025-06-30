@@ -57,6 +57,7 @@ final class CodeBlockView: UIView {
 
         codeLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            make.width.equalToSuperview()
         }
 
         copyButton.snp.makeConstraints { make in
