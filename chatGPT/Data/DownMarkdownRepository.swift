@@ -11,9 +11,22 @@ final class DownMarkdownRepository: MarkdownRepository {
         let styledHTML = """
         <html>
         <head>
+        <meta name=\"color-scheme\" content=\"light dark\">
         <style>
         body { font-family: -apple-system; font-size: 16px; }
-        pre { background-color: #F5F5F5; padding: 8px; border-radius: 4px; }
+        pre {
+            background-color: #f6f8fa;
+            color: #24292e;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        @media (prefers-color-scheme: dark) {
+            pre {
+                background-color: #2d333b;
+                color: #dcdcdc;
+            }
+        }
         code { font-family: Menlo; }
         </style>
         </head>
