@@ -13,14 +13,16 @@ final class ChatMessageCell: UITableViewCell {
     private var lastHeight: CGFloat = 0
 
     private let bubbleView = UIView()
-    private let messageLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.lineBreakMode = .byCharWrapping
-
-        return label
+    private let messageView: UITextView = {
+        let view = UITextView()
+        view.font = .systemFont(ofSize: 16)
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.backgroundColor = .clear
+        view.textContainerInset = .zero
+        view.textContainer.lineFragmentPadding = 0
+        view.dataDetectorTypes = [.link]
+        return view
     }()
 
 
@@ -40,7 +42,7 @@ final class ChatMessageCell: UITableViewCell {
         bubbleView.clipsToBounds = true
 
         contentView.addSubview(bubbleView)
-        bubbleView.addSubview(messageLabel)
+        bubbleView.addSubview(messageView)
 
         bubbleView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8).priority(999)
@@ -48,14 +50,14 @@ final class ChatMessageCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(16)
         }
 
-        messageLabel.snp.makeConstraints { make in
+        messageView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(12).priority(999)
         }
     }
 
     func configure(with message: ChatViewModel.ChatMessage) {
 
-        messageLabel.text = message.text
+        messageView.attributedText = message.text.markdownAttributed(font: messageView.font ?? .systemFont(ofSize: 16), textColor: messageView.textColor ?? .label)
 
 
         switch message.type {
@@ -63,8 +65,8 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.isHidden = false
             bubbleView.backgroundColor = UIColor.systemBlue
             bubbleView.layer.cornerRadius = 16
-            messageLabel.textColor = .white
-            messageLabel.snp.remakeConstraints { make in
+            messageView.textColor = .white
+            messageView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -77,8 +79,8 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.isHidden = false
             bubbleView.backgroundColor = .clear
             bubbleView.layer.cornerRadius = 0
-            messageLabel.textColor = .label
-            messageLabel.snp.remakeConstraints { make in
+            messageView.textColor = .label
+            messageView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -90,8 +92,8 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.isHidden = false
             bubbleView.backgroundColor = UIColor.systemRed
             bubbleView.layer.cornerRadius = 16
-            messageLabel.textColor = .white
-            messageLabel.snp.remakeConstraints { make in
+            messageView.textColor = .white
+            messageView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -102,15 +104,15 @@ final class ChatMessageCell: UITableViewCell {
         }
 
         layoutIfNeeded()
-        lastHeight = messageLabel.bounds.height
+        lastHeight = messageView.contentSize.height
 
     }
 
     @discardableResult
     func update(text: String) -> Bool {
-        messageLabel.text = text
+        messageView.attributedText = text.markdownAttributed(font: messageView.font ?? .systemFont(ofSize: 16), textColor: messageView.textColor ?? .label)
         layoutIfNeeded()
-        let newHeight = messageLabel.bounds.height
+        let newHeight = messageView.contentSize.height
         defer { lastHeight = newHeight }
         return newHeight != lastHeight
     }
