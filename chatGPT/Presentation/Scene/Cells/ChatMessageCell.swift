@@ -58,14 +58,13 @@ final class ChatMessageCell: UITableViewCell {
     func configure(with message: ChatViewModel.ChatMessage,
                    parser: ParseMarkdownUseCase) {
 
-        let attributed = parser.execute(markdown: message.text)
-        let mutable = NSMutableAttributedString(attributedString: attributed)
-        let range = NSRange(location: 0, length: mutable.length)
-        mutable.addAttributes([
-            .font: messageView.font ?? .systemFont(ofSize: 16),
-            .foregroundColor: messageView.textColor ?? .label
-        ], range: range)
-        messageView.attributedText = mutable
+        switch message.type {
+        case .assistant:
+            messageView.attributedText = parser.execute(markdown: message.text)
+        default:
+            messageView.text = message.text
+            messageView.font = .systemFont(ofSize: 16)
+        }
 
 
         switch message.type {
@@ -118,14 +117,7 @@ final class ChatMessageCell: UITableViewCell {
 
     @discardableResult
     func update(text: String, parser: ParseMarkdownUseCase) -> Bool {
-        let attributed = parser.execute(markdown: text)
-        let mutable = NSMutableAttributedString(attributedString: attributed)
-        let range = NSRange(location: 0, length: mutable.length)
-        mutable.addAttributes([
-            .font: messageView.font ?? .systemFont(ofSize: 16),
-            .foregroundColor: messageView.textColor ?? .label
-        ], range: range)
-        messageView.attributedText = mutable
+        messageView.attributedText = parser.execute(markdown: text)
         layoutIfNeeded()
         let newHeight = messageView.contentSize.height
         defer { lastHeight = newHeight }
