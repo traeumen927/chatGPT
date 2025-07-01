@@ -35,6 +35,9 @@ final class DownMarkdownRepository: MarkdownRepository {
         let range = NSRange(location: 0, length: result.length)
         result.removeAttribute(.foregroundColor, range: range)
         result.addAttribute(.foregroundColor, value: UIColor.label, range: range)
+        while result.string.hasSuffix("\n") {
+            result.deleteCharacters(in: NSRange(location: result.length - 1, length: 1))
+        }
         return result
     }
 
@@ -64,7 +67,10 @@ final class DownMarkdownRepository: MarkdownRepository {
             .characterEncoding: String.Encoding.utf8.rawValue
         ]
 
-        if let attributed = try? NSAttributedString(data: data, options: options, documentAttributes: nil) {
+        if let attributed = try? NSMutableAttributedString(data: data, options: options, documentAttributes: nil) {
+            while attributed.string.hasSuffix("\n") {
+                attributed.deleteCharacters(in: NSRange(location: attributed.length - 1, length: 1))
+            }
             return attributed
         }
         return NSAttributedString(string: markdown)
