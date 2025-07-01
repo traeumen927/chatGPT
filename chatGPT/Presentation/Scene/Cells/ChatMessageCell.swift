@@ -87,16 +87,34 @@ final class ChatMessageCell: UITableViewCell {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         let fullRange = NSRange(location: 0, length: attributed.length)
-        attributed.enumerateAttributes(in: fullRange) { attrs, range, _ in
-            if let attachment = attrs[.attachment] as? CodeBlockAttachment {
+        var currentLocation = 0
+        attributed.enumerateAttribute(.attachment, in: fullRange) { value, range, _ in
+            if let attachment = value as? CodeBlockAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                }
                 stackView.addArrangedSubview(attachment.view)
-            } else if let attachment = attrs[.attachment] as? HorizontalRuleAttachment {
+                currentLocation = range.location + range.length
+            } else if let attachment = value as? HorizontalRuleAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                }
                 stackView.addArrangedSubview(attachment.view)
-            } else {
-                let textView = makeTextView()
-                textView.attributedText = attributed.attributedSubstring(from: range)
-                stackView.addArrangedSubview(textView)
+                currentLocation = range.location + range.length
             }
+        }
+
+        if currentLocation < attributed.length {
+            let remainingRange = NSRange(location: currentLocation, length: attributed.length - currentLocation)
+            let textView = makeTextView()
+            textView.attributedText = attributed.attributedSubstring(from: remainingRange)
+            stackView.addArrangedSubview(textView)
         }
     }
 
