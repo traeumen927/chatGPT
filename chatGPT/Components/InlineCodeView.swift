@@ -5,13 +5,16 @@ final class InlineCodeView: UILabel {
 
     init(code: String) {
         super.init(frame: .zero)
-        text = code
-        font = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
-        textColor = ThemeColor.inlineCodeForeground
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.monospacedSystemFont(ofSize: 14, weight: .regular),
+            .foregroundColor: ThemeColor.inlineCodeForeground
+        ]
+        attributedText = NSAttributedString(string: code, attributes: attributes)
         backgroundColor = ThemeColor.inlineCodeBackground
         layer.cornerRadius = 4
         layer.masksToBounds = true
         numberOfLines = 1
+        isOpaque = false
     }
 
     required init?(coder: NSCoder) {
