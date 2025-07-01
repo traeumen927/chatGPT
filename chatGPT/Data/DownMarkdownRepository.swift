@@ -32,6 +32,9 @@ final class DownMarkdownRepository: MarkdownRepository {
 
         let result = NSMutableAttributedString()
         parts.forEach { result.append($0) }
+        let range = NSRange(location: 0, length: result.length)
+        result.removeAttribute(.foregroundColor, range: range)
+        result.addAttribute(.foregroundColor, value: UIColor.label, range: range)
         return result
     }
 
