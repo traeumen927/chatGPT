@@ -17,11 +17,19 @@ final class CodeBlockView: UIView {
         return view
     }()
 
+    private let contentView: UIView = {
+        let view = UIView()
+        return view
+    }()
+
     private let codeLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
+        label.lineBreakMode = .byClipping
         label.font = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
         label.textColor = ThemeColor.label1
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
@@ -49,15 +57,22 @@ final class CodeBlockView: UIView {
 
         addSubview(scrollView)
         addSubview(copyButton)
-        scrollView.addSubview(codeLabel)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(codeLabel)
 
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(12)
         }
 
+        contentView.snp.makeConstraints { make in
+            make.top.bottom.leading.equalToSuperview()
+            make.trailing.equalToSuperview().priority(.low)
+            make.width.greaterThanOrEqualToSuperview()
+            make.height.equalToSuperview()
+        }
+
         codeLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.width.equalToSuperview()
         }
 
         copyButton.snp.makeConstraints { make in
