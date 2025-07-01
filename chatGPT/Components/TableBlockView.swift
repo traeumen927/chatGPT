@@ -36,8 +36,9 @@ final class TableBlockView: UIView {
         }
 
         contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
+            make.top.bottom.leading.equalToSuperview()
+            make.trailing.equalToSuperview().priority(.low)
+            make.width.greaterThanOrEqualToSuperview()
         }
 
         stackView.snp.makeConstraints { make in
@@ -55,27 +56,31 @@ final class TableBlockView: UIView {
             rowStack.distribution = .fillEqually
             rowStack.spacing = 0
 
-            for (index, cell) in row.enumerated() {
+            var cells: [UIView] = []
+            for cell in row {
                 let label = UILabel()
                 label.font = .systemFont(ofSize: 14)
                 label.numberOfLines = 0
                 label.textAlignment = .center
                 label.text = cell
                 rowStack.addArrangedSubview(label)
-
-                if index != row.count - 1 {
-                    let vLine = UIView()
-                    vLine.backgroundColor = .separator
-                    rowStack.addArrangedSubview(vLine)
-                    vLine.snp.makeConstraints { make in
-                        make.width.equalTo(1.0 / UIScreen.main.scale)
-                    }
-                }
+                cells.append(label)
             }
 
             container.addSubview(rowStack)
             rowStack.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
+            }
+
+            for index in 0..<cells.count - 1 {
+                let vLine = UIView()
+                vLine.backgroundColor = .separator
+                container.addSubview(vLine)
+                vLine.snp.makeConstraints { make in
+                    make.top.bottom.equalToSuperview()
+                    make.leading.equalTo(cells[index].snp.trailing)
+                    make.width.equalTo(1.0 / UIScreen.main.scale)
+                }
             }
 
             if rowIndex != rows.count - 1 {
