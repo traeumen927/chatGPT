@@ -107,6 +107,15 @@ final class ChatMessageCell: UITableViewCell {
                 }
                 stackView.addArrangedSubview(attachment.view)
                 currentLocation = range.location + range.length
+            } else if let attachment = value as? TableBlockAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                }
+                stackView.addArrangedSubview(attachment.view)
+                currentLocation = range.location + range.length
             }
         }
 

@@ -40,21 +40,31 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     private func attributed(from markdown: String) -> NSAttributedString {
         let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false)
         let result = NSMutableAttributedString()
-        
-        for (index, lineSub) in lines.enumerated() {
-            let line = String(lineSub)
-            
+
+        var index = 0
+        while index < lines.count {
+            let line = String(lines[index])
+
             if line.trimmingCharacters(in: .whitespaces) == "---" {
                 let attachment = HorizontalRuleAttachment()
                 result.append(NSAttributedString(attachment: attachment))
+                index += 1
+            } else if line.starts(with: "|") {
+                var tableLines: [String] = []
+                while index < lines.count && lines[index].starts(with: "|") {
+                    tableLines.append(String(lines[index]))
+                    index += 1
+                }
+                if let attachment = makeTableAttachment(from: tableLines) {
+                    result.append(NSAttributedString(attachment: attachment))
+                }
             } else {
                 var options = AttributedString.MarkdownParsingOptions()
                 options.interpretedSyntax = .inlineOnlyPreservingWhitespace
                 options.allowsExtendedAttributes = true
-                
+
                 if var attr = try? AttributedString(markdown: line, options: options) {
-                    
-                    // run 단위 스타일 지정
+
                     for run in attr.runs {
                         let range = run.range
                         if run.inlinePresentationIntent == .code {
@@ -66,22 +76,40 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                             attr[range].foregroundColor = UIColor.label
                         }
                     }
-                    
+
                     result.append(NSAttributedString(attr))
                 } else {
-                    // fallback: 마크다운 파싱 실패 시 일반 텍스트로 처리
                     result.append(NSAttributedString(string: line, attributes: [
                         .font: UIFont.systemFont(ofSize: 16),
                         .foregroundColor: UIColor.label
                     ]))
                 }
+                index += 1
             }
-            
-            if index < lines.count - 1 {
+
+            if index < lines.count {
                 result.append(NSAttributedString(string: "\n"))
             }
         }
-        
+
         return result
+    }
+
+    private func makeTableAttachment(from lines: [String]) -> TableBlockAttachment? {
+        guard lines.count >= 2 else { return nil }
+        let header = parseCells(from: lines[0])
+        var rows: [[String]] = [header]
+        for line in lines.dropFirst(2) {
+            rows.append(parseCells(from: line))
+        }
+        return TableBlockAttachment(rows: rows)
+    }
+
+    private func parseCells(from line: String) -> [String] {
+        var temp = line
+        temp = temp.trimmingCharacters(in: .whitespaces)
+        if temp.hasPrefix("|") { temp.removeFirst() }
+        if temp.hasSuffix("|") { temp.removeLast() }
+        return temp.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }
     }
 }
