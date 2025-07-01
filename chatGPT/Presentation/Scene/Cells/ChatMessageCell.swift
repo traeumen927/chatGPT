@@ -51,6 +51,9 @@ final class ChatMessageCell: UITableViewCell {
         bubbleView.addSubview(messageView)
         bubbleView.addSubview(stackView)
 
+        stackView.isHidden = true
+        messageView.isHidden = false
+
         bubbleView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8).priority(999)
             make.leading.equalToSuperview().inset(16)
@@ -91,6 +94,16 @@ final class ChatMessageCell: UITableViewCell {
                 stackView.addArrangedSubview(textView)
             }
         }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        messageView.text = nil
+        messageView.attributedText = nil
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        stackView.isHidden = true
+        messageView.isHidden = false
+        lastHeight = 0
     }
 
     override func layoutSubviews() {
