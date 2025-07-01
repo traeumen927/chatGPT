@@ -22,6 +22,7 @@ final class ChatMessageCell: UITableViewCell {
         view.textContainerInset = .zero
         view.textContainer.lineFragmentPadding = 0
         view.dataDetectorTypes = [.link]
+        view.textColor = .label
         return view
     }()
     private let stackView: UIStackView = {
@@ -78,6 +79,7 @@ final class ChatMessageCell: UITableViewCell {
         view.textContainerInset = .zero
         view.textContainer.lineFragmentPadding = 0
         view.dataDetectorTypes = [.link]
+        view.textColor = .label
         return view
     }
 
