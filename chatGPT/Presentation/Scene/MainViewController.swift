@@ -229,7 +229,8 @@ final class MainViewController: UIViewController {
                     let heightChanged = cell.update(text: message.text, parser: self.parseMarkdownUseCase)
                     if heightChanged {
                         UIView.performWithoutAnimation {
-                            self.tableView.performBatchUpdates(nil, completion: nil)
+                            self.tableView.beginUpdates()
+                            self.tableView.endUpdates()
                         }
                     }
                 }
@@ -285,7 +286,7 @@ final class MainViewController: UIViewController {
         snapshot.appendSections([0])
         snapshot.appendItems(messages)
         UIView.performWithoutAnimation {
-            dataSource.apply(snapshot, animatingDifferences: false)
+            dataSource.applySnapshotUsingReloadData(snapshot)
             if !messages.isEmpty {
                 tableView.layoutIfNeeded()
             }
