@@ -1,17 +1,10 @@
 import UIKit
 import SnapKit
-import RxSwift
-import RxCocoa
 
 final class TableBlockView: UIView {
-    private let disposeBag = DisposeBag()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     private let stackView = UIStackView()
-    private let copyButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Copy", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
-        return button
-    }()
 
     private let rows: [[String]]
 
@@ -19,7 +12,6 @@ final class TableBlockView: UIView {
         self.rows = rows
         super.init(frame: .zero)
         layout()
-        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -27,53 +19,77 @@ final class TableBlockView: UIView {
     }
 
     private func layout() {
-        backgroundColor = ThemeColor.background3
-        layer.cornerRadius = 8
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(stackView)
 
-        addSubview(stackView)
-        addSubview(copyButton)
+        scrollView.showsHorizontalScrollIndicator = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = true
+        scrollView.alwaysBounceVertical = false
 
         stackView.axis = .vertical
-        stackView.spacing = 4
+        stackView.spacing = 0
 
-        stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(12)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
 
-        copyButton.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(8)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.greaterThanOrEqualToSuperview()
+            make.height.equalToSuperview()
+        }
+
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
 
         buildTable()
     }
 
-    private func bind() {
-        copyButton.rx.tap
-            .bind { [weak self] in
-                guard let self else { return }
-                let text = self.rows.map { $0.joined(separator: "\t") }.joined(separator: "\n")
-                UIPasteboard.general.string = text
-            }
-            .disposed(by: disposeBag)
-    }
-
     private func buildTable() {
-        rows.forEach { row in
+        for (rowIndex, row) in rows.enumerated() {
+            let container = UIView()
             let rowStack = UIStackView()
             rowStack.axis = .horizontal
             rowStack.distribution = .fillEqually
-            rowStack.spacing = 4
-            row.forEach { cell in
+            rowStack.spacing = 0
+
+            for (index, cell) in row.enumerated() {
                 let label = UILabel()
                 label.font = .systemFont(ofSize: 14)
                 label.numberOfLines = 0
                 label.textAlignment = .center
                 label.text = cell
-                label.layer.borderWidth = 0.5
-                label.layer.borderColor = UIColor.separator.cgColor
                 rowStack.addArrangedSubview(label)
+
+                if index != row.count - 1 {
+                    let vLine = UIView()
+                    vLine.backgroundColor = .separator
+                    rowStack.addArrangedSubview(vLine)
+                    vLine.snp.makeConstraints { make in
+                        make.width.equalTo(1.0 / UIScreen.main.scale)
+                    }
+                }
             }
-            stackView.addArrangedSubview(rowStack)
+
+            container.addSubview(rowStack)
+            rowStack.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+
+            if rowIndex != rows.count - 1 {
+                let bottom = UIView()
+                bottom.backgroundColor = .separator
+                container.addSubview(bottom)
+                bottom.snp.makeConstraints { make in
+                    make.leading.trailing.bottom.equalToSuperview()
+                    make.height.equalTo(1.0 / UIScreen.main.scale)
+                }
+            }
+
+            stackView.addArrangedSubview(container)
         }
     }
 }
