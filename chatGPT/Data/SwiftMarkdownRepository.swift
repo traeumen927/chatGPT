@@ -49,8 +49,8 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             } else {
                 var options = AttributedString.MarkdownParsingOptions()
                 options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-                if var attr = try? AttributedString(markdown: line, options: options) {
-                    var ns = NSMutableAttributedString()
+                if let attr = try? AttributedString(markdown: line, options: options) {
+                    let ns = NSMutableAttributedString()
                     var current = attr.startIndex
                     for run in attr.runs {
                         if run.inlinePresentationIntent == .code {
@@ -58,7 +58,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                                 let sub = AttributedString(attr[current..<run.range.lowerBound])
                                 ns.append(NSAttributedString(sub))
                             }
-                            let code = String(attr[run.range])
+                            let code = String(attr[run.range].characters)
                             let attachment = InlineCodeAttachment(code: code)
                             ns.append(NSAttributedString(attachment: attachment))
                             current = run.range.upperBound
