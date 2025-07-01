@@ -38,18 +38,35 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     }
 
     private func attributed(from markdown: String) -> NSAttributedString {
-        var options = AttributedString.MarkdownParsingOptions()
-        options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-        if let attr = try? AttributedString(markdown: markdown, options: options) {
-            let ns = NSMutableAttributedString(attr)
-            let range = NSRange(location: 0, length: ns.length)
-            ns.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: range)
-            ns.addAttribute(.foregroundColor, value: UIColor.label, range: range)
-            return ns
+        let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false)
+        let result = NSMutableAttributedString()
+
+        for (index, lineSub) in lines.enumerated() {
+            let line = String(lineSub)
+            if line.trimmingCharacters(in: .whitespaces) == "---" {
+                let attachment = HorizontalRuleAttachment()
+                result.append(NSAttributedString(attachment: attachment))
+            } else {
+                var options = AttributedString.MarkdownParsingOptions()
+                options.interpretedSyntax = .inlineOnlyPreservingWhitespace
+                if let attr = try? AttributedString(markdown: line, options: options) {
+                    let ns = NSMutableAttributedString(attr)
+                    let range = NSRange(location: 0, length: ns.length)
+                    ns.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: range)
+                    ns.addAttribute(.foregroundColor, value: UIColor.label, range: range)
+                    result.append(ns)
+                } else {
+                    result.append(NSAttributedString(string: line, attributes: [
+                        .font: UIFont.systemFont(ofSize: 16),
+                        .foregroundColor: UIColor.label
+                    ]))
+                }
+            }
+            if index < lines.count - 1 {
+                result.append(NSAttributedString(string: "\n"))
+            }
         }
-        return NSAttributedString(string: markdown, attributes: [
-            .font: UIFont.systemFont(ofSize: 16),
-            .foregroundColor: UIColor.label
-        ])
+
+        return result
     }
 }

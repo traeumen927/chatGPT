@@ -57,8 +57,10 @@
 		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
                 F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
                 8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717BADADF1E39907F7A046E9 /* CodeBlockView.swift */; };
-                B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */; };
-                06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */; };
+               B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */; };
+               F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */; };
+               F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111122F0A000100D00000 /* HorizontalRuleView.swift */; };
+               06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */; };
                 F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
 		F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */; };
 		F1C897122E044087000A0C3D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F1C897112E044087000A0C3D /* GoogleSignIn */; };
@@ -189,8 +191,10 @@
 		eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUserProfileImageUseCase.swift; sourceTree = "<group>"; };
                 f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
                 717BADADF1E39907F7A046E9 /* CodeBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlockView.swift; sourceTree = "<group>"; };
-                7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlockAttachment.swift; sourceTree = "<group>"; };
-                6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Attachment.swift"; sourceTree = "<group>"; };
+               7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlockAttachment.swift; sourceTree = "<group>"; };
+               F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRuleAttachment.swift; sourceTree = "<group>"; };
+               F12111122F0A000100D00000 /* HorizontalRuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRuleView.swift; sourceTree = "<group>"; };
+               6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Attachment.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -458,11 +462,13 @@
                                 F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */,
                                 F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */,
                                 F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */,
-                                F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */,
-                                F1EF04EC2E044CDE005D2CF9 /* GoogleLoginButton.swift */,
-                                717BADADF1E39907F7A046E9 /* CodeBlockView.swift */,
-                                7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */,
-                        );
+                               F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */,
+                               F1EF04EC2E044CDE005D2CF9 /* GoogleLoginButton.swift */,
+                               717BADADF1E39907F7A046E9 /* CodeBlockView.swift */,
+                               7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */,
+                               F12111122F0A000100D00000 /* HorizontalRuleView.swift */,
+                               F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */,
+                       );
                         path = Components;
                         sourceTree = "<group>";
                 };
@@ -655,9 +661,11 @@
 				F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */,
 				F1051DF32E004E17008D5D80 /* OpenAIResponse.swift in Sources */,
                                F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */,
-                                8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */,
-                                B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */,
-                                06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */,
+                               8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */,
+                               B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */,
+                               F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */,
+                               F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */,
+                               06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */,
                                ED3EEADB42E0AF92425F1398 /* SwiftMarkdownRepository.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */,

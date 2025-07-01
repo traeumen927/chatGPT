@@ -90,6 +90,8 @@ final class ChatMessageCell: UITableViewCell {
         attributed.enumerateAttributes(in: fullRange) { attrs, range, _ in
             if let attachment = attrs[.attachment] as? CodeBlockAttachment {
                 stackView.addArrangedSubview(attachment.view)
+            } else if let attachment = attrs[.attachment] as? HorizontalRuleAttachment {
+                stackView.addArrangedSubview(attachment.view)
             } else {
                 let textView = makeTextView()
                 textView.attributedText = attributed.attributedSubstring(from: range)
