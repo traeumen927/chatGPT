@@ -39,6 +39,7 @@ final class TableBlockView: UIView {
             make.top.bottom.leading.equalToSuperview()
             make.trailing.equalToSuperview().priority(.low)
             make.width.greaterThanOrEqualToSuperview()
+            make.height.equalToSuperview()
         }
 
         stackView.snp.makeConstraints { make in
