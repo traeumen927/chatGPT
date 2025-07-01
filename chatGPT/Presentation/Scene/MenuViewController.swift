@@ -31,7 +31,7 @@ final class MenuViewController: UIViewController {
     private let logoutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("로그아웃", for: .normal)
-        button.setTitleColor(ThemeColor.nagative, for: .normal)
+        button.setTitleColor(ThemeColor.negative, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         return button
     }()
