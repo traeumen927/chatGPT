@@ -24,6 +24,12 @@ final class ChatMessageCell: UITableViewCell {
         view.dataDetectorTypes = [.link]
         return view
     }()
+    private let stackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.spacing = 8
+        return view
+    }()
 
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -43,6 +49,7 @@ final class ChatMessageCell: UITableViewCell {
 
         contentView.addSubview(bubbleView)
         bubbleView.addSubview(messageView)
+        bubbleView.addSubview(stackView)
 
         bubbleView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8).priority(999)
@@ -53,11 +60,41 @@ final class ChatMessageCell: UITableViewCell {
         messageView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(12).priority(999)
         }
+
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(12).priority(999)
+        }
+    }
+
+    private func makeTextView() -> UITextView {
+        let view = UITextView()
+        view.font = .systemFont(ofSize: 16)
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.backgroundColor = .clear
+        view.textContainerInset = .zero
+        view.textContainer.lineFragmentPadding = 0
+        view.dataDetectorTypes = [.link]
+        return view
+    }
+
+    private func buildStack(from attributed: NSAttributedString) {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        let fullRange = NSRange(location: 0, length: attributed.length)
+        attributed.enumerateAttributes(in: fullRange) { attrs, range, _ in
+            if let attachment = attrs[.attachment] as? CodeBlockAttachment {
+                stackView.addArrangedSubview(attachment.view)
+            } else {
+                let textView = makeTextView()
+                textView.attributedText = attributed.attributedSubstring(from: range)
+                stackView.addArrangedSubview(textView)
+            }
+        }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
     }
 
     func configure(with message: ChatViewModel.ChatMessage,
@@ -65,13 +102,16 @@ final class ChatMessageCell: UITableViewCell {
 
         switch message.type {
         case .assistant:
-            messageView.attributedText = parser.execute(markdown: message.text)
+            let attributed = parser.execute(markdown: message.text)
+            buildStack(from: attributed)
+            stackView.isHidden = false
+            messageView.isHidden = true
         default:
             messageView.text = message.text
             messageView.font = .systemFont(ofSize: 16)
+            stackView.isHidden = true
+            messageView.isHidden = false
         }
-
-        
 
         switch message.type {
         case .user:
@@ -93,7 +133,7 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.backgroundColor = .clear
             bubbleView.layer.cornerRadius = 0
             messageView.textColor = .label
-            messageView.snp.remakeConstraints { make in
+            stackView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -117,19 +157,32 @@ final class ChatMessageCell: UITableViewCell {
         }
 
         layoutIfNeeded()
-        messageView.addAttachmentViews()
-        lastHeight = messageView.contentSize.height
+        if stackView.isHidden {
+            messageView.addAttachmentViews()
+            lastHeight = messageView.contentSize.height
+        } else {
+            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        }
 
     }
 
     @discardableResult
     func update(text: String, parser: ParseMarkdownUseCase) -> Bool {
-        messageView.attributedText = parser.execute(markdown: text)
-        layoutIfNeeded()
-        messageView.addAttachmentViews()
-        let newHeight = messageView.contentSize.height
-        defer { lastHeight = newHeight }
-        return newHeight != lastHeight
+        if stackView.isHidden {
+            messageView.attributedText = parser.execute(markdown: text)
+            layoutIfNeeded()
+            messageView.addAttachmentViews()
+            let newHeight = messageView.contentSize.height
+            defer { lastHeight = newHeight }
+            return newHeight != lastHeight
+        } else {
+            let attributed = parser.execute(markdown: text)
+            buildStack(from: attributed)
+            layoutIfNeeded()
+            let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            defer { lastHeight = newHeight }
+            return newHeight != lastHeight
+        }
     }
 
 }
