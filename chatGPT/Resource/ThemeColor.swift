@@ -41,12 +41,6 @@ struct ThemeColor {
     static var background3: UIColor {
         .dynamic(light: UIColor(hex: "#DEE2E6"), dark: UIColor(hex: "#2C2C2E"))
     }
-    static var inlineCodeForeground: UIColor {
-        .dynamic(light: UIColor(hex: "#c7254e"), dark: UIColor(hex: "#ffdce0"))
-    }
-    static var inlineCodeBackground: UIColor {
-        .dynamic(light: UIColor(hex: "#f9f2f4"), dark: UIColor(hex: "#2d333b"))
-    }
     static var positive: UIColor {
         .dynamic(light: UIColor(hex: "#1261C4"), dark: UIColor(hex: "#0A84FF"))
     }
