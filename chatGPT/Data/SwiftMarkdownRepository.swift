@@ -49,25 +49,14 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             } else {
                 var options = AttributedString.MarkdownParsingOptions()
                 options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-                if let attr = try? AttributedString(markdown: line, options: options) {
-                    let ns = NSMutableAttributedString()
-                    var current = attr.startIndex
+                if var attr = try? AttributedString(markdown: line, options: options) {
                     for run in attr.runs {
                         if run.inlinePresentationIntent == .code {
-                            if current < run.range.lowerBound {
-                                let sub = AttributedString(attr[current..<run.range.lowerBound])
-                                ns.append(NSAttributedString(sub))
-                            }
-                            let code = String(attr[run.range].characters)
-                            let attachment = InlineCodeAttachment(code: code)
-                            ns.append(NSAttributedString(attachment: attachment))
-                            current = run.range.upperBound
+                            attr[run.range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                            attr[run.range].backgroundColor = ThemeColor.background3
                         }
                     }
-                    if current < attr.endIndex {
-                        let sub = AttributedString(attr[current..<attr.endIndex])
-                        ns.append(NSAttributedString(sub))
-                    }
+                    let ns = NSMutableAttributedString(attr)
                     let range = NSRange(location: 0, length: ns.length)
                     ns.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: range)
                     ns.addAttribute(.foregroundColor, value: UIColor.label, range: range)

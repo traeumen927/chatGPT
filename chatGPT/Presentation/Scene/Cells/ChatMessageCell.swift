@@ -196,7 +196,6 @@ final class ChatMessageCell: UITableViewCell {
             messageView.addAttachmentViews()
             lastHeight = messageView.contentSize.height
         } else {
-            stackView.arrangedSubviews.compactMap { $0 as? UITextView }.forEach { $0.addAttachmentViews() }
             lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
         }
 
@@ -215,7 +214,6 @@ final class ChatMessageCell: UITableViewCell {
             let attributed = parser.execute(markdown: text)
             buildStack(from: attributed)
             layoutIfNeeded()
-            stackView.arrangedSubviews.compactMap { $0 as? UITextView }.forEach { $0.addAttachmentViews() }
             let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
