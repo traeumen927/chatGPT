@@ -82,7 +82,7 @@ final class AppCoordinator {
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let observeAuthStateUseCase = ObserveAuthStateUseCase(repository: authRepository)
-        let markdownRepository = DownMarkdownRepository()
+        let markdownRepository = SwiftMarkdownRepository()
         let parseMarkdownUseCase = ParseMarkdownUseCase(repository: markdownRepository)
 
         let vc = MainViewController(

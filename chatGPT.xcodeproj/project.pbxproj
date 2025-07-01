@@ -32,9 +32,9 @@
 		F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D12E0C034B006E81DD /* ConversationMessage.swift */; };
 		F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */; };
 		F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */; };
-		F13EB5952E12BD9600171AFC /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = F13EB5942E12BD9600171AFC /* Down */; };
-		F13EB5972E12BFE200171AFC /* DownMarkdownRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB5962E12BFE200171AFC /* DownMarkdownRepository.swift */; };
-		F13EB5992E12BFED00171AFC /* MarkdownRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */; };
+               ED3EEADB42E0AF92425F1398 /* SwiftMarkdownRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EFA23517533A354FB58C66 /* SwiftMarkdownRepository.swift */; };
+               DFD7D0A8D8E5A53D924BEF6E /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = E0FF3914DF8AFA4FDFA7E3D0 /* Markdown */; };
+               F13EB5992E12BFED00171AFC /* MarkdownRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */; };
 		F13EB59B2E12BFF400171AFC /* ParseMarkdownUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB59A2E12BFF400171AFC /* ParseMarkdownUseCase.swift */; };
 		F1452D832E095F7D00795A9E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1452D822E095F7D00795A9E /* GoogleService-Info.plist */; };
 		F1452D852E09741500795A9E /* AuthUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1452D842E09741500795A9E /* AuthUser.swift */; };
@@ -139,7 +139,7 @@
 		F122E5D12E0C034B006E81DD /* ConversationMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
 		F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConversationMessagesUseCase.swift; sourceTree = "<group>"; };
 		F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Sanitize.swift"; sourceTree = "<group>"; };
-		F13EB5962E12BFE200171AFC /* DownMarkdownRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownMarkdownRepository.swift; sourceTree = "<group>"; };
+               E3EFA23517533A354FB58C66 /* SwiftMarkdownRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftMarkdownRepository.swift; sourceTree = "<group>"; };
 		F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRepository.swift; sourceTree = "<group>"; };
 		F13EB59A2E12BFF400171AFC /* ParseMarkdownUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseMarkdownUseCase.swift; sourceTree = "<group>"; };
 		F1452D822E095F7D00795A9E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -206,7 +206,7 @@
 				F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */,
 				F1DF3AFA2DF9AD6E00D8445A /* RxSwift in Frameworks */,
 				F1E571452E043CD100438A53 /* FirebaseFirestore in Frameworks */,
-				F13EB5952E12BD9600171AFC /* Down in Frameworks */,
+                               DFD7D0A8D8E5A53D924BEF6E /* Markdown in Frameworks */,
 				F1E571412E043CD100438A53 /* FirebaseAuth in Frameworks */,
 				F1E571432E043CD100438A53 /* FirebaseCore in Frameworks */,
 				F1DF3AF52DF9AD5200D8445A /* SnapKit in Frameworks */,
@@ -343,7 +343,7 @@
 		F1DF3B012DF9AF5700D8445A /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				F13EB5962E12BFE200171AFC /* DownMarkdownRepository.swift */,
+                               E3EFA23517533A354FB58C66 /* SwiftMarkdownRepository.swift */,
 				F15BC4F92E0A959200F25923 /* FirestoreConversationRepository.swift */,
 				F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */,
 				F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */,
@@ -493,8 +493,8 @@
 				F1E571422E043CD100438A53 /* FirebaseCore */,
 				F1E571442E043CD100438A53 /* FirebaseFirestore */,
 				F1E571462E043CD100438A53 /* FirebaseStorage */,
-				F1C897112E044087000A0C3D /* GoogleSignIn */,
-				F13EB5942E12BD9600171AFC /* Down */,
+                               F1C897112E044087000A0C3D /* GoogleSignIn */,
+                               E0FF3914DF8AFA4FDFA7E3D0 /* Markdown */,
 			);
 			productName = chatGPT;
 			productReference = F16563C82DF9A30F001CDF3B /* chatGPT.app */;
@@ -579,8 +579,8 @@
 				F1DF3AFB2DF9AD8200D8445A /* XCRemoteSwiftPackageReference "Alamofire" */,
 				F1DF3AFE2DF9AD9000D8445A /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				F1E5713F2E043CD100438A53 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				F1C897102E044087000A0C3D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
-				F13EB5932E12BD9600171AFC /* XCRemoteSwiftPackageReference "Down" */,
+                               F1C897102E044087000A0C3D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+                               1C78AD859C38999A08BE6C1A /* XCRemoteSwiftPackageReference "swift-markdown" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F16563C92DF9A30F001CDF3B /* Products */;
@@ -658,7 +658,7 @@
                                 8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */,
                                 B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */,
                                 06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */,
-                               F13EB5972E12BFE200171AFC /* DownMarkdownRepository.swift in Sources */,
+                               ED3EEADB42E0AF92425F1398 /* SwiftMarkdownRepository.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */,
 				F16D6E2D2E0D2F6200E0718A /* OpenAIStreamResponse.swift in Sources */,
@@ -1022,14 +1022,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F13EB5932E12BD9600171AFC /* XCRemoteSwiftPackageReference "Down" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/johnxnguyen/Down.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
+               1C78AD859C38999A08BE6C1A /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+                       isa = XCRemoteSwiftPackageReference;
+                       repositoryURL = "https://github.com/apple/swift-markdown.git";
+                       requirement = {
+                               kind = upToNextMajorVersion;
+                               minimumVersion = 0.2.0;
+                       };
+               };
 		F1C897102E044087000A0C3D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -1089,11 +1089,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F13EB5942E12BD9600171AFC /* Down */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F13EB5932E12BD9600171AFC /* XCRemoteSwiftPackageReference "Down" */;
-			productName = Down;
-		};
+               E0FF3914DF8AFA4FDFA7E3D0 /* Markdown */ = {
+                       isa = XCSwiftPackageProductDependency;
+                       package = 1C78AD859C38999A08BE6C1A /* XCRemoteSwiftPackageReference "swift-markdown" */;
+                       productName = Markdown;
+               };
 		F1C897112E044087000A0C3D /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F1C897102E044087000A0C3D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
