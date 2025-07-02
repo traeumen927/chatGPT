@@ -82,6 +82,8 @@ final class AppCoordinator {
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let observeAuthStateUseCase = ObserveAuthStateUseCase(repository: authRepository)
+        let markdownRepository = SwiftMarkdownRepository()
+        let parseMarkdownUseCase = ParseMarkdownUseCase(repository: markdownRepository)
 
         let vc = MainViewController(
             fetchModelsUseCase: fetchModelsUseCase,
@@ -94,7 +96,8 @@ final class AppCoordinator {
             observeConversationsUseCase: observeConversationsUseCase,
             signOutUseCase: signOutUseCase,
             loadUserImageUseCase: loadUserImageUseCase,
-            observeAuthStateUseCase: observeAuthStateUseCase
+            observeAuthStateUseCase: observeAuthStateUseCase,
+            parseMarkdownUseCase: parseMarkdownUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)

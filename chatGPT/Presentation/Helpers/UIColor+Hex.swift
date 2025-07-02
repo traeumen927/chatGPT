@@ -1,5 +1,5 @@
 //
-//  UIColor+hex.swift
+//  UIColor+Hex.swift
 //  chatGPT
 //
 //  Created by 홍정연 on 6/19/25.

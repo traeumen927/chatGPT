@@ -21,6 +21,7 @@ final class MainViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
+    private let parseMarkdownUseCase: ParseMarkdownUseCase
 
     private let disposeBag = DisposeBag()
 
@@ -126,10 +127,11 @@ final class MainViewController: UIViewController {
          appendMessageUseCase: AppendMessageUseCase,
          fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
          contextRepository: ChatContextRepository,
-         observeConversationsUseCase: ObserveConversationsUseCase,
-         signOutUseCase: SignOutUseCase,
-         loadUserImageUseCase: LoadUserProfileImageUseCase,
-         observeAuthStateUseCase: ObserveAuthStateUseCase) {
+        observeConversationsUseCase: ObserveConversationsUseCase,
+        signOutUseCase: SignOutUseCase,
+        loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase,
+         parseMarkdownUseCase: ParseMarkdownUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -141,6 +143,7 @@ final class MainViewController: UIViewController {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
+        self.parseMarkdownUseCase = parseMarkdownUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -223,7 +226,7 @@ final class MainViewController: UIViewController {
                 
                 // 셀을 찾아 직접 업데이트
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
-                    let heightChanged = cell.update(text: message.text)
+                    let heightChanged = cell.update(text: message.text, parser: self.parseMarkdownUseCase)
                     if heightChanged {
                         UIView.performWithoutAnimation {
                             self.tableView.beginUpdates()
@@ -271,7 +274,7 @@ final class MainViewController: UIViewController {
     private func createDataSource() -> UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage> {
         let dataSource = UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>(tableView: tableView) { tableView, indexPath, message in
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageCell
-            cell.configure(with: message)
+            cell.configure(with: message, parser: self.parseMarkdownUseCase)
             return cell
         }
         dataSource.defaultRowAnimation = .none
@@ -283,7 +286,7 @@ final class MainViewController: UIViewController {
         snapshot.appendSections([0])
         snapshot.appendItems(messages)
         UIView.performWithoutAnimation {
-            dataSource.apply(snapshot, animatingDifferences: false)
+            dataSource.applySnapshotUsingReloadData(snapshot)
             if !messages.isEmpty {
                 tableView.layoutIfNeeded()
             }
