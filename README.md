@@ -1,5 +1,39 @@
 # chatGPT
-App using OpenAI's ChatGPT API
+## ✨ 소개
+
+이 앱은 OpenAI의 **ChatGPT API**를 활용하여, 자연스러운 대화형 인터페이스를 제공하는 iOS용 챗봇 애플리케이션입니다.  
+**클린 아키텍처**를 기반으로 설계되어 유지보수성과 확장성이 뛰어나며, 사용자 경험 중심의 UI를 갖추고 있습니다.
+
+> 단순한 질문-응답을 넘어, 문맥 유지 · 모델 선택 · 히스토리 저장 · 마크다운 렌더링 등 실사용에 필요한 주요 기능을 모두 갖췄습니다.
+
+---
+
+### 🧩 기술 스택 및 구조
+
+- **Architecture**: Clean Architecture 기반 계층 분리
+- **Dependency Manager**: Swift Package Manager (SPM)
+
+### 🔧 사용 라이브러리
+
+- **네트워킹**: Alamofire
+- **인증 및 백엔드**: Firebase, GoogleSignIn
+- **UI 및 레이아웃**: UIKit, SnapKit, Toast
+- **반응형 바인딩**: RxSwift
+- **이미지 로딩**: Kingfisher
+- **마크다운 렌더링**: swift-markdown
+
+---
+
+## 📚 목차
+
+- [🔐 OpenAI API 키 입력 과정 안내](#-openai-api-키-입력-과정-안내)
+- [💬 질문하고, 답변을 받아보세요](#-질문하고-답변을-받아보세요)
+- [🛠️ 모델 선택 및 유지 기능](#️-모델-선택-및-유지-기능)
+- [🧠 대화의 흐름을 기억하는 문맥 유지 기능](#-대화의-흐름을-기억하는-문맥-유지-기능)
+- [📂 대화 히스토리 불러오기 및 전환 기능](#-대화-히스토리-불러오기-및-전환-기능)
+- [🔁 스트리밍 응답 지원 (Stream On/Off)](#-스트리밍-응답-지원-stream-onoff)
+- [🌗 시스템 테마 대응 (다크모드 & 라이트모드)](#-시스템-테마-대응-다크모드--라이트모드)
+- [📄 마크다운 형식 지원](#-마크다운-형식-지원)
 
 ---
 
@@ -194,9 +228,35 @@ ThemeColor를 통해 일관된 색상 시스템을 관리하고 있습니다.
   <img src="https://github.com/user-attachments/assets/0981c436-6556-4944-8ac0-ff3db9dbff09" width="30%">
 </p>
 
->개발 환경에서는 시뮬레이터나 디바이스에서 테마 변경을 통해 시각적으로 쉽게 테스트할 수 있습니다.
->별도 설정 없이 시스템 설정을 그대로 따르며, 필요한 경우 수동 제어도 고려할 수 있도록 구조를 단순하게 유지했습니다.
+> 개발 환경에서는 시뮬레이터나 디바이스에서 테마 변경을 통해 시각적으로 쉽게 테스트할 수 있습니다.  
+> 별도 설정 없이 시스템 설정을 그대로 따르며, 필요한 경우 수동 제어도 고려할 수 있도록 구조를 단순하게 유지했습니다.
 
+
+
+---
+
+## 📄 마크다운 형식 지원
+이 앱에서는 ChatGPT 응답에 포함된 마크다운 포맷을 시각적으로 자연스럽게 표현할 수 있도록 커스텀 UI를 구성했습니다.
+[swift-markdown](https://github.com/swiftlang/swift-markdown) 라이브러리 활용해 기본 문법을 파싱하고, 이를 앱 내부 뷰로 렌더링하는 방식으로 구현되었습니다.
+
+예를들어서 표, 소스코드, 볼드체와 이탤릭체와 같은 텍스트 스타일 서식, 기본 HTML 태그 등의 요소는
+아래와 같이 실제 앱 화면에서도 마크다운 구조에 맞게 잘 정리되어 출력됩니다.
+
+📸 **아래 예시는 마크다운 기능을 지원하여 서식이 적용된 화면과, 그렇지 않은 일반 텍스트 화면을 비교한 예시 입니다. **
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/222b430d-19b7-4198-96cb-92eef035643d" width="30%">
+  <img src="https://github.com/user-attachments/assets/0f4b9b4c-800a-436e-a2f9-5fa91b6c465b" width="30%">
+  <img src="https://github.com/user-attachments/assets/bf8b0b6a-bff3-4768-921a-35f45075546f" width="30%">
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7c1ca7b6-08de-4c31-9e83-e10c134ac9c1" width="30%">
+  <img src="https://github.com/user-attachments/assets/d09e146d-408a-4f1b-b886-43ab24f7379d" width="30%">
+  <img src="https://github.com/user-attachments/assets/0f618410-e5d0-4af1-8e8e-5b7c5e01349a" width="30%">
+</p>
+
+
+> 사용자가 읽기 편하게 정돈된 형태로 답변을 전달하는 데 중점을 두었으며, 추가 서식이 필요할 경우에도 구조 변경 없이 손쉽게 확장할 수 있습니다.
 
 
 
