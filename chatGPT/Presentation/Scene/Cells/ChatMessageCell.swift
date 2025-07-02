@@ -13,14 +13,23 @@ final class ChatMessageCell: UITableViewCell {
     private var lastHeight: CGFloat = 0
 
     private let bubbleView = UIView()
-    private let messageLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.lineBreakMode = .byCharWrapping
-
-        return label
+    private let messageView: UITextView = {
+        let view = UITextView()
+        view.font = .systemFont(ofSize: 16)
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.backgroundColor = .clear
+        view.textContainerInset = .zero
+        view.textContainer.lineFragmentPadding = 0
+        view.dataDetectorTypes = [.link]
+        view.textColor = .label
+        return view
+    }()
+    private let stackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.spacing = 8
+        return view
     }()
 
 
@@ -40,7 +49,11 @@ final class ChatMessageCell: UITableViewCell {
         bubbleView.clipsToBounds = true
 
         contentView.addSubview(bubbleView)
-        bubbleView.addSubview(messageLabel)
+        bubbleView.addSubview(messageView)
+        bubbleView.addSubview(stackView)
+
+        stackView.isHidden = true
+        messageView.isHidden = false
 
         bubbleView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8).priority(999)
@@ -48,23 +61,109 @@ final class ChatMessageCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(16)
         }
 
-        messageLabel.snp.makeConstraints { make in
+        messageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(12).priority(999)
+        }
+
+        stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(12).priority(999)
         }
     }
 
-    func configure(with message: ChatViewModel.ChatMessage) {
+    private func makeTextView() -> UITextView {
+        let view = UITextView()
+        view.font = .systemFont(ofSize: 16)
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.backgroundColor = .clear
+        view.textContainerInset = .zero
+        view.textContainer.lineFragmentPadding = 0
+        view.dataDetectorTypes = [.link]
+        view.textColor = .label
+        return view
+    }
 
-        messageLabel.text = message.text
+    private func buildStack(from attributed: NSAttributedString) {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
+        let fullRange = NSRange(location: 0, length: attributed.length)
+        var currentLocation = 0
+        attributed.enumerateAttribute(.attachment, in: fullRange) { value, range, _ in
+            if let attachment = value as? CodeBlockAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                }
+                stackView.addArrangedSubview(attachment.view)
+                currentLocation = range.location + range.length
+            } else if let attachment = value as? HorizontalRuleAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                }
+                stackView.addArrangedSubview(attachment.view)
+                currentLocation = range.location + range.length
+            } else if let attachment = value as? TableBlockAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                }
+                stackView.addArrangedSubview(attachment.view)
+                currentLocation = range.location + range.length
+            }
+        }
+
+        if currentLocation < attributed.length {
+            let remainingRange = NSRange(location: currentLocation, length: attributed.length - currentLocation)
+            let textView = makeTextView()
+            textView.attributedText = attributed.attributedSubstring(from: remainingRange)
+            stackView.addArrangedSubview(textView)
+        }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        messageView.text = nil
+        messageView.attributedText = nil
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        stackView.isHidden = true
+        messageView.isHidden = false
+        lastHeight = 0
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+
+    func configure(with message: ChatViewModel.ChatMessage,
+                   parser: ParseMarkdownUseCase) {
+
+        switch message.type {
+        case .assistant:
+            let attributed = parser.execute(markdown: message.text)
+            buildStack(from: attributed)
+            stackView.isHidden = false
+            messageView.isHidden = true
+        default:
+            messageView.text = message.text
+            messageView.font = .systemFont(ofSize: 16)
+            stackView.isHidden = true
+            messageView.isHidden = false
+        }
 
         switch message.type {
         case .user:
             bubbleView.isHidden = false
             bubbleView.backgroundColor = UIColor.systemBlue
             bubbleView.layer.cornerRadius = 16
-            messageLabel.textColor = .white
-            messageLabel.snp.remakeConstraints { make in
+            messageView.textColor = .white
+            messageView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -77,8 +176,8 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.isHidden = false
             bubbleView.backgroundColor = .clear
             bubbleView.layer.cornerRadius = 0
-            messageLabel.textColor = .label
-            messageLabel.snp.remakeConstraints { make in
+            messageView.textColor = .label
+            stackView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -90,8 +189,8 @@ final class ChatMessageCell: UITableViewCell {
             bubbleView.isHidden = false
             bubbleView.backgroundColor = UIColor.systemRed
             bubbleView.layer.cornerRadius = 16
-            messageLabel.textColor = .white
-            messageLabel.snp.remakeConstraints { make in
+            messageView.textColor = .white
+            messageView.snp.remakeConstraints { make in
                 make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
@@ -102,16 +201,32 @@ final class ChatMessageCell: UITableViewCell {
         }
 
         layoutIfNeeded()
-        lastHeight = messageLabel.bounds.height
+        if stackView.isHidden {
+            messageView.addAttachmentViews()
+            lastHeight = messageView.contentSize.height
+        } else {
+            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        }
 
     }
 
     @discardableResult
-    func update(text: String) -> Bool {
-        messageLabel.text = text
-        layoutIfNeeded()
-        let newHeight = messageLabel.bounds.height
-        defer { lastHeight = newHeight }
-        return newHeight != lastHeight
+    func update(text: String, parser: ParseMarkdownUseCase) -> Bool {
+        if stackView.isHidden {
+            messageView.attributedText = parser.execute(markdown: text)
+            layoutIfNeeded()
+            messageView.addAttachmentViews()
+            let newHeight = messageView.contentSize.height
+            defer { lastHeight = newHeight }
+            return newHeight != lastHeight
+        } else {
+            let attributed = parser.execute(markdown: text)
+            buildStack(from: attributed)
+            layoutIfNeeded()
+            let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            defer { lastHeight = newHeight }
+            return newHeight != lastHeight
+        }
     }
+
 }

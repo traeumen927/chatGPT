@@ -112,12 +112,13 @@ final class ChatViewModel {
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
                 fullText += chunk
-                self.updateMessage(id: assistantID, text: fullText)
+                self.updateMessage(id: assistantID, text: fullText, updateList: false)
             }, onError: { [weak self] error in
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                 self?.updateMessage(id: assistantID, text: message, type: .error)
             }, onCompleted: { [weak self] in
                 guard let self else { return }
+                self.updateMessage(id: assistantID, text: fullText)
                 self.sendMessageUseCase.finalize(prompt: prompt, reply: fullText, model: model)
                 if let id = self.conversationID, !isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
@@ -159,13 +160,16 @@ final class ChatViewModel {
         messages.accept(current)
     }
     
-    private func updateMessage(id: UUID, text: String, type: MessageType? = nil) {
+    private func updateMessage(id: UUID,
+                               text: String,
+                               type: MessageType? = nil,
+                               updateList: Bool = true) {
         var current = messages.value
         guard let index = current.firstIndex(where: { $0.id == id }) else { return }
         let old = current[index]
         let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
         current[index] = newMsg
-        messages.accept(current)
+        if updateList { messages.accept(current) }
         streamingMessageRelay.accept(newMsg)
     }
     
