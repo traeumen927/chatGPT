@@ -9,9 +9,10 @@ final class TableBlockView: UIView {
     private let rows: [[String]]
     private var columnWidths: [CGFloat] = []
     private var mergedRows: Set<Int> = []
+    private var verticalLines: [UIView] = []
 
     private let cellFont = UIFont.systemFont(ofSize: 14)
-    private let cellInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+    private let cellInsets = UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12)
     private let mergeStartRow = 1
 
     init(rows: [[String]]) {
@@ -55,6 +56,27 @@ final class TableBlockView: UIView {
         computeColumnWidths()
         computeMergedRows()
         buildTable()
+        layoutVerticalLines()
+    }
+
+    private func layoutVerticalLines() {
+        verticalLines.forEach { $0.removeFromSuperview() }
+        verticalLines.removeAll()
+
+        var offset: CGFloat = 0
+        for (index, width) in columnWidths.enumerated() {
+            offset += width
+            guard index < columnWidths.count - 1 else { break }
+            let line = UIView()
+            line.backgroundColor = .separator
+            contentView.addSubview(line)
+            line.snp.makeConstraints { make in
+                make.top.bottom.equalToSuperview()
+                make.leading.equalToSuperview().offset(offset)
+                make.width.equalTo(1.0 / UIScreen.main.scale)
+            }
+            verticalLines.append(line)
+        }
     }
 
     private func buildTable() {
@@ -95,20 +117,7 @@ final class TableBlockView: UIView {
                 make.edges.equalToSuperview()
             }
 
-            for index in 0..<cells.count - 1 {
-                let vLine = UIView()
-                vLine.backgroundColor = .separator
-                container.addSubview(vLine)
-                vLine.snp.makeConstraints { make in
-                    make.top.bottom.equalToSuperview()
-                    make.leading.equalTo(cells[index].snp.trailing)
-                    make.width.equalTo(1.0 / UIScreen.main.scale)
-                }
-                if isMergedCell(row: rowIndex, column: index) ||
-                    isMergedCell(row: rowIndex, column: index + 1) {
-                    vLine.isHidden = true
-                }
-            }
+
 
             if rowIndex != rows.count - 1 {
                 let bottom = UIView()
@@ -132,8 +141,13 @@ final class TableBlockView: UIView {
         columnWidths = Array(repeating: 0, count: first.count)
         for row in rows {
             for (index, text) in row.enumerated() {
-                let width = (text as NSString).size(withAttributes: [.font: cellFont]).width
-                let value = width + cellInsets.left + cellInsets.right
+                let bounding = (text as NSString).boundingRect(
+                    with: CGSize(width: .greatestFiniteMagnitude, height: .greatestFiniteMagnitude),
+                    options: [.usesLineFragmentOrigin, .usesFontLeading],
+                    attributes: [.font: cellFont],
+                    context: nil
+                ).width
+                let value = bounding + cellInsets.left + cellInsets.right
                 if value > columnWidths[index] {
                     columnWidths[index] = value
                 }
