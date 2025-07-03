@@ -24,6 +24,8 @@ final class MenuViewController: UIViewController {
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
     private let fetchModelsUseCase: FetchAvailableModelsUseCase
+    private let updateTitleUseCase: UpdateConversationTitleUseCase
+    private let deleteConversationUseCase: DeleteConversationUseCase
     private var currentConversationID: String?
     private let draftExists: Bool
     private let disposeBag = DisposeBag()
@@ -57,6 +59,8 @@ final class MenuViewController: UIViewController {
     init(observeConversationsUseCase: ObserveConversationsUseCase,
          signOutUseCase: SignOutUseCase,
          fetchModelsUseCase: FetchAvailableModelsUseCase,
+         updateTitleUseCase: UpdateConversationTitleUseCase,
+         deleteConversationUseCase: DeleteConversationUseCase,
          selectedModel: OpenAIModel,
          streamEnabled: Bool,
          currentConversationID: String?,
@@ -66,6 +70,8 @@ final class MenuViewController: UIViewController {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
         self.fetchModelsUseCase = fetchModelsUseCase
+        self.updateTitleUseCase = updateTitleUseCase
+        self.deleteConversationUseCase = deleteConversationUseCase
         self.selectedModel = selectedModel
         self.streamEnabled = streamEnabled
         self.currentConversationID = currentConversationID
@@ -182,6 +188,27 @@ final class MenuViewController: UIViewController {
         return UIMenu(title: "", options: .displayInline, children: actions)
     }
 
+    private func showEditAlert(convo: ConversationSummary) {
+        let alert = UIAlertController(title: "제목 수정", message: nil, preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.text = convo.title
+        }
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "저장", style: .default) { [weak self, weak alert] _ in
+            guard let self, let title = alert?.textFields?.first?.text, !title.isEmpty else { return }
+            self.updateTitleUseCase.execute(conversationID: convo.id, title: title)
+                .subscribe()
+                .disposed(by: self.disposeBag)
+        })
+        present(alert, animated: true)
+    }
+
+    private func deleteConversation(id: String) {
+        deleteConversationUseCase.execute(conversationID: id)
+            .subscribe()
+            .disposed(by: disposeBag)
+    }
+
 }
 
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
@@ -257,6 +284,24 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         Section(rawValue: section) == .setting ? 40 : .leastNormalMagnitude
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard Section(rawValue: indexPath.section) == .history else { return nil }
+        let convo = conversations[indexPath.row]
+        guard convo.id != "draft" else { return nil }
+
+        let edit = UIContextualAction(style: .normal, title: "수정") { [weak self] _, _, completion in
+            self?.showEditAlert(convo: convo)
+            completion(true)
+        }
+        edit.backgroundColor = ThemeColor.background3
+
+        let delete = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+            self?.deleteConversation(id: convo.id)
+            completion(true)
+        }
+        return UISwipeActionsConfiguration(actions: [delete, edit])
     }
 }
 

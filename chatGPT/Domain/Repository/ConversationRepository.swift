@@ -15,4 +15,6 @@ protocol ConversationRepository {
     func fetchConversations(uid: String) -> Single<[ConversationSummary]>
     func fetchMessages(uid: String, conversationID: String) -> Single<[ConversationMessage]>
     func observeConversations(uid: String) -> Observable<[ConversationSummary]>
+    func updateTitle(uid: String, conversationID: String, title: String) -> Single<Void>
+    func deleteConversation(uid: String, conversationID: String) -> Single<Void>
 }

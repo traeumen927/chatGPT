@@ -72,6 +72,14 @@ final class AppCoordinator {
             repository: conversationRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
+        let updateTitleUseCase = UpdateConversationTitleUseCase(
+            repository: conversationRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let deleteConversationUseCase = DeleteConversationUseCase(
+            repository: conversationRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
         observeConversationsUseCase.execute()
             .subscribe()
             .disposed(by: disposeBag)
@@ -95,6 +103,8 @@ final class AppCoordinator {
             contextRepository: contextRepository,
             observeConversationsUseCase: observeConversationsUseCase,
             signOutUseCase: signOutUseCase,
+            updateTitleUseCase: updateTitleUseCase,
+            deleteConversationUseCase: deleteConversationUseCase,
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase,
             parseMarkdownUseCase: parseMarkdownUseCase
