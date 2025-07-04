@@ -43,6 +43,7 @@ final class MenuViewController: UIViewController {
     // 메뉴 닫기용 클로저
     var onClose: (() -> Void)?
     var onConversationSelected: ((String?) -> Void)?
+    var onConversationDeleted: ((String) -> Void)?
 
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
@@ -205,7 +206,14 @@ final class MenuViewController: UIViewController {
 
     private func deleteConversation(id: String) {
         deleteConversationUseCase.execute(conversationID: id)
-            .subscribe()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] in
+                guard let self else { return }
+                if self.currentConversationID == id {
+                    self.currentConversationID = nil
+                    self.onConversationDeleted?(id)
+                }
+            })
             .disposed(by: disposeBag)
     }
 

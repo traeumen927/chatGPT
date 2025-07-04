@@ -91,6 +91,12 @@ final class MainViewController: UIViewController {
                 }
             }
         }
+        menuVC.onConversationDeleted = { [weak self] id in
+            guard let self else { return }
+            if self.chatViewModel.conversationID == id {
+                self.chatViewModel.startNewConversation()
+            }
+        }
         menuVC.onClose = { [weak menuVC] in
             menuVC?.dismiss(animated: true)
         }
