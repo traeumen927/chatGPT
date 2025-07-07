@@ -19,6 +19,8 @@ final class MainViewController: UIViewController {
     private let chatViewModel: ChatViewModel
     private let signOutUseCase: SignOutUseCase
     private let observeConversationsUseCase: ObserveConversationsUseCase
+    private let updateTitleUseCase: UpdateConversationTitleUseCase
+    private let deleteConversationUseCase: DeleteConversationUseCase
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
     private let parseMarkdownUseCase: ParseMarkdownUseCase
@@ -62,6 +64,8 @@ final class MainViewController: UIViewController {
             observeConversationsUseCase: observeConversationsUseCase,
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
+            updateTitleUseCase: updateTitleUseCase,
+            deleteConversationUseCase: deleteConversationUseCase,
             selectedModel: selectedModel,
             streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
@@ -85,6 +89,12 @@ final class MainViewController: UIViewController {
                 } else {
                     self.chatViewModel.startNewConversation()
                 }
+            }
+        }
+        menuVC.onConversationDeleted = { [weak self] id in
+            guard let self else { return }
+            if self.chatViewModel.conversationID == id {
+                self.chatViewModel.startNewConversation()
             }
         }
         menuVC.onClose = { [weak menuVC] in
@@ -124,14 +134,16 @@ final class MainViewController: UIViewController {
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-         appendMessageUseCase: AppendMessageUseCase,
-         fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
-         contextRepository: ChatContextRepository,
-        observeConversationsUseCase: ObserveConversationsUseCase,
-        signOutUseCase: SignOutUseCase,
-        loadUserImageUseCase: LoadUserProfileImageUseCase,
-         observeAuthStateUseCase: ObserveAuthStateUseCase,
-         parseMarkdownUseCase: ParseMarkdownUseCase) {
+        appendMessageUseCase: AppendMessageUseCase,
+        fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+        contextRepository: ChatContextRepository,
+       observeConversationsUseCase: ObserveConversationsUseCase,
+       signOutUseCase: SignOutUseCase,
+       updateTitleUseCase: UpdateConversationTitleUseCase,
+       deleteConversationUseCase: DeleteConversationUseCase,
+       loadUserImageUseCase: LoadUserProfileImageUseCase,
+        observeAuthStateUseCase: ObserveAuthStateUseCase,
+        parseMarkdownUseCase: ParseMarkdownUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -141,6 +153,8 @@ final class MainViewController: UIViewController {
                                            contextRepository: contextRepository)
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
+        self.updateTitleUseCase = updateTitleUseCase
+        self.deleteConversationUseCase = deleteConversationUseCase
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
         self.parseMarkdownUseCase = parseMarkdownUseCase
