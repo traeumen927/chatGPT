@@ -142,20 +142,22 @@ func execute(prompt: String, model: OpenAIModel, completion: @escaping (Result<S
 ## 📂 대화 히스토리 불러오기 및 전환 기능
 
 앱은 Firebase Auth로 로그인한 사용자 기준으로, Firestore에 대화 히스토리를 저장합니다.  
-각 대화는 주고받은 내용을 바탕으로 OpenAI API를 활용해 자동으로 제목이 생성되며, 히스토리 목록에서 쉽게 구분할 수 있습니다.  
-저장된 대화를 선택하면 이전 내용을 불러와 이어서 대화할 수 있습니다.
+질문을 전송하면 내부적으로 OpenAI API를 활용해 해당 대화에 어울리는 **제목을 자동으로 생성**해 저장합니다.  
+저장된 대화는 히스토리 목록에서 선택하여 불러올 수 있으며, 제목 수정이나 삭제 또한 UI 내에서 간편하게 가능합니다.
 
 📸 **이미지는 다음을 보여줍니다:**
-1. '성인남자의 단백질 위주 2끼 식단' 대화 내용 화면 — 질문과 답변이 진행된 상태  
-2. 히스토리 목록 화면 — '성인남자의 단백질 위주 2끼 식단' 대화가 선택된 상태  
-3. 목록에서 '한국 소설 추천: 살인자의 기억법' 대화를 선택하자, '한국 소설 추천: 살인자의 기억법' 대화 내용이 불러와진 화면
+1. `역인과성`에 대한 질문이 포함된 대화 화면  
+2. 자동 생성된 제목과 함께 해당 대화가 히스토리 목록에 추가된 모습  
+3. 히스토리 항목을 스와이프했을 때 표시되는 **수정/삭제** 메뉴  
+4. 제목 수정을 선택하면 나타나는 팝업 입력창  
 
 > 로그인한 사용자 기준으로만 히스토리가 저장되며, 자동 생성된 제목 덕분에 원하는 대화를 쉽게 찾고 이어갈 수 있습니다.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/b6941407-09c4-4d68-9dd3-c14dc347dd2c" width="30%">
-  <img src="https://github.com/user-attachments/assets/acb180a5-a0d6-45d2-a6ee-c8de3fec47d4" width="30%">
-  <img src="https://github.com/user-attachments/assets/8da5214e-2254-457c-9195-063dd362bcb9" width="30%">
+  <img src="https://github.com/user-attachments/assets/afa41545-a202-4e26-a468-f9f6012037ae" width="24%">
+  <img src="https://github.com/user-attachments/assets/70f92733-c3cf-4a2e-aed6-dacecdb54972" width="24%">
+  <img src="https://github.com/user-attachments/assets/8baadd1e-3acb-4fcf-8734-d371d07b093b" width="24%">
+  <img src="https://github.com/user-attachments/assets/1fa0b361-401a-44c2-a92d-811e1828af0b" width="24%">
 </p>
 
 ---
