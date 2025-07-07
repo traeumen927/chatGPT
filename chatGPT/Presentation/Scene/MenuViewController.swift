@@ -303,7 +303,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             self?.showEditAlert(convo: convo)
             completion(true)
         }
-        edit.backgroundColor = ThemeColor.background3
+        edit.backgroundColor = ThemeColor.positive
 
         let delete = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
             self?.deleteConversation(id: convo.id)
