@@ -26,7 +26,7 @@ final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
         Single.create { single in
             let doc = self.db.collection("preferences").document(uid)
             doc.getDocument { snapshot, error in
-                var topics = snapshot?.data()? ["topics"] as? [String: Double] ?? [:]
+                var topics = snapshot?.data()?["topics"] as? [String: Double] ?? [:]
                 tokens.forEach { token in
                     topics[token, default: 0] += 1
                 }
