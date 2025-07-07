@@ -149,3 +149,8 @@ func execute(prompt: String, model: OpenAIModel, completion: @escaping (Result<S
 
 
 
+
+## 🔒 Firestore 보안 규칙
+
+Firestore에 저장되는 `preferences` 컬렉션과 대화 데이터는 인증된 사용자만 접근할 수 있도록 권한을 설정해야 합니다.
+Firebase 콘솔의 **Firestore Database > 규칙** 탭에서 [`firebase/firestore_rules.md`](firebase/firestore_rules.md) 파일의 내용을 적용하세요.
