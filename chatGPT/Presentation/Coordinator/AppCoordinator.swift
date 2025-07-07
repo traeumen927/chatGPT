@@ -54,6 +54,8 @@ final class AppCoordinator {
             contextRepository: contextRepository,
             summarizeUseCase: summarizeUseCase
         )
+        let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
+        
         let preferenceRepository = FirestoreUserPreferenceRepository()
         let fetchPreferenceUseCase = FetchUserPreferenceUseCase(
             repository: preferenceRepository,
@@ -64,7 +66,7 @@ final class AppCoordinator {
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let conversationRepository = FirestoreConversationRepository()
-        let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
+        
         let saveConversationUseCase = SaveConversationUseCase(
             repository: conversationRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
