@@ -132,6 +132,32 @@ final class FirestoreConversationRepository: ConversationRepository {
         }
     }
 
+    func updateTitle(uid: String, conversationID: String, title: String) -> Single<Void> {
+        Single.create { single in
+            self.db.collection(uid).document(conversationID).updateData(["title": title]) { error in
+                if let error = error {
+                    single(.failure(error))
+                } else {
+                    single(.success(()))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+
+    func deleteConversation(uid: String, conversationID: String) -> Single<Void> {
+        Single.create { single in
+            self.db.collection(uid).document(conversationID).delete { error in
+                if let error = error {
+                    single(.failure(error))
+                } else {
+                    single(.success(()))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+
     deinit {
         listener?.remove()
     }
