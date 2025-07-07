@@ -27,8 +27,15 @@ final class SendChatWithContextUseCase {
         self.summaryTrigger = summaryTrigger
     }
 
-    func execute(prompt: String, model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+    func execute(prompt: String,
+                 model: OpenAIModel,
+                 stream: Bool,
+                 preference: String?,
+                 completion: @escaping (Result<String, Error>) -> Void) {
         var messages = [Message]()
+        if let preference {
+            messages.append(Message(role: .system, content: preference))
+        }
         if let summary = contextRepository.summary {
             messages.append(Message(role: .system, content: summary))
         }
@@ -50,8 +57,11 @@ final class SendChatWithContextUseCase {
         }
     }
 
-    func stream(prompt: String, model: OpenAIModel) -> Observable<String> {
+    func stream(prompt: String, model: OpenAIModel, preference: String?) -> Observable<String> {
         var messages = [Message]()
+        if let preference {
+            messages.append(Message(role: .system, content: preference))
+        }
         if let summary = contextRepository.summary {
             messages.append(Message(role: .system, content: summary))
         }

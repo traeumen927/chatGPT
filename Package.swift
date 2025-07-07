@@ -6,6 +6,7 @@ import PackageDescription
 let package = Package(
     name: "chatGPT",
     defaultLocalization: "ko",
+    platforms: [.iOS(.v18)],
     targets: [
         .executableTarget(
             name: "chatGPT",

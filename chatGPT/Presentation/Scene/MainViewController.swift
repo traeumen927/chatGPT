@@ -24,6 +24,8 @@ final class MainViewController: UIViewController {
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
     private let parseMarkdownUseCase: ParseMarkdownUseCase
+    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
+    private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
 
     private let disposeBag = DisposeBag()
 
@@ -142,15 +144,19 @@ final class MainViewController: UIViewController {
        updateTitleUseCase: UpdateConversationTitleUseCase,
        deleteConversationUseCase: DeleteConversationUseCase,
        loadUserImageUseCase: LoadUserProfileImageUseCase,
-        observeAuthStateUseCase: ObserveAuthStateUseCase,
-        parseMarkdownUseCase: ParseMarkdownUseCase) {
+       observeAuthStateUseCase: ObserveAuthStateUseCase,
+       parseMarkdownUseCase: ParseMarkdownUseCase,
+       fetchPreferenceUseCase: FetchUserPreferenceUseCase,
+       updatePreferenceUseCase: UpdateUserPreferenceUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
                                            appendMessageUseCase: appendMessageUseCase,
                                            fetchMessagesUseCase: fetchConversationMessagesUseCase,
-                                           contextRepository: contextRepository)
+                                           contextRepository: contextRepository,
+                                           fetchPreferenceUseCase: fetchPreferenceUseCase,
+                                           updatePreferenceUseCase: updatePreferenceUseCase)
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
         self.updateTitleUseCase = updateTitleUseCase
@@ -158,6 +164,8 @@ final class MainViewController: UIViewController {
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
         self.parseMarkdownUseCase = parseMarkdownUseCase
+        self.fetchPreferenceUseCase = fetchPreferenceUseCase
+        self.updatePreferenceUseCase = updatePreferenceUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
