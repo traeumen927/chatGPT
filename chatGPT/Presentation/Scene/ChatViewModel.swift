@@ -41,6 +41,8 @@ final class ChatViewModel {
     private let appendMessageUseCase: AppendMessageUseCase
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
     private let contextRepository: ChatContextRepository
+    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
+    private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
     private let disposeBag = DisposeBag()
     
     private var draftMessages: [ChatMessage]? = nil
@@ -56,31 +58,59 @@ final class ChatViewModel {
          saveConversationUseCase: SaveConversationUseCase,
          appendMessageUseCase: AppendMessageUseCase,
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
-         contextRepository: ChatContextRepository) {
+         contextRepository: ChatContextRepository,
+         fetchPreferenceUseCase: FetchUserPreferenceUseCase,
+         updatePreferenceUseCase: UpdateUserPreferenceUseCase) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
         self.appendMessageUseCase = appendMessageUseCase
         self.fetchMessagesUseCase = fetchMessagesUseCase
         self.contextRepository = contextRepository
+        self.fetchPreferenceUseCase = fetchPreferenceUseCase
+        self.updatePreferenceUseCase = updatePreferenceUseCase
     }
     
     func send(prompt: String, model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
-        
+
         if let id = conversationID {
             appendMessageUseCase.execute(conversationID: id,
                                          role: .user,
                                          text: prompt)
+                .subscribe()
+                .disposed(by: disposeBag)
+        }
+
+        updatePreferenceUseCase.execute(prompt: prompt)
             .subscribe()
             .disposed(by: disposeBag)
-        }
-        
+
+        fetchPreferenceUseCase.execute()
+            .catchAndReturn(nil)
+            .subscribe(onSuccess: { [weak self] preference in
+                self?.sendInternal(prompt: prompt,
+                                   model: model,
+                                   stream: stream,
+                                   preference: preference,
+                                   isFirst: isFirst)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func sendInternal(prompt: String,
+                              model: OpenAIModel,
+                              stream: Bool,
+                              preference: UserPreference?,
+                              isFirst: Bool) {
         guard stream else {
-            sendMessageUseCase.execute(prompt: prompt, model: model, stream: false) { [weak self] result in
+            let prefMessage = self.preferenceText(from: preference)
+            sendMessageUseCase.execute(prompt: prompt,
+                                      model: model,
+                                      stream: false,
+                                      preference: prefMessage) { [weak self] result in
                 guard let self = self else { return }
-                
                 switch result {
                 case .success(let reply):
                     self.appendMessage(ChatMessage(type: .assistant, text: reply))
@@ -88,13 +118,12 @@ final class ChatViewModel {
                         self.appendMessageUseCase.execute(conversationID: id,
                                                           role: .assistant,
                                                           text: reply)
-                        .subscribe()
-                        .disposed(by: self.disposeBag)
+                            .subscribe()
+                            .disposed(by: self.disposeBag)
                     }
                     if isFirst {
                         self.saveFirstConversation(question: prompt, answer: reply, model: model)
                     }
-                    
                 case .failure(let error):
                     let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                     self.appendMessage(ChatMessage(type: .error, text: message))
@@ -102,12 +131,13 @@ final class ChatViewModel {
             }
             return
         }
-        
+
         let assistantID = UUID()
         appendMessage(ChatMessage(id: assistantID, type: .assistant, text: ""))
         var fullText = ""
-        
-        sendMessageUseCase.stream(prompt: prompt, model: model)
+
+        let prefMessage = self.preferenceText(from: preference)
+        sendMessageUseCase.stream(prompt: prompt, model: model, preference: prefMessage)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
@@ -124,14 +154,22 @@ final class ChatViewModel {
                     self.appendMessageUseCase.execute(conversationID: id,
                                                       role: .assistant,
                                                       text: fullText)
-                    .subscribe()
-                    .disposed(by: self.disposeBag)
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
                 }
                 if isFirst {
                     self.saveFirstConversation(question: prompt, answer: fullText, model: model)
                 }
             })
             .disposed(by: disposeBag)
+    }
+
+    private func preferenceText(from preference: UserPreference?) -> String? {
+        guard let preference else { return nil }
+        let sorted = preference.topics.sorted { $0.value > $1.value }
+        let topics = sorted.map { $0.key }.joined(separator: ", ")
+        guard !topics.isEmpty else { return nil }
+        return "사용자가 선호하는 주제: " + topics
     }
     
     private func saveFirstConversation(question: String, answer: String, model: OpenAIModel) {
