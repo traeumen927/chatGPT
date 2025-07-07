@@ -54,6 +54,15 @@ final class AppCoordinator {
             contextRepository: contextRepository,
             summarizeUseCase: summarizeUseCase
         )
+        let preferenceRepository = FirestoreUserPreferenceRepository()
+        let fetchPreferenceUseCase = FetchUserPreferenceUseCase(
+            repository: preferenceRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let updatePreferenceUseCase = UpdateUserPreferenceUseCase(
+            repository: preferenceRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
         let conversationRepository = FirestoreConversationRepository()
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
         let saveConversationUseCase = SaveConversationUseCase(
@@ -108,6 +117,9 @@ final class AppCoordinator {
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase,
             parseMarkdownUseCase: parseMarkdownUseCase
+        ,
+            fetchPreferenceUseCase: fetchPreferenceUseCase,
+            updatePreferenceUseCase: updatePreferenceUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)
