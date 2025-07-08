@@ -93,7 +93,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
                     attr[range].foregroundColor = ThemeColor.negative
                     attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                } else if case .heading(let level) = run.presentationIntent?.kind {
+                } else if case .heading(let level) = run.presentationIntent {
                     let size: CGFloat
                     switch level {
                     case 1: size = 24
