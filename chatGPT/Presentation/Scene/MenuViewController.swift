@@ -146,6 +146,14 @@ final class MenuViewController: UIViewController {
     }
 
     private func load() {
+        var initial: [ConversationSummary] = []
+        if currentConversationID == nil || draftExists {
+            let draft = ConversationSummary(id: "draft", title: "새로운 대화", timestamp: Date())
+            initial.append(draft)
+        }
+        conversations = initial
+        tableView.reloadData()
+
         observeConversationsUseCase.execute()
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] list in
