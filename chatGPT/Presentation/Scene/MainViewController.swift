@@ -26,6 +26,7 @@ final class MainViewController: UIViewController {
     private let parseMarkdownUseCase: ParseMarkdownUseCase
     private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
+    private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
 
     private let disposeBag = DisposeBag()
 
@@ -150,7 +151,7 @@ final class MainViewController: UIViewController {
        fetchPreferenceUseCase: FetchUserPreferenceUseCase,
        updatePreferenceUseCase: UpdateUserPreferenceUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
-        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
+       self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
                                            appendMessageUseCase: appendMessageUseCase,
@@ -158,6 +159,7 @@ final class MainViewController: UIViewController {
                                            contextRepository: contextRepository,
                                            fetchPreferenceUseCase: fetchPreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase)
+        self.fetchConversationMessagesUseCase = fetchConversationMessagesUseCase
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
         self.updateTitleUseCase = updateTitleUseCase
