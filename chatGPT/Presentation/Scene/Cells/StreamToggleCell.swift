@@ -26,7 +26,7 @@ final class StreamToggleCell: UITableViewCell {
         contentView.addSubview(toggleSwitch)
         toggleSwitch.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(8)
         }
     }
 
