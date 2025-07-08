@@ -4,6 +4,10 @@ import RxSwift
 
 final class FirestoreConversationRepository: ConversationRepository {
     private let db = Firestore.firestore()
+
+    private func userCollection(_ uid: String) -> CollectionReference {
+        db.collection("conversations").document(uid).collection("items")
+    }
     private var listener: ListenerRegistration?
     private var currentUID: String?
     private let subject = BehaviorSubject<[ConversationSummary]>(value: [])
@@ -31,7 +35,7 @@ final class FirestoreConversationRepository: ConversationRepository {
                     ]
                 ]
             ]
-            self.db.collection(uid).document(conversationID).setData(data) { error in
+            self.userCollection(uid).document(conversationID).setData(data) { error in
                 if let error = error {
                     single(.failure(error))
                 } else {
@@ -53,7 +57,7 @@ final class FirestoreConversationRepository: ConversationRepository {
                 "text": text,
                 "timestamp": Timestamp(date: timestamp)
             ]
-            self.db.collection(uid)
+            self.userCollection(uid)
                 .document(conversationID)
                 .updateData(["messages": FieldValue.arrayUnion([message])]) { error in
                     if let error = error {
@@ -68,7 +72,7 @@ final class FirestoreConversationRepository: ConversationRepository {
 
     func fetchConversations(uid: String) -> Single<[ConversationSummary]> {
         Single.create { single in
-            self.db.collection(uid).getDocuments { snapshot, error in
+            self.userCollection(uid).getDocuments { snapshot, error in
                 if let error = error {
                     single(.failure(error))
                 } else {
@@ -90,7 +94,7 @@ final class FirestoreConversationRepository: ConversationRepository {
         if currentUID != uid {
             listener?.remove()
             currentUID = uid
-            listener = db.collection(uid).addSnapshotListener { [weak self] snapshot, error in
+            listener = userCollection(uid).addSnapshotListener { [weak self] snapshot, error in
                 guard let self = self else { return }
                 if let docs = snapshot?.documents {
                     let items = docs.compactMap { doc -> ConversationSummary? in
@@ -111,7 +115,7 @@ final class FirestoreConversationRepository: ConversationRepository {
 
     func fetchMessages(uid: String, conversationID: String) -> Single<[ConversationMessage]> {
         Single.create { single in
-            self.db.collection(uid).document(conversationID).getDocument { document, error in
+            self.userCollection(uid).document(conversationID).getDocument { document, error in
                 if let data = document?.data(),
                    let rawMessages = data["messages"] as? [[String: Any]] {
                     let messages = rawMessages.compactMap { dict -> ConversationMessage? in
@@ -134,7 +138,7 @@ final class FirestoreConversationRepository: ConversationRepository {
 
     func updateTitle(uid: String, conversationID: String, title: String) -> Single<Void> {
         Single.create { single in
-            self.db.collection(uid).document(conversationID).updateData(["title": title]) { error in
+            self.userCollection(uid).document(conversationID).updateData(["title": title]) { error in
                 if let error = error {
                     single(.failure(error))
                 } else {
@@ -147,7 +151,7 @@ final class FirestoreConversationRepository: ConversationRepository {
 
     func deleteConversation(uid: String, conversationID: String) -> Single<Void> {
         Single.create { single in
-            self.db.collection(uid).document(conversationID).delete { error in
+            self.userCollection(uid).document(conversationID).delete { error in
                 if let error = error {
                     single(.failure(error))
                 } else {
