@@ -33,4 +33,17 @@ final class chatGPTTests: XCTestCase {
         }
     }
 
+    func testHeadingListParsing() throws {
+        let repo = SwiftMarkdownRepository()
+        let markdown = """
+        # Title
+        - first
+        - second
+        """
+        let result = repo.parse(markdown)
+        XCTAssertTrue(result.string.contains("Title"))
+        XCTAssertTrue(result.string.contains("first"))
+        XCTAssertTrue(result.string.contains("second"))
+    }
+
 }
