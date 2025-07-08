@@ -3,5 +3,5 @@ import RxSwift
 
 protocol UserPreferenceRepository {
     func fetch(uid: String) -> Single<UserPreference?>
-    func update(uid: String, tokens: [String]) -> Single<Void>
+    func update(uid: String, items: [PreferenceItem]) -> Single<Void>
 }
