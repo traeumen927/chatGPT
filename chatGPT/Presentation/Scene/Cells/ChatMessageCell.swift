@@ -211,7 +211,19 @@ final class ChatMessageCell: UITableViewCell {
     }
 
     @discardableResult
-    func update(text: String, parser: ParseMarkdownUseCase) -> Bool {
+    func update(text: String,
+                parser: ParseMarkdownUseCase,
+                streaming: Bool = false) -> Bool {
+        if streaming {
+            messageView.text = text
+            stackView.isHidden = true
+            messageView.isHidden = false
+            layoutIfNeeded()
+            let newHeight = messageView.contentSize.height
+            defer { lastHeight = newHeight }
+            return newHeight != lastHeight
+        }
+
         if stackView.isHidden {
             messageView.attributedText = parser.execute(markdown: text)
             layoutIfNeeded()

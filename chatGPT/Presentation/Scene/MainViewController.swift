@@ -251,7 +251,9 @@ final class MainViewController: UIViewController {
                 
                 // 셀을 찾아 직접 업데이트
                 if let cell = self.tableView.cellForRow(at: indexPath) as? ChatMessageCell {
-                    let heightChanged = cell.update(text: message.text, parser: self.parseMarkdownUseCase)
+                    let heightChanged = cell.update(text: message.text,
+                                                  parser: self.parseMarkdownUseCase,
+                                                  streaming: true)
                     if heightChanged {
                         UIView.performWithoutAnimation {
                             self.tableView.beginUpdates()
