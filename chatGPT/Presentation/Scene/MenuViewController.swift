@@ -290,8 +290,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         case .setting:
             return section.title
         case .history:
-            let hasHistory = conversations.contains { $0.id != "draft" }
-            return hasHistory ? section.title : nil
+            let hasItem = !conversations.isEmpty
+            return hasItem ? section.title : nil
         }
     }
 
