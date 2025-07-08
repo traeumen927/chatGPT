@@ -285,7 +285,14 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        Section(rawValue: section)?.title
+        guard let section = Section(rawValue: section) else { return nil }
+        switch section {
+        case .setting:
+            return section.title
+        case .history:
+            let hasHistory = conversations.contains { $0.id != "draft" }
+            return hasHistory ? section.title : nil
+        }
     }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
