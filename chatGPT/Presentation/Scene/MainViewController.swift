@@ -68,6 +68,7 @@ final class MainViewController: UIViewController {
             fetchModelsUseCase: fetchModelsUseCase,
             updateTitleUseCase: updateTitleUseCase,
             deleteConversationUseCase: deleteConversationUseCase,
+            fetchMessagesUseCase: fetchConversationMessagesUseCase,
             selectedModel: selectedModel,
             streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
