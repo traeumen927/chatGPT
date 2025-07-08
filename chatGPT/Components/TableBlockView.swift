@@ -99,9 +99,9 @@ final class TableBlockView: UIView {
             rowStack.axis = .horizontal
             rowStack.distribution = .fill
             rowStack.spacing = 0
-            
+
             var cells: [UIView] = []
-            for (colIndex, cell) in row.enumerated() {
+            for colIndex in 0..<columnWidths.count {
                 if isMergedCell(row: rowIndex, column: colIndex) {
                     let placeholder = UIView()
                     rowStack.addArrangedSubview(placeholder)
@@ -111,7 +111,9 @@ final class TableBlockView: UIView {
                     cells.append(placeholder)
                     continue
                 }
-                
+
+                let text = colIndex < row.count ? row[colIndex] : ""
+
                 // 일반 셀은 UILabel로 렌더링
                 let label = PaddedLabel()
                 label.textInsets = cellInsets
@@ -125,12 +127,12 @@ final class TableBlockView: UIView {
                 label.numberOfLines = 1
                 label.lineBreakMode = .byClipping
                 label.textAlignment = .left
-                label.text = cell
+                label.text = text
                 label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
                 label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-                
+
                 rowStack.addArrangedSubview(label)
-                
+
                 // 셀의 너비를 명확히 고정하기 위해 columnWidths를 사용합니다.
                 label.snp.makeConstraints { make in
                     make.width.greaterThanOrEqualTo(columnWidths[colIndex]).priority(.required)
@@ -164,13 +166,16 @@ final class TableBlockView: UIView {
     /// 각 열에서 가장 긴 문자열의 실제 렌더링 폭을 계산하여 columnWidths 배열에 저장합니다.
     /// - 셀 안의 마진 여유(cellInsets)와 추가 여백(16pt)을 더해 실제 셀 크기에 여유를 둡니다.
     private func computeColumnWidths() {
-        guard let first = rows.first else { return }
-        columnWidths = Array(repeating: 0, count: first.count)
+        guard !rows.isEmpty else { return }
+        let maxCount = rows.map { $0.count }.max() ?? 0
+        columnWidths = Array(repeating: 0, count: maxCount)
         for row in rows {
             for (index, text) in row.enumerated() {
                 let bounding = (text as NSString).size(withAttributes: [.font: cellFont]).width
                 let value = bounding + cellInsets.left + cellInsets.right + 16 // 여유 너비 추가
-                if value > columnWidths[index] {
+                if index >= columnWidths.count {
+                    columnWidths.append(value)
+                } else if value > columnWidths[index] {
                     columnWidths[index] = value
                 }
             }
@@ -179,15 +184,15 @@ final class TableBlockView: UIView {
     
     private func computeMergedRows() {
         guard !rows.isEmpty else { return }
-        let columnCount = rows[0].count
+        let columnCount = columnWidths.count
         for col in 0..<columnCount {
             var row = mergeStartRow - 1
             while row < rows.count {
                 row += 1
                 guard row < rows.count else { break }
-                if rows[row][col].isEmpty { continue }
+                if col >= rows[row].count || rows[row][col].isEmpty { continue }
                 var next = row + 1
-                while next < rows.count && rows[next][col].isEmpty {
+                while next < rows.count && (col >= rows[next].count || rows[next][col].isEmpty) {
                     mergedRows.insert(next - 1)
                     next += 1
                 }
@@ -198,6 +203,9 @@ final class TableBlockView: UIView {
     
     private func isMergedCell(row: Int, column: Int) -> Bool {
         guard row > mergeStartRow else { return false }
+        if column >= rows[row].count {
+            return mergedRows.contains(row - 1)
+        }
         if rows[row][column].isEmpty && mergedRows.contains(row - 1) {
             return true
         }
