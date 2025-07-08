@@ -82,6 +82,33 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     }
 
     private func parseSegment(_ markdown: String) -> NSAttributedString {
+        let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false)
+        let result = NSMutableAttributedString()
+        var buffer = ""
+
+        func flushBuffer() {
+            guard !buffer.isEmpty else { return }
+            result.append(parseBody(buffer))
+            buffer.removeAll()
+        }
+
+        for (index, lineSub) in lines.enumerated() {
+            let line = String(lineSub)
+            if line.trimmingCharacters(in: .whitespaces).hasPrefix("#") {
+                flushBuffer()
+                result.append(parseHeading(from: line))
+                if index < lines.count - 1 { result.append(NSAttributedString(string: "\n")) }
+            } else {
+                buffer += line
+                if index < lines.count - 1 { buffer += "\n" }
+            }
+        }
+
+        flushBuffer()
+        return result
+    }
+
+    private func parseBody(_ markdown: String) -> NSAttributedString {
         var options = AttributedString.MarkdownParsingOptions()
         options.interpretedSyntax = .full
         options.allowsExtendedAttributes = true
@@ -93,40 +120,74 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
                     attr[range].foregroundColor = ThemeColor.negative
                     attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                } else if case .heading(let level)? = run.presentationIntent {
-                    let size: CGFloat
-                    switch level {
-                    case 1: size = 24
-                    case 2: size = 22
-                    case 3: size = 20
-                    default: size = 18
-                    }
-                    attr[range].font = UIFont.boldSystemFont(ofSize: size)
-                    attr[range].foregroundColor = UIColor.label
                 } else {
                     attr[range].font = UIFont.systemFont(ofSize: 16)
                     attr[range].foregroundColor = UIColor.label
                 }
             }
 
-            var ns = NSMutableAttributedString(attr)
-            let pattern = "^(?:\\u{2022}|\\d+\\.)\\s"
-            if let regex = try? NSRegularExpression(pattern: pattern, options: [.anchorsMatchLines]) {
-                let entire = NSRange(location: 0, length: ns.length)
-                regex.enumerateMatches(in: ns.string, options: [], range: entire) { match, _, _ in
-                    guard let m = match else { return }
-                    let paragraphRange = (ns.string as NSString).paragraphRange(for: m.range)
-                    let style = NSMutableParagraphStyle()
-                    style.headIndent = 16
-                    ns.addAttribute(.paragraphStyle, value: style, range: paragraphRange)
-                }
-            }
+            let ns = NSMutableAttributedString(attr)
+            applyBulletStyle(to: ns)
             return ns
         } else {
             return NSAttributedString(string: markdown, attributes: [
                 .font: UIFont.systemFont(ofSize: 16),
                 .foregroundColor: UIColor.label
             ])
+        }
+    }
+
+    private func parseHeading(from line: String) -> NSAttributedString {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        let level = min(trimmed.prefix { $0 == "#" }.count, 6)
+        var content = String(trimmed.drop(while: { $0 == "#" }))
+        if content.hasPrefix(" ") { content.removeFirst() }
+
+        var options = AttributedString.MarkdownParsingOptions()
+        options.interpretedSyntax = .full
+        options.allowsExtendedAttributes = true
+
+        func fontSize() -> CGFloat {
+            switch level {
+            case 1: return 24
+            case 2: return 22
+            case 3: return 20
+            default: return 18
+            }
+        }
+
+        if var attr = try? AttributedString(markdown: content, options: options) {
+            for run in attr.runs {
+                let range = run.range
+                if run.inlinePresentationIntent == .code {
+                    attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                    attr[range].foregroundColor = ThemeColor.negative
+                    attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                } else {
+                    attr[range].font = UIFont.boldSystemFont(ofSize: fontSize())
+                    attr[range].foregroundColor = UIColor.label
+                }
+            }
+            return NSAttributedString(attr)
+        } else {
+            return NSAttributedString(string: content, attributes: [
+                .font: UIFont.boldSystemFont(ofSize: fontSize()),
+                .foregroundColor: UIColor.label
+            ])
+        }
+    }
+
+    private func applyBulletStyle(to ns: NSMutableAttributedString) {
+        let pattern = "^(?:\\u{2022}|\\d+\\.)\\s"
+        if let regex = try? NSRegularExpression(pattern: pattern, options: [.anchorsMatchLines]) {
+            let entire = NSRange(location: 0, length: ns.length)
+            regex.enumerateMatches(in: ns.string, options: [], range: entire) { match, _, _ in
+                guard let m = match else { return }
+                let paragraphRange = (ns.string as NSString).paragraphRange(for: m.range)
+                let style = NSMutableParagraphStyle()
+                style.headIndent = 16
+                ns.addAttribute(.paragraphStyle, value: style, range: paragraphRange)
+            }
         }
     }
 
