@@ -130,10 +130,12 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             applyBulletStyle(to: ns)
             return ns
         } else {
-            return NSAttributedString(string: markdown, attributes: [
+            let ns = NSMutableAttributedString(string: markdown, attributes: [
                 .font: UIFont.systemFont(ofSize: 16),
                 .foregroundColor: UIColor.label
             ])
+            applyFallbackListStyle(to: ns)
+            return ns
         }
     }
 
@@ -189,6 +191,45 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 ns.addAttribute(.paragraphStyle, value: style, range: paragraphRange)
             }
         }
+    }
+
+    private func applyFallbackListStyle(to ns: NSMutableAttributedString) {
+        let lines = ns.string.split(separator: "\n", omittingEmptySubsequences: false)
+        let result = NSMutableAttributedString()
+        for (index, line) in lines.enumerated() {
+            var text = String(line)
+            let trimmed = text.trimmingCharacters(in: .whitespaces)
+            var bullet: String?
+
+            if trimmed.hasPrefix("- ") {
+                bullet = "\u{2022} "
+                text = String(trimmed.dropFirst(2))
+            } else if let range = trimmed.range(of: "^\\d+\\. ", options: .regularExpression) {
+                bullet = String(trimmed[range])
+                text = String(trimmed[range.upperBound...])
+            } else {
+                text = trimmed
+            }
+
+            var attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 16),
+                .foregroundColor: UIColor.label
+            ]
+
+            if let bullet = bullet {
+                let style = NSMutableParagraphStyle()
+                style.headIndent = 16
+                attributes[.paragraphStyle] = style
+                result.append(NSAttributedString(string: bullet + text, attributes: attributes))
+            } else {
+                result.append(NSAttributedString(string: text, attributes: attributes))
+            }
+
+            if index < lines.count - 1 {
+                result.append(NSAttributedString(string: "\n"))
+            }
+        }
+        ns.setAttributedString(result)
     }
 
     private func makeTableAttachment(from lines: [String]) -> TableBlockAttachment? {
