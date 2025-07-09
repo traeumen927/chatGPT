@@ -11,6 +11,7 @@ import SnapKit
 final class ChatMessageCell: UITableViewCell {
 
     private var lastHeight: CGFloat = 0
+    private var lastWidth: CGFloat = 0
 
     private let bubbleView = UIView()
     private let messageView: UITextView = {
@@ -139,6 +140,13 @@ final class ChatMessageCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        if stackView.isHidden {
+            let width = messageView.bounds.width
+            if width != lastWidth {
+                messageView.addAttachmentViews()
+                lastWidth = width
+            }
+        }
     }
 
     func configure(with message: ChatViewModel.ChatMessage,
