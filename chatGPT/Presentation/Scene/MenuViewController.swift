@@ -26,6 +26,7 @@ final class MenuViewController: UIViewController {
     private let fetchModelsUseCase: FetchAvailableModelsUseCase
     private let updateTitleUseCase: UpdateConversationTitleUseCase
     private let deleteConversationUseCase: DeleteConversationUseCase
+    private let fetchMessagesUseCase: FetchConversationMessagesUseCase
     private var currentConversationID: String?
     private let draftExists: Bool
     private let disposeBag = DisposeBag()
@@ -62,6 +63,7 @@ final class MenuViewController: UIViewController {
          fetchModelsUseCase: FetchAvailableModelsUseCase,
          updateTitleUseCase: UpdateConversationTitleUseCase,
          deleteConversationUseCase: DeleteConversationUseCase,
+         fetchMessagesUseCase: FetchConversationMessagesUseCase,
          selectedModel: OpenAIModel,
          streamEnabled: Bool,
          currentConversationID: String?,
@@ -73,6 +75,7 @@ final class MenuViewController: UIViewController {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.updateTitleUseCase = updateTitleUseCase
         self.deleteConversationUseCase = deleteConversationUseCase
+        self.fetchMessagesUseCase = fetchMessagesUseCase
         self.selectedModel = selectedModel
         self.streamEnabled = streamEnabled
         self.currentConversationID = currentConversationID
@@ -146,7 +149,19 @@ final class MenuViewController: UIViewController {
     }
 
     private func load() {
+        var initial: [ConversationSummary] = []
+        if currentConversationID == nil || draftExists {
+            let draft = ConversationSummary(id: "draft", title: "새로운 대화", timestamp: Date())
+            initial.append(draft)
+        }
+        conversations = initial
+        tableView.reloadData()
+
         observeConversationsUseCase.execute()
+            .flatMapLatest { [weak self] list -> Single<[ConversationSummary]> in
+                guard let self else { return .just(list) }
+                return self.sortConversationsByLastQuestion(list)
+            }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] list in
                 guard let self else { return }
@@ -159,6 +174,21 @@ final class MenuViewController: UIViewController {
                 self.tableView.reloadData()
             })
             .disposed(by: disposeBag)
+    }
+
+    private func sortConversationsByLastQuestion(_ list: [ConversationSummary]) -> Single<[ConversationSummary]> {
+        guard !list.isEmpty else { return .just([]) }
+        let singles = list.map { summary in
+            fetchMessagesUseCase.execute(conversationID: summary.id)
+                .map { messages -> (ConversationSummary, Date) in
+                    let lastUserDate = messages.last { $0.role == .user }?.timestamp ?? summary.timestamp
+                    return (summary, lastUserDate)
+                }
+        }
+        return Single.zip(singles)
+            .map { results in
+                results.sorted { $0.1 > $1.1 }.map { $0.0 }
+            }
     }
 
     private func loadModels() {
@@ -277,7 +307,14 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        Section(rawValue: section)?.title
+        guard let section = Section(rawValue: section) else { return nil }
+        switch section {
+        case .setting:
+            return section.title
+        case .history:
+            let hasItem = !conversations.isEmpty
+            return hasItem ? section.title : nil
+        }
     }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

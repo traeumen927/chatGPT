@@ -11,8 +11,8 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // 대화 데이터 (사용자 UID를 최상위 컬렉션 이름으로 사용)
-    match /{userId}/{conversationId} {
+    // conversations 컬렉션
+    match /conversations/{userId}/items/{conversationId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }

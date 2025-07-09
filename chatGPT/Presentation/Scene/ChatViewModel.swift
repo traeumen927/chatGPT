@@ -166,10 +166,10 @@ final class ChatViewModel {
 
     private func preferenceText(from preference: UserPreference?) -> String? {
         guard let preference else { return nil }
-        let sorted = preference.topics.sorted { $0.value > $1.value }
-        let topics = sorted.map { $0.key }.joined(separator: ", ")
-        guard !topics.isEmpty else { return nil }
-        return "사용자가 선호하는 주제: " + topics
+        let sorted = preference.items.sorted { $0.updatedAt > $1.updatedAt }
+        let texts = sorted.map { "\($0.relation.rawValue): \($0.key)" }
+        let result = texts.joined(separator: ", ")
+        return result.isEmpty ? nil : result
     }
     
     private func saveFirstConversation(question: String, answer: String, model: OpenAIModel) {
