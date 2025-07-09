@@ -6,7 +6,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     // 3개 이상의 백틱을 동일한 길이의 백틱으로 닫는 패턴으로 수정하여
     // 코드 블럭 내부에 ``` 문자열이 포함되어도 올바르게 파싱되도록 개선합니다.
     private let codeRegex = try! NSRegularExpression(
-        pattern: "(`{3,})([^\\n]*?)\\n([\\s\\S]*?)\\n\\1(?:\\n|$)",
+        pattern: "(`{3,})([^\\r\\n]*?)\\r?\\n([\\s\\S]*?)\\r?\\n\\1(?:\\r?\\n|$)",
         options: []
     )
     
@@ -28,7 +28,13 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             let codeRange = Range(match.range(at: 3), in: markdown)!
             let code = String(markdown[codeRange])
 
-            let attachment = CodeBlockAttachment(code: code)
+            var language: String? = nil
+            if let langRange = Range(match.range(at: 2), in: markdown) {
+                let lang = String(markdown[langRange])
+                language = lang.isEmpty ? nil : lang
+            }
+
+            let attachment = CodeBlockAttachment(code: code, language: language)
             parts.append(NSAttributedString(attachment: attachment))
             
             currentLocation = range.upperBound
