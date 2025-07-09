@@ -3,7 +3,12 @@ import Markdown
 
 final class SwiftMarkdownRepository: MarkdownRepository {
     // ``` 코드 블럭을 추출하기 위한 정규식
-    private let codeRegex = try! NSRegularExpression(pattern: "```(.*?)\\n([\\s\\S]*?)```", options: [])
+    // 3개 이상의 백틱을 동일한 길이의 백틱으로 닫는 패턴으로 수정하여
+    // 코드 블럭 내부에 ``` 문자열이 포함되어도 올바르게 파싱되도록 개선합니다.
+    private let codeRegex = try! NSRegularExpression(
+        pattern: "(`{3,})([^\\n]*?)\\n([\\s\\S]*?)\\n\\1(?:\\n|$)",
+        options: []
+    )
     
     /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
@@ -20,7 +25,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 parts.append(attributed(from: beforeText))
             }
 
-            let codeRange = Range(match.range(at: 2), in: markdown)!
+            let codeRange = Range(match.range(at: 3), in: markdown)!
             let code = String(markdown[codeRange])
             // 코드 블럭에 대한 Attachment 생성
             let attachment = CodeBlockAttachment(code: code)
