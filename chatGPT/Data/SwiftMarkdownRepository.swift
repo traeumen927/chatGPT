@@ -103,6 +103,14 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     ]))
                 }
                 index += 1
+            // 순번(`1. `) 목록
+            } else if orderedListNumber(in: line) != nil {
+                var listLines: [String] = []
+                while index < lines.count && orderedListNumber(in: String(lines[index])) != nil {
+                    listLines.append(String(lines[index]))
+                    index += 1
+                }
+                result.append(makeOrderedList(from: listLines))
             // 글머리표(`- `) 목록
             } else if line.trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
                 var listLines: [String] = []
@@ -194,6 +202,70 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             }
         }
         return result
+    }
+
+    /// `1. ` 형태의 순번 목록을 NSAttributedString으로 변환
+    private func makeOrderedList(from lines: [String]) -> NSAttributedString {
+        let result = NSMutableAttributedString()
+        for (idx, line) in lines.enumerated() {
+            var item = line
+            if let range = item.range(of: "^\\d+\\. ", options: .regularExpression) {
+                item = String(item[range.upperBound...])
+            }
+
+            var options = AttributedString.MarkdownParsingOptions()
+            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
+            options.allowsExtendedAttributes = true
+
+            if var attr = try? AttributedString(markdown: item, options: options) {
+                for run in attr.runs {
+                    let range = run.range
+                    if run.inlinePresentationIntent == .code {
+                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                        attr[range].foregroundColor = ThemeColor.negative
+                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                    } else {
+                        attr[range].font = UIFont.systemFont(ofSize: 16)
+                        attr[range].foregroundColor = UIColor.label
+                    }
+                }
+                let bullet = NSAttributedString(
+                    string: "\(idx + 1). ",
+                    attributes: [
+                        .font: UIFont.systemFont(ofSize: 16),
+                        .foregroundColor: UIColor.label
+                    ]
+                )
+                result.append(bullet)
+                result.append(NSAttributedString(attr))
+            } else {
+                result.append(NSAttributedString(string: "\(idx + 1). " + item, attributes: [
+                    .font: UIFont.systemFont(ofSize: 16),
+                    .foregroundColor: UIColor.label
+                ]))
+            }
+            if idx != lines.count - 1 {
+                result.append(NSAttributedString(string: "\n"))
+            }
+        }
+        return result
+    }
+
+    /// 순번 목록 여부를 판별
+    private func orderedListNumber(in line: String) -> Int? {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        var digits = ""
+        var idx = trimmed.startIndex
+        while idx < trimmed.endIndex, trimmed[idx].isNumber {
+            digits.append(trimmed[idx])
+            idx = trimmed.index(after: idx)
+        }
+        guard !digits.isEmpty, idx < trimmed.endIndex, trimmed[idx] == "." else {
+            return nil
+        }
+        idx = trimmed.index(after: idx)
+        guard idx < trimmed.endIndex, trimmed[idx] == " " else { return nil }
+        return Int(digits)
     }
 
     /// `|` 로 이루어진 마크다운 테이블을 Attachment로 변환
