@@ -58,6 +58,13 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 if let attachment = makeTableAttachment(from: tableLines) {
                     result.append(NSAttributedString(attachment: attachment))
                 }
+            } else if line.trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
+                var listLines: [String] = []
+                while index < lines.count && lines[index].trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
+                    listLines.append(String(lines[index]))
+                    index += 1
+                }
+                result.append(makeBulletList(from: listLines))
             } else {
                 var options = AttributedString.MarkdownParsingOptions()
                 options.interpretedSyntax = .inlineOnlyPreservingWhitespace
@@ -92,6 +99,45 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             }
         }
 
+        return result
+    }
+
+    private func makeBulletList(from lines: [String]) -> NSAttributedString {
+        let result = NSMutableAttributedString()
+        for (idx, line) in lines.enumerated() {
+            var item = line
+            if let range = item.range(of: "- ") {
+                item = String(item[range.upperBound...])
+            }
+
+            var options = AttributedString.MarkdownParsingOptions()
+            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
+            options.allowsExtendedAttributes = true
+
+            if var attr = try? AttributedString(markdown: item, options: options) {
+                for run in attr.runs {
+                    let range = run.range
+                    if run.inlinePresentationIntent == .code {
+                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                        attr[range].foregroundColor = ThemeColor.negative
+                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                    } else {
+                        attr[range].font = UIFont.systemFont(ofSize: 16)
+                        attr[range].foregroundColor = UIColor.label
+                    }
+                }
+                result.append(NSAttributedString(string: "\u{2022} "))
+                result.append(NSAttributedString(attr))
+            } else {
+                result.append(NSAttributedString(string: "\u{2022} " + item, attributes: [
+                    .font: UIFont.systemFont(ofSize: 16),
+                    .foregroundColor: UIColor.label
+                ]))
+            }
+            if idx != lines.count - 1 {
+                result.append(NSAttributedString(string: "\n"))
+            }
+        }
         return result
     }
 
