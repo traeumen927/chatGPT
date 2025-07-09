@@ -95,8 +95,10 @@ final class ChatMessageCell: UITableViewCell {
                     let textView = makeTextView()
                     textView.attributedText = attributed.attributedSubstring(from: textRange)
                     stackView.addArrangedSubview(textView)
+                    textView.snp.makeConstraints { $0.width.equalToSuperview() }
                 }
                 stackView.addArrangedSubview(attachment.view)
+                attachment.view.snp.makeConstraints { $0.width.equalToSuperview() }
                 currentLocation = range.location + range.length
             } else if let attachment = value as? HorizontalRuleAttachment {
                 if range.location > currentLocation {
@@ -104,8 +106,10 @@ final class ChatMessageCell: UITableViewCell {
                     let textView = makeTextView()
                     textView.attributedText = attributed.attributedSubstring(from: textRange)
                     stackView.addArrangedSubview(textView)
+                    textView.snp.makeConstraints { $0.width.equalToSuperview() }
                 }
                 stackView.addArrangedSubview(attachment.view)
+                attachment.view.snp.makeConstraints { $0.width.equalToSuperview() }
                 currentLocation = range.location + range.length
             } else if let attachment = value as? TableBlockAttachment {
                 if range.location > currentLocation {
@@ -113,8 +117,10 @@ final class ChatMessageCell: UITableViewCell {
                     let textView = makeTextView()
                     textView.attributedText = attributed.attributedSubstring(from: textRange)
                     stackView.addArrangedSubview(textView)
+                    textView.snp.makeConstraints { $0.width.equalToSuperview() }
                 }
                 stackView.addArrangedSubview(attachment.view)
+                attachment.view.snp.makeConstraints { $0.width.equalToSuperview() }
                 currentLocation = range.location + range.length
             }
         }
@@ -124,6 +130,7 @@ final class ChatMessageCell: UITableViewCell {
             let textView = makeTextView()
             textView.attributedText = attributed.attributedSubstring(from: remainingRange)
             stackView.addArrangedSubview(textView)
+            textView.snp.makeConstraints { $0.width.equalToSuperview() }
         }
     }
 
