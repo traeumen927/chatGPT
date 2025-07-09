@@ -174,7 +174,14 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                         attr[range].foregroundColor = UIColor.label
                     }
                 }
-                result.append(NSAttributedString(string: "\u{2022} "))
+                let bullet = NSAttributedString(
+                    string: "\u{2022} ",
+                    attributes: [
+                        .font: UIFont.systemFont(ofSize: 16),
+                        .foregroundColor: UIColor.label
+                    ]
+                )
+                result.append(bullet)
                 result.append(NSAttributedString(attr))
             } else {
                 result.append(NSAttributedString(string: "\u{2022} " + item, attributes: [
