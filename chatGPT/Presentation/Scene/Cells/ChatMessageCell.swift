@@ -47,13 +47,6 @@ final class ChatMessageCell: UITableViewCell {
         backgroundColor = .clear
 
         bubbleView.clipsToBounds = true
-        bubbleView.setContentHuggingPriority(.required, for: .horizontal)
-        bubbleView.setContentCompressionResistancePriority(.required, for: .horizontal)
-
-        messageView.setContentHuggingPriority(.required, for: .horizontal)
-        messageView.setContentCompressionResistancePriority(.required, for: .horizontal)
-        stackView.setContentHuggingPriority(.required, for: .horizontal)
-        stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         contentView.addSubview(bubbleView)
         bubbleView.addSubview(messageView)
