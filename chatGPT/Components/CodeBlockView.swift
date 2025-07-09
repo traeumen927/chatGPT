@@ -28,8 +28,6 @@ final class CodeBlockView: UIView {
         label.lineBreakMode = .byClipping
         label.font = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
         label.textColor = ThemeColor.label1
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
@@ -65,10 +63,9 @@ final class CodeBlockView: UIView {
         }
 
         contentView.snp.makeConstraints { make in
-            make.top.bottom.leading.equalToSuperview()
-            make.trailing.equalToSuperview().priority(.low)
-            make.width.greaterThanOrEqualToSuperview()
-            make.height.equalToSuperview()
+            make.edges.equalTo(scrollView.contentLayoutGuide)
+            make.width.greaterThanOrEqualTo(scrollView.frameLayoutGuide.snp.width)
+            make.height.equalTo(scrollView.frameLayoutGuide.snp.height)
         }
 
         codeLabel.snp.makeConstraints { make in
