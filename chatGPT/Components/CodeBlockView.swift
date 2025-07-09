@@ -40,7 +40,7 @@ final class CodeBlockView: UIView {
         return button
     }()
 
-    init(code: String) {
+    init(code: String, language: String? = nil) {
         super.init(frame: .zero)
         layout()
         bind()

@@ -2,11 +2,13 @@ import UIKit
 
 final class CodeBlockAttachment: NSTextAttachment {
     let code: String
+    let language: String?
     let view: CodeBlockView
 
-    init(code: String) {
+    init(code: String, language: String? = nil) {
         self.code = code
-        self.view = CodeBlockView(code: code)
+        self.language = language
+        self.view = CodeBlockView(code: code, language: language)
         super.init(data: nil, ofType: nil)
     }
 
