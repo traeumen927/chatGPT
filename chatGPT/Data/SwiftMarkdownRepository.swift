@@ -25,21 +25,11 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 parts.append(attributed(from: beforeText))
             }
 
-            let languageRange = Range(match.range(at: 2), in: markdown)
-            let language = languageRange
-                .map { String(markdown[$0]).trimmingCharacters(in: .whitespaces) }
-                ?? ""
             let codeRange = Range(match.range(at: 3), in: markdown)!
             let code = String(markdown[codeRange])
 
-            if language.lowercased() == "markdown" {
-                // 코드 블럭 내부가 마크다운이라면 재귀적으로 파싱
-                parts.append(parse(code))
-            } else {
-                // 일반 코드 블럭 Attachment 생성
-                let attachment = CodeBlockAttachment(code: code)
-                parts.append(NSAttributedString(attachment: attachment))
-            }
+            let attachment = CodeBlockAttachment(code: code)
+            parts.append(NSAttributedString(attachment: attachment))
             
             currentLocation = range.upperBound
         }
