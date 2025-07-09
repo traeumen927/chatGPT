@@ -2,28 +2,34 @@ import UIKit
 import Markdown
 
 final class SwiftMarkdownRepository: MarkdownRepository {
+    // ``` 코드 블럭을 추출하기 위한 정규식
     private let codeRegex = try! NSRegularExpression(pattern: "```(.*?)\\n([\\s\\S]*?)```", options: [])
     
+    /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
+        // 코드 블럭 찾기
         let matches = codeRegex.matches(in: markdown, options: [], range: NSRange(location: 0, length: markdown.utf16.count))
         var parts: [NSAttributedString] = []
         var currentLocation = markdown.startIndex
-        
+
         for match in matches {
             guard let range = Range(match.range, in: markdown) else { continue }
+            // 코드 블럭 앞의 일반 마크다운 처리
             let beforeText = String(markdown[currentLocation..<range.lowerBound])
             if !beforeText.isEmpty {
                 parts.append(attributed(from: beforeText))
             }
-            
+
             let codeRange = Range(match.range(at: 2), in: markdown)!
             let code = String(markdown[codeRange])
+            // 코드 블럭에 대한 Attachment 생성
             let attachment = CodeBlockAttachment(code: code)
             parts.append(NSAttributedString(attachment: attachment))
             
             currentLocation = range.upperBound
         }
         
+        // 남은 마크다운 처리
         let remaining = String(markdown[currentLocation...])
         if !remaining.isEmpty {
             parts.append(attributed(from: remaining))
@@ -37,7 +43,9 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         return result
     }
     
+    /// 코드 블럭 외의 일반 마크다운을 라인 단위로 처리
     private func attributed(from markdown: String) -> NSAttributedString {
+        // 줄 단위로 분리
         let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false)
         let result = NSMutableAttributedString()
 
@@ -45,10 +53,12 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         while index < lines.count {
             let line = String(lines[index])
 
+            // 수평선(`---`)
             if line.trimmingCharacters(in: .whitespaces) == "---" {
                 let attachment = HorizontalRuleAttachment()
                 result.append(NSAttributedString(attachment: attachment))
                 index += 1
+            // 테이블(`|`로 시작하는 라인들)
             } else if line.starts(with: "|") {
                 var tableLines: [String] = []
                 while index < lines.count && lines[index].starts(with: "|") {
@@ -58,6 +68,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 if let attachment = makeTableAttachment(from: tableLines) {
                     result.append(NSAttributedString(attachment: attachment))
                 }
+            // 헤딩(`#`, `##`, `###`)
             } else if let headingLevel = headingLevel(in: line) {
                 let content = headingContent(from: line, level: headingLevel)
 
@@ -92,6 +103,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     ]))
                 }
                 index += 1
+            // 글머리표(`- `) 목록
             } else if line.trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
                 var listLines: [String] = []
                 while index < lines.count && lines[index].trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
@@ -99,6 +111,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     index += 1
                 }
                 result.append(makeBulletList(from: listLines))
+            // 그 외 일반 텍스트 라인
             } else {
                 var options = AttributedString.MarkdownParsingOptions()
                 options.interpretedSyntax = .inlineOnlyPreservingWhitespace
@@ -136,6 +149,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         return result
     }
 
+    /// `-` 로 시작하는 목록을 NSAttributedString으로 변환
     private func makeBulletList(from lines: [String]) -> NSAttributedString {
         let result = NSMutableAttributedString()
         for (idx, line) in lines.enumerated() {
@@ -175,6 +189,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         return result
     }
 
+    /// `|` 로 이루어진 마크다운 테이블을 Attachment로 변환
     private func makeTableAttachment(from lines: [String]) -> TableBlockAttachment? {
         guard lines.count >= 2 else { return nil }
         let header = parseCells(from: lines[0])
@@ -185,6 +200,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         return TableBlockAttachment(rows: rows)
     }
 
+    /// 테이블 한 줄을 셀 배열로 변환
     private func parseCells(from line: String) -> [String] {
         var temp = line
         temp = temp.trimmingCharacters(in: .whitespaces)
@@ -193,6 +209,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         return temp.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }
     }
 
+    /// 헤딩 레벨(`###`, `##`, `#`)을 판별
     private func headingLevel(in line: String) -> Int? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         if trimmed.hasPrefix("### ") { return 3 }
@@ -201,6 +218,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         return nil
     }
 
+    /// 헤딩에서 `#` 표시를 제외한 본문 추출
     private func headingContent(from line: String, level: Int) -> String {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         let start = trimmed.index(trimmed.startIndex, offsetBy: level + 1)
