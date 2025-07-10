@@ -117,20 +117,48 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 index += 1
             // 순번(`1. `) 목록
             } else if orderedListNumber(in: line) != nil {
-                var listLines: [String] = []
-                while index < lines.count && orderedListNumber(in: String(lines[index])) != nil {
-                    listLines.append(String(lines[index]))
+                var items: [String] = []
+                while index < lines.count {
+                    let current = String(lines[index])
+                    guard orderedListNumber(in: current) != nil else { break }
+                    var item = current
                     index += 1
+                    while index < lines.count {
+                        let next = String(lines[index])
+                        let trimmed = next.trimmingCharacters(in: .whitespaces)
+                        if orderedListNumber(in: trimmed) != nil { break }
+                        if next.hasPrefix("    ") || trimmed.isEmpty {
+                            item += "\n" + next
+                            index += 1
+                        } else {
+                            break
+                        }
+                    }
+                    items.append(item)
                 }
-                result.append(makeOrderedList(from: listLines))
+                result.append(makeOrderedList(from: items))
             // 글머리표(`- `) 목록
             } else if line.trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
-                var listLines: [String] = []
-                while index < lines.count && lines[index].trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
-                    listLines.append(String(lines[index]))
+                var items: [String] = []
+                while index < lines.count {
+                    let current = String(lines[index])
+                    guard current.trimmingCharacters(in: .whitespaces).hasPrefix("- ") else { break }
+                    var item = current
                     index += 1
+                    while index < lines.count {
+                        let next = String(lines[index])
+                        let trimmed = next.trimmingCharacters(in: .whitespaces)
+                        if trimmed.hasPrefix("- ") { break }
+                        if next.hasPrefix("    ") || trimmed.isEmpty {
+                            item += "\n" + next
+                            index += 1
+                        } else {
+                            break
+                        }
+                    }
+                    items.append(item)
                 }
-                result.append(makeBulletList(from: listLines))
+                result.append(makeBulletList(from: items))
             // 그 외 일반 텍스트 라인
             } else {
                 var options = AttributedString.MarkdownParsingOptions()
@@ -178,37 +206,20 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 item = String(item[range.upperBound...])
             }
 
-            var options = AttributedString.MarkdownParsingOptions()
-            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-            options.allowsExtendedAttributes = true
+            let itemLines = item.split(separator: "\n", omittingEmptySubsequences: false).map { String($0) }
+                .map { $0.hasPrefix("    ") ? String($0.dropFirst(4)) : $0 }
+                .joined(separator: "\n")
 
-            if var attr = try? AttributedString(markdown: item, options: options) {
-                for run in attr.runs {
-                    let range = run.range
-                    if run.inlinePresentationIntent == .code {
-                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                        attr[range].foregroundColor = ThemeColor.negative
-                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                    } else {
-                        attr[range].font = UIFont.systemFont(ofSize: 16)
-                        attr[range].foregroundColor = UIColor.label
-                    }
-                }
-                let bullet = NSAttributedString(
-                    string: "\u{2022} ",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]
-                )
-                result.append(bullet)
-                result.append(NSAttributedString(attr))
-            } else {
-                result.append(NSAttributedString(string: "\u{2022} " + item, attributes: [
+            let attr = parse(itemLines)
+            let bullet = NSAttributedString(
+                string: "\u{2022} ",
+                attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
-                ]))
-            }
+                ]
+            )
+            result.append(bullet)
+            result.append(attr)
             if idx != lines.count - 1 {
                 result.append(NSAttributedString(string: "\n"))
             }
@@ -225,37 +236,20 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 item = String(item[range.upperBound...])
             }
 
-            var options = AttributedString.MarkdownParsingOptions()
-            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-            options.allowsExtendedAttributes = true
+            let itemLines = item.split(separator: "\n", omittingEmptySubsequences: false).map { String($0) }
+                .map { $0.hasPrefix("    ") ? String($0.dropFirst(4)) : $0 }
+                .joined(separator: "\n")
 
-            if var attr = try? AttributedString(markdown: item, options: options) {
-                for run in attr.runs {
-                    let range = run.range
-                    if run.inlinePresentationIntent == .code {
-                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                        attr[range].foregroundColor = ThemeColor.negative
-                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                    } else {
-                        attr[range].font = UIFont.systemFont(ofSize: 16)
-                        attr[range].foregroundColor = UIColor.label
-                    }
-                }
-                let bullet = NSAttributedString(
-                    string: "\(idx + 1). ",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]
-                )
-                result.append(bullet)
-                result.append(NSAttributedString(attr))
-            } else {
-                result.append(NSAttributedString(string: "\(idx + 1). " + item, attributes: [
+            let attr = parse(itemLines)
+            let bullet = NSAttributedString(
+                string: "\(idx + 1). ",
+                attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
-                ]))
-            }
+                ]
+            )
+            result.append(bullet)
+            result.append(attr)
             if idx != lines.count - 1 {
                 result.append(NSAttributedString(string: "\n"))
             }
