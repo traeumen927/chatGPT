@@ -7,7 +7,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     // 코드 블럭 내부에 ``` 문자열이 포함되어도 올바르게 파싱되도록 개선합니다.
     // 닫는 백틱 뒤에 공백이 올 수 있도록 패턴을 보강합니다.
     private let codeRegex = try! NSRegularExpression(
-        pattern: "(`{3,})([^\\r\\n]*?)\\r?\\n([\\s\\S]*?)\\r?\\n\\1[ \\t]*(?:\\r?\\n|$)",
+        pattern: "(?:^|\\n)[ \\t]*(`{3,})([^\\r\\n]*?)\\r?\\n([\\s\\S]*?)\\r?\\n[ \\t]*\\1[ \\t]*(?=\\r?\\n|$)",
         options: []
     )
     
