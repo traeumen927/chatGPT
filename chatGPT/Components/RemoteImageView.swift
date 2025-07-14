@@ -21,11 +21,11 @@ final class RemoteImageView: UIView {
     }
 
     private func layout() {
+        backgroundColor = ThemeColor.background2
         addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.lessThanOrEqualTo(300).priority(999)
         }
     }
 
@@ -39,6 +39,6 @@ final class RemoteImageView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: 200)
+        CGSize(width: 200, height: 200)
     }
 }
