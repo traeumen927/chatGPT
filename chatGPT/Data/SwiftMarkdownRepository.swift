@@ -257,7 +257,10 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         let result = NSMutableAttributedString()
         for (idx, line) in lines.enumerated() {
             var item = line
+            var numberText = "\(idx + 1). "
             if let range = item.range(of: "^\\d+\\. ", options: .regularExpression) {
+                let prefix = item[item.startIndex..<range.upperBound]
+                numberText = String(prefix)
                 item = String(item[range.upperBound...])
             }
 
@@ -278,7 +281,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     }
                 }
                 let bullet = NSAttributedString(
-                    string: "\(idx + 1). ",
+                    string: numberText,
                     attributes: [
                         .font: UIFont.systemFont(ofSize: 16),
                         .foregroundColor: UIColor.label
@@ -287,7 +290,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 result.append(bullet)
                 result.append(NSAttributedString(attr))
             } else {
-                result.append(NSAttributedString(string: "\(idx + 1). " + item, attributes: [
+                result.append(NSAttributedString(string: numberText + item, attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
                 ]))
