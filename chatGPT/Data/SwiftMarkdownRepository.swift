@@ -6,47 +6,83 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     // 3개 이상의 백틱을 동일한 길이의 백틱으로 닫는 패턴으로 수정하여
     // 코드 블럭 내부에 ``` 문자열이 포함되어도 올바르게 파싱되도록 개선합니다.
     // 닫는 백틱 뒤에 공백이 올 수 있도록 패턴을 보강합니다.
-    private let codeRegex = try! NSRegularExpression(
-        pattern: "(?:^|\\n)[ \\t]*(`{3,})([^\\r\\n]*?)\\r?\\n([\\s\\S]*?)\\r?\\n[ \\t]*\\1[ \\t]*(?=\\r?\\n|$)",
+
+    private let openRegex = try! NSRegularExpression(
+        pattern: "^([ \\t]*)(`{3,})([^\\n]*)$",
         options: []
     )
     
     /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
-        // 코드 블럭 찾기
-        let matches = codeRegex.matches(in: markdown, options: [], range: NSRange(location: 0, length: markdown.utf16.count))
+        let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         var parts: [NSAttributedString] = []
-        var currentLocation = markdown.startIndex
+        var buffer: [String] = []
 
-        for match in matches {
-            guard let range = Range(match.range, in: markdown) else { continue }
-            // 코드 블럭 앞의 일반 마크다운 처리
-            let beforeText = String(markdown[currentLocation..<range.lowerBound])
-            if !beforeText.isEmpty {
-                parts.append(attributed(from: beforeText))
-            }
-
-            let codeRange = Range(match.range(at: 3), in: markdown)!
-            let code = String(markdown[codeRange])
-
-            var language: String? = nil
-            if let langRange = Range(match.range(at: 2), in: markdown) {
-                let lang = String(markdown[langRange]).trimmingCharacters(in: .whitespaces)
-                language = lang.isEmpty ? nil : lang
-            }
-
-            let attachment = CodeBlockAttachment(code: code, language: language)
-            parts.append(NSAttributedString(attachment: attachment))
-            
-            currentLocation = range.upperBound
+        func flush() {
+            guard !buffer.isEmpty else { return }
+            parts.append(attributed(from: buffer.joined(separator: "\n")))
+            buffer.removeAll()
         }
-        
-        // 남은 마크다운 처리
-        let remaining = String(markdown[currentLocation...])
-        if !remaining.isEmpty {
-            parts.append(attributed(from: remaining))
+
+        var index = 0
+        while index < lines.count {
+            let line = lines[index]
+            if let match = openRegex.firstMatch(in: line, range: NSRange(location: 0, length: (line as NSString).length)) {
+                flush()
+
+                let indent = (line as NSString).substring(with: match.range(at: 1))
+                let fence = (line as NSString).substring(with: match.range(at: 2))
+                let langRaw = (line as NSString).substring(with: match.range(at: 3)).trimmingCharacters(in: .whitespaces)
+                let language = langRaw.isEmpty ? nil : langRaw
+
+                var j = index + 1
+                var codeLines: [String] = []
+
+                func isFence(_ str: String) -> Bool {
+                    str.trimmingCharacters(in: .whitespaces) == fence && str.hasPrefix(indent)
+                }
+
+                if j < lines.count && isFence(lines[j]) {
+                    codeLines.append(lines[j])
+                    j += 1
+                }
+
+                var closing: Int? = nil
+                while j < lines.count {
+                    if isFence(lines[j]) {
+                        var first = j
+                        j += 1
+                        while j < lines.count && isFence(lines[j]) {
+                            codeLines.append(lines[first])
+                            first = j
+                            j += 1
+                        }
+                        closing = j - 1
+                        break
+                    } else {
+                        codeLines.append(lines[j])
+                        j += 1
+                    }
+                }
+
+                if let close = closing {
+                    let code = codeLines.joined(separator: "\n")
+                    let attachment = CodeBlockAttachment(code: code, language: language)
+                    parts.append(NSAttributedString(attachment: attachment))
+                    index = close + 1
+                } else {
+                    buffer.append(line)
+                    buffer.append(contentsOf: codeLines)
+                    index = j
+                }
+            } else {
+                buffer.append(line)
+                index += 1
+            }
         }
-        
+
+        flush()
+
         let result = NSMutableAttributedString()
         parts.forEach { result.append($0) }
         while result.string.hasSuffix("\n") {
