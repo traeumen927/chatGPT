@@ -10,9 +10,9 @@ final class CodeBlockView: UIView {
         let view = UIScrollView()
         view.showsHorizontalScrollIndicator = true
         view.showsVerticalScrollIndicator = false
-        view.alwaysBounceHorizontal = true
+        view.alwaysBounceHorizontal = false
         view.alwaysBounceVertical = false
-        view.bounces = true
+        view.bounces = false
         view.backgroundColor = .clear
         return view
     }()
@@ -83,6 +83,22 @@ final class CodeBlockView: UIView {
             .bind { [weak self] in
                 guard let self else { return }
                 UIPasteboard.general.string = self.codeLabel.text
+            }
+            .disposed(by: disposeBag)
+
+        Observable
+            .combineLatest(
+                scrollView.rx.observe(CGSize.self, "contentSize"),
+                scrollView.rx.observe(CGRect.self, "bounds")
+            )
+            .compactMap { contentSize, bounds -> Bool? in
+                guard let contentSize, let bounds else { return nil }
+                return contentSize.width > bounds.width
+            }
+            .distinctUntilChanged()
+            .bind { [weak self] shouldBounce in
+                self?.scrollView.alwaysBounceHorizontal = shouldBounce
+                self?.scrollView.bounces = shouldBounce
             }
             .disposed(by: disposeBag)
     }
