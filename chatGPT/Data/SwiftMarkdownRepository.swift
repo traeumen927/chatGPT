@@ -230,6 +230,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                         attr[range].foregroundColor = UIColor.label
                     }
                 }
+
                 let bullet = NSAttributedString(
                     string: "\u{2022} ",
                     attributes: [
