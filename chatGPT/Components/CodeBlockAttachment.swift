@@ -2,11 +2,13 @@ import UIKit
 
 final class CodeBlockAttachment: NSTextAttachment {
     let code: String
+    let language: String?
     let view: CodeBlockView
 
-    init(code: String) {
+    init(code: String, language: String? = nil) {
         self.code = code
-        self.view = CodeBlockView(code: code)
+        self.language = language
+        self.view = CodeBlockView(code: code, language: language)
         super.init(data: nil, ofType: nil)
     }
 
@@ -16,7 +18,8 @@ final class CodeBlockAttachment: NSTextAttachment {
 
     override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
         let targetWidth = lineFrag.width
-        let size = view.systemLayoutSizeFitting(CGSize(width: targetWidth, height: .greatestFiniteMagnitude))
+        var size = view.systemLayoutSizeFitting(CGSize(width: targetWidth, height: .greatestFiniteMagnitude))
+        size.width = max(size.width, targetWidth)
         return CGRect(origin: .zero, size: size)
     }
 }
