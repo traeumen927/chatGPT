@@ -17,6 +17,7 @@ final class RemoteImageAttachment: NSTextAttachment {
     }
 
     override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
-        CGRect(x: 0, y: 0, width: 200, height: 200)
+        let width = lineFrag.width * 0.65
+        return CGRect(x: 0, y: 0, width: width, height: width)
     }
 }
