@@ -246,7 +246,7 @@ UIKit 기반 구성 요소 및 커스텀 UI 모두 traitCollection에 따라 적
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/222b430d-19b7-4198-96cb-92eef035643d" width="30%">
-  <img src="https://github.com/user-attachments/assets/0f4b9b4c-800a-436e-a2f9-5fa91b6c465b" width="30%">
+  <img src="https://github.com/user-attachments/assets/87f6a237-32a1-4e6b-8f70-03961a7458ee" width="30%">
   <img src="https://github.com/user-attachments/assets/bf8b0b6a-bff3-4768-921a-35f45075546f" width="30%">
 </p>
 <p align="center">
