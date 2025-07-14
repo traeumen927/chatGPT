@@ -122,6 +122,17 @@ final class ChatMessageCell: UITableViewCell {
                 stackView.addArrangedSubview(attachment.view)
                 attachment.view.snp.makeConstraints { $0.width.equalToSuperview() }
                 currentLocation = range.location + range.length
+            } else if let attachment = value as? RemoteImageAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                    textView.snp.makeConstraints { $0.width.equalToSuperview() }
+                }
+                stackView.addArrangedSubview(attachment.view)
+                attachment.view.snp.makeConstraints { $0.width.equalToSuperview() }
+                currentLocation = range.location + range.length
             }
         }
 

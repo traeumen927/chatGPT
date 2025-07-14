@@ -12,6 +12,11 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         options: []
     )
     
+    private let imageRegex = try! NSRegularExpression(
+        pattern: "!\[([^\]]*)\]\(([^\)]+)\)",
+        options: []
+    )
+
     /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
         let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
@@ -90,6 +95,63 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         }
         return result
     }
+
+    private func parseInline(_ text: String) -> NSAttributedString {
+        var options = AttributedString.MarkdownParsingOptions()
+        options.interpretedSyntax = .inlineOnlyPreservingWhitespace
+        options.allowsExtendedAttributes = true
+
+        if var attr = try? AttributedString(markdown: text, options: options) {
+            for run in attr.runs {
+                let range = run.range
+                if run.inlinePresentationIntent == .code {
+                    attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                    attr[range].foregroundColor = ThemeColor.negative
+                    attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                } else {
+                    attr[range].font = UIFont.systemFont(ofSize: 16)
+                    attr[range].foregroundColor = UIColor.label
+                }
+            }
+            return NSAttributedString(attr)
+        } else {
+            return NSAttributedString(string: text, attributes: [
+                .font: UIFont.systemFont(ofSize: 16),
+                .foregroundColor: UIColor.label
+            ])
+        }
+    }
+
+    private func parseLineWithImages(_ line: String) -> NSAttributedString {
+        let ns = line as NSString
+        let matches = imageRegex.matches(in: line, range: NSRange(location: 0, length: ns.length))
+        guard !matches.isEmpty else {
+            return parseInline(line)
+        }
+        let result = NSMutableAttributedString()
+        var location = 0
+        for match in matches {
+            if match.range.location > location {
+                let textPart = ns.substring(with: NSRange(location: location, length: match.range.location - location))
+                result.append(parseInline(textPart))
+            }
+            let alt = ns.substring(with: match.range(at: 1))
+            let urlString = ns.substring(with: match.range(at: 2))
+            if let url = URL(string: urlString) {
+                let attachment = RemoteImageAttachment(url: url, altText: alt)
+                result.append(NSAttributedString(attachment: attachment))
+            } else {
+                let raw = ns.substring(with: match.range)
+                result.append(parseInline(raw))
+            }
+            location = match.range.location + match.range.length
+        }
+        if location < ns.length {
+            let textPart = ns.substring(from: location)
+            result.append(parseInline(textPart))
+        }
+        return result
+    }
     
     /// 코드 블럭 외의 일반 마크다운을 라인 단위로 처리
     private func attributed(from markdown: String) -> NSAttributedString {
@@ -120,10 +182,6 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             } else if let headingLevel = headingLevel(in: line) {
                 let content = headingContent(from: line, level: headingLevel)
 
-                var options = AttributedString.MarkdownParsingOptions()
-                options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-                options.allowsExtendedAttributes = true
-
                 let fontSize: CGFloat
                 switch headingLevel {
                 case 1: fontSize = 28
@@ -131,25 +189,19 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 default: fontSize = 20
                 }
 
-                if var attr = try? AttributedString(markdown: content, options: options) {
-                    for run in attr.runs {
-                        let range = run.range
-                        if run.inlinePresentationIntent == .code {
-                            attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                            attr[range].foregroundColor = ThemeColor.negative
-                            attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                        } else {
-                            attr[range].font = UIFont.boldSystemFont(ofSize: fontSize)
-                            attr[range].foregroundColor = UIColor.label
-                        }
+                var attr = NSMutableAttributedString(attributedString: parseLineWithImages(content))
+                for run in attr.runs {
+                    let range = run.range
+                    if run.inlinePresentationIntent == .code {
+                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                        attr[range].foregroundColor = ThemeColor.negative
+                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                    } else {
+                        attr[range].font = UIFont.boldSystemFont(ofSize: fontSize)
+                        attr[range].foregroundColor = UIColor.label
                     }
-                    result.append(NSAttributedString(attr))
-                } else {
-                    result.append(NSAttributedString(string: content, attributes: [
-                        .font: UIFont.boldSystemFont(ofSize: fontSize),
-                        .foregroundColor: UIColor.label
-                    ]))
                 }
+                result.append(NSAttributedString(attr))
                 index += 1
             // 순번(`1. `) 목록
             } else if orderedListNumber(in: line) != nil {
@@ -169,31 +221,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 result.append(makeBulletList(from: listLines))
             // 그 외 일반 텍스트 라인
             } else {
-                var options = AttributedString.MarkdownParsingOptions()
-                options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-                options.allowsExtendedAttributes = true
-
-                if var attr = try? AttributedString(markdown: line, options: options) {
-
-                    for run in attr.runs {
-                        let range = run.range
-                        if run.inlinePresentationIntent == .code {
-                            attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                            attr[range].foregroundColor = ThemeColor.negative
-                            attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                        } else {
-                            attr[range].font = UIFont.systemFont(ofSize: 16)
-                            attr[range].foregroundColor = UIColor.label
-                        }
-                    }
-
-                    result.append(NSAttributedString(attr))
-                } else {
-                    result.append(NSAttributedString(string: line, attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]))
-                }
+                result.append(parseLineWithImages(line))
                 index += 1
             }
 
@@ -214,37 +242,15 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 item = String(item[range.upperBound...])
             }
 
-            var options = AttributedString.MarkdownParsingOptions()
-            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-            options.allowsExtendedAttributes = true
-
-            if var attr = try? AttributedString(markdown: item, options: options) {
-                for run in attr.runs {
-                    let range = run.range
-                    if run.inlinePresentationIntent == .code {
-                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                        attr[range].foregroundColor = ThemeColor.negative
-                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                    } else {
-                        attr[range].font = UIFont.systemFont(ofSize: 16)
-                        attr[range].foregroundColor = UIColor.label
-                    }
-                }
-                let bullet = NSAttributedString(
-                    string: "\u{2022} ",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]
-                )
-                result.append(bullet)
-                result.append(NSAttributedString(attr))
-            } else {
-                result.append(NSAttributedString(string: "\u{2022} " + item, attributes: [
+            let bullet = NSAttributedString(
+                string: "\u{2022} ",
+                attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
-                ]))
-            }
+                ]
+            )
+            result.append(bullet)
+            result.append(parseLineWithImages(item))
             if idx != lines.count - 1 {
                 result.append(NSAttributedString(string: "\n"))
             }
@@ -264,37 +270,15 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 item = String(item[range.upperBound...])
             }
 
-            var options = AttributedString.MarkdownParsingOptions()
-            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-            options.allowsExtendedAttributes = true
-
-            if var attr = try? AttributedString(markdown: item, options: options) {
-                for run in attr.runs {
-                    let range = run.range
-                    if run.inlinePresentationIntent == .code {
-                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                        attr[range].foregroundColor = ThemeColor.negative
-                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                    } else {
-                        attr[range].font = UIFont.systemFont(ofSize: 16)
-                        attr[range].foregroundColor = UIColor.label
-                    }
-                }
-                let bullet = NSAttributedString(
-                    string: numberText,
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]
-                )
-                result.append(bullet)
-                result.append(NSAttributedString(attr))
-            } else {
-                result.append(NSAttributedString(string: numberText + item, attributes: [
+            let bullet = NSAttributedString(
+                string: numberText,
+                attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
-                ]))
-            }
+                ]
+            )
+            result.append(bullet)
+            result.append(parseLineWithImages(item))
             if idx != lines.count - 1 {
                 result.append(NSAttributedString(string: "\n"))
             }
