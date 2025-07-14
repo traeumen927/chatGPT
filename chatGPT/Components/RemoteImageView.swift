@@ -27,6 +27,7 @@ final class RemoteImageView: UIView {
     }
 
     private func load() {
+        print("url: \(url)")
         imageView.kf.setImage(with: url)
     }
 }
