@@ -21,7 +21,7 @@ final class RemoteImageGroupView: UIView {
     }
 
     private func layout() {
-        backgroundColor = ThemeColor.background2
+        backgroundColor = ThemeColor.background1
         addSubview(scrollView)
         scrollView.addSubview(stackView)
         scrollView.showsHorizontalScrollIndicator = true
@@ -30,18 +30,19 @@ final class RemoteImageGroupView: UIView {
 
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalTo(200)
         }
 
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
+        let itemWidthRatio: CGFloat = 0.65
         urls.forEach { url in
             let imageView = RemoteImageView(url: url)
             stackView.addArrangedSubview(imageView)
             imageView.snp.makeConstraints { make in
-                make.size.equalTo(CGSize(width: 200, height: 200))
+                make.width.equalTo(self.snp.width).multipliedBy(itemWidthRatio)
+                make.height.equalTo(imageView.snp.width)
             }
         }
     }
@@ -51,6 +52,6 @@ final class RemoteImageGroupView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: 200)
+        CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
     }
 }
