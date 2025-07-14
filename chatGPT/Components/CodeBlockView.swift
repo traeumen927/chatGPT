@@ -66,6 +66,7 @@ final class CodeBlockView: UIView {
     private func layout() {
         backgroundColor = ThemeColor.background3
         layer.cornerRadius = 8
+        layer.masksToBounds = true
 
         addSubview(headerView)
         addSubview(scrollView)
@@ -75,7 +76,7 @@ final class CodeBlockView: UIView {
         contentView.addSubview(codeLabel)
 
         headerView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview().inset(12)
+            make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(24)
         }
 
