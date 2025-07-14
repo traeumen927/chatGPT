@@ -41,6 +41,6 @@ final class RemoteImageView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        CGSize(width: 200, height: 200)
+        CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
     }
 }
