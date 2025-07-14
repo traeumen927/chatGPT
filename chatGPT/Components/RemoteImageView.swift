@@ -1,16 +1,19 @@
 import UIKit
 import SnapKit
-import Kingfisher
+import RxSwift
+import RxCocoa
 
 final class RemoteImageView: UIView {
     private let imageView = UIImageView()
     private let url: URL
+    private let disposeBag = DisposeBag()
+    private let imageRepository = KingfisherImageRepository()
 
     init(url: URL) {
         self.url = url
         super.init(frame: .zero)
         layout()
-        load()
+        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -26,8 +29,17 @@ final class RemoteImageView: UIView {
         }
     }
 
-    private func load() {
+    private func bind() {
         print("url: \(url)")
-        imageView.kf.setImage(with: url)
+        imageRepository.fetchImage(from: url)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] image in
+                self?.imageView.image = image
+            })
+            .disposed(by: disposeBag)
+    }
+
+    override var intrinsicContentSize: CGSize {
+        CGSize(width: UIView.noIntrinsicMetric, height: 200)
     }
 }
