@@ -36,7 +36,9 @@ extension UITextView {
               let textRange = textRange(from: start, to: end) else {
             return .zero
         }
-        let rect = firstRect(for: textRange)
-        return rect.integral
+        let rect = firstRect(for: textRange).integral
+        let padding = textContainerInset.left + textContainer.lineFragmentPadding
+        let width = bounds.width - padding * 2
+        return CGRect(x: padding, y: rect.minY, width: width, height: rect.height)
     }
 }
