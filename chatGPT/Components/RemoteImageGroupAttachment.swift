@@ -1,14 +1,12 @@
 import UIKit
 
-final class RemoteImageAttachment: NSTextAttachment {
-    let url: URL
-    let altText: String
-    let view: RemoteImageView
+final class RemoteImageGroupAttachment: NSTextAttachment {
+    let urls: [URL]
+    let view: RemoteImageGroupView
 
-    init(url: URL, altText: String) {
-        self.url = url
-        self.altText = altText
-        self.view = RemoteImageView(url: url)
+    init(urls: [URL]) {
+        self.urls = urls
+        self.view = RemoteImageGroupView(urls: urls)
         super.init(data: nil, ofType: nil)
     }
 
@@ -17,6 +15,6 @@ final class RemoteImageAttachment: NSTextAttachment {
     }
 
     override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
-        CGRect(x: 0, y: 0, width: 200, height: 200)
+        CGRect(x: 0, y: 0, width: lineFrag.width, height: 200)
     }
 }

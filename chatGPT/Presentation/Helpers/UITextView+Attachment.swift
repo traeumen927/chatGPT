@@ -3,7 +3,7 @@ import UIKit
 extension UITextView {
     func addAttachmentViews() {
         subviews.forEach { view in
-            if view is CodeBlockView || view is HorizontalRuleView || view is TableBlockView || view is RemoteImageView {
+            if view is CodeBlockView || view is HorizontalRuleView || view is TableBlockView || view is RemoteImageView || view is RemoteImageGroupView {
                 view.removeFromSuperview()
             }
         }
@@ -27,6 +27,11 @@ extension UITextView {
                 attachment.view.frame = rect
                 addSubview(attachment.view)
             } else if let attachment = value as? RemoteImageAttachment {
+                let rect = self.boundingRect(forCharacterRange: range)
+                guard !rect.isNull, !rect.isInfinite, !rect.isEmpty else { return }
+                attachment.view.frame = rect
+                addSubview(attachment.view)
+            } else if let attachment = value as? RemoteImageGroupAttachment {
                 let rect = self.boundingRect(forCharacterRange: range)
                 guard !rect.isNull, !rect.isInfinite, !rect.isEmpty else { return }
                 attachment.view.frame = rect

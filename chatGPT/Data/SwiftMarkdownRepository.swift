@@ -21,6 +21,29 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         pattern: "(`+)([^`]*?)\\1",
         options: []
     )
+
+    private func imagePartsIfImageOnly(_ line: String) -> [(URL, String)]? {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return nil }
+        let ns = trimmed as NSString
+        let matches = imageRegex.matches(in: trimmed, range: NSRange(location: 0, length: ns.length))
+        guard !matches.isEmpty else { return nil }
+        var remainder = trimmed
+        for match in matches.reversed() {
+            if let range = Range(match.range, in: remainder) {
+                remainder.removeSubrange(range)
+            }
+        }
+        guard remainder.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+        var parts: [(URL, String)] = []
+        for match in matches {
+            let alt = ns.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespaces)
+            let urlString = ns.substring(with: match.range(at: 2)).trimmingCharacters(in: .whitespaces)
+            guard let url = URL(string: urlString) else { return nil }
+            parts.append((url, alt))
+        }
+        return parts
+    }
     
     /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
@@ -133,6 +156,25 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         guard !matches.isEmpty else {
             return parseInline(text)
         }
+        // detect continuous images without text
+        var remainder = text
+        for match in matches.reversed() {
+            if let range = Range(match.range, in: remainder) {
+                remainder.removeSubrange(range)
+            }
+        }
+        let onlySpaces = remainder.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if onlySpaces && matches.count > 1 {
+            var urls: [URL] = []
+            for match in matches {
+                let urlString = ns.substring(with: match.range(at: 2)).trimmingCharacters(in: .whitespaces)
+                guard let url = URL(string: urlString) else { return parseInline(text) }
+                urls.append(url)
+            }
+            let attachment = RemoteImageGroupAttachment(urls: urls)
+            return NSAttributedString(attachment: attachment)
+        }
+
         let result = NSMutableAttributedString()
         var location = 0
         for match in matches {
@@ -191,6 +233,27 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         var index = 0
         while index < lines.count {
             let line = String(lines[index])
+
+            if let parts = imagePartsIfImageOnly(line) {
+                var urls: [URL] = parts.map { $0.0 }
+                var j = index + 1
+                while j < lines.count, let more = imagePartsIfImageOnly(String(lines[j])) {
+                    urls.append(contentsOf: more.map { $0.0 })
+                    j += 1
+                }
+                if urls.count > 1 {
+                    let attachment = RemoteImageGroupAttachment(urls: urls)
+                    result.append(NSAttributedString(attachment: attachment))
+                } else if let url = urls.first {
+                    let attachment = RemoteImageAttachment(url: url, altText: parts.first?.1 ?? "")
+                    result.append(NSAttributedString(attachment: attachment))
+                }
+                index = j
+                if index < lines.count {
+                    result.append(NSAttributedString(string: "\n"))
+                }
+                continue
+            }
             
             // 수평선(`---`)
             if line.trimmingCharacters(in: .whitespaces) == "---" {
