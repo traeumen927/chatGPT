@@ -5,20 +5,20 @@ import RxCocoa
 
 final class CodeBlockView: UIView {
     private let disposeBag = DisposeBag()
-
+    
     private let headerView: UIView = {
         let view = UIView()
         view.backgroundColor = ThemeColor.background2
         return view
     }()
-
+    
     private let languageLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)
         label.textColor = ThemeColor.label2
         return label
     }()
-
+    
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.showsHorizontalScrollIndicator = true
@@ -29,12 +29,12 @@ final class CodeBlockView: UIView {
         view.backgroundColor = .clear
         return view
     }()
-
+    
     private let contentView: UIView = {
         let view = UIView()
         return view
     }()
-
+    
     private let codeLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -43,14 +43,14 @@ final class CodeBlockView: UIView {
         label.textColor = ThemeColor.label1
         return label
     }()
-
+    
     private let copyButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Copy", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 12, weight: .medium)
         return button
     }()
-
+    
     init(code: String, language: String? = nil) {
         super.init(frame: .zero)
         layout()
@@ -58,55 +58,54 @@ final class CodeBlockView: UIView {
         codeLabel.text = code
         languageLabel.text = language ?? "text"
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func layout() {
         backgroundColor = ThemeColor.background3
         layer.cornerRadius = 8
         layer.masksToBounds = true
-
+        
         addSubview(headerView)
         addSubview(scrollView)
         headerView.addSubview(languageLabel)
         headerView.addSubview(copyButton)
         scrollView.addSubview(contentView)
         contentView.addSubview(codeLabel)
-
+        
         headerView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(24)
         }
-
+        
         languageLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(8)
             make.centerY.equalToSuperview()
         }
-
+        
         copyButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(8)
             make.centerY.equalToSuperview()
         }
-
+        
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(headerView.snp.bottom).offset(4)
             make.leading.trailing.bottom.equalToSuperview().inset(12)
         }
-
+        
         contentView.snp.makeConstraints { make in
             make.edges.equalTo(scrollView.contentLayoutGuide)
             make.width.greaterThanOrEqualTo(scrollView.frameLayoutGuide.snp.width)
             make.height.equalTo(scrollView.frameLayoutGuide.snp.height)
         }
-
+        
         codeLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
     }
-
+    
     private func bind() {
         copyButton.rx.tap
             .bind { [weak self] in
@@ -114,14 +113,17 @@ final class CodeBlockView: UIView {
                 UIPasteboard.general.string = self.codeLabel.text
                 self.copyButton.setTitle("Copied", for: .normal)
                 Observable.just(())
-                    .delay(.seconds(1), scheduler: MainScheduler.instance)
+                    .delay(.seconds(2), scheduler: MainScheduler.instance)
                     .bind { [weak self] in
-                        self?.copyButton.setTitle("Copy", for: .normal)
+                        guard let self else { return }
+                        UIView.transition(with: self.copyButton, duration: 0.2, options: .transitionCrossDissolve) {
+                            self.copyButton.setTitle("Copy", for: .normal)
+                        }
                     }
                     .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
-
+        
         Observable
             .combineLatest(
                 scrollView.rx.observe(CGSize.self, "contentSize"),
