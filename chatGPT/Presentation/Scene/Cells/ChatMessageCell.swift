@@ -147,6 +147,7 @@ final class ChatMessageCell: UITableViewCell {
                 stackView.addArrangedSubview(attachment.view)
                 attachment.view.snp.makeConstraints { make in
                     make.height.equalTo(200)
+                    make.width.equalToSuperview()
                 }
                 currentLocation = range.location + range.length
             }
