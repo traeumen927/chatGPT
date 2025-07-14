@@ -112,6 +112,13 @@ final class CodeBlockView: UIView {
             .bind { [weak self] in
                 guard let self else { return }
                 UIPasteboard.general.string = self.codeLabel.text
+                self.copyButton.setTitle("Copied", for: .normal)
+                Observable.just(())
+                    .delay(.seconds(1), scheduler: MainScheduler.instance)
+                    .bind { [weak self] in
+                        self?.copyButton.setTitle("Copy", for: .normal)
+                    }
+                    .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
 
