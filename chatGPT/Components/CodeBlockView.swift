@@ -35,13 +35,16 @@ final class CodeBlockView: UIView {
         return view
     }()
     
-    private let codeLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.lineBreakMode = .byClipping
-        label.font = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
-        label.textColor = ThemeColor.label1
-        return label
+    private let codeTextView: UITextView = {
+        let view = UITextView()
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.textContainerInset = .zero
+        view.textContainer.lineFragmentPadding = 0
+        view.font = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
+        view.textColor = ThemeColor.label1
+        view.backgroundColor = .clear
+        return view
     }()
     
     private let copyButton: UIButton = {
@@ -55,7 +58,7 @@ final class CodeBlockView: UIView {
         super.init(frame: .zero)
         layout()
         bind()
-        codeLabel.text = code
+        codeTextView.text = code
         languageLabel.text = language ?? "text"
     }
     
@@ -73,7 +76,7 @@ final class CodeBlockView: UIView {
         headerView.addSubview(languageLabel)
         headerView.addSubview(copyButton)
         scrollView.addSubview(contentView)
-        contentView.addSubview(codeLabel)
+        contentView.addSubview(codeTextView)
         
         headerView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
@@ -101,7 +104,7 @@ final class CodeBlockView: UIView {
             make.height.equalTo(scrollView.frameLayoutGuide.snp.height)
         }
         
-        codeLabel.snp.makeConstraints { make in
+        codeTextView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
@@ -110,7 +113,7 @@ final class CodeBlockView: UIView {
         copyButton.rx.tap
             .bind { [weak self] in
                 guard let self else { return }
-                UIPasteboard.general.string = self.codeLabel.text
+                UIPasteboard.general.string = self.codeTextView.text
                 self.copyButton.setTitle("Copied", for: .normal)
                 Observable.just(())
                     .delay(.seconds(2), scheduler: MainScheduler.instance)
