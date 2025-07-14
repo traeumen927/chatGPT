@@ -22,6 +22,8 @@ final class RemoteImageView: UIView {
 
     private func layout() {
         backgroundColor = ThemeColor.background2
+        layer.cornerRadius = 8
+        clipsToBounds = true
         addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
         imageView.snp.makeConstraints { make in
