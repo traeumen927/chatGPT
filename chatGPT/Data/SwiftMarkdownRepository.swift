@@ -16,6 +16,11 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         pattern: #"!\[([^\]]*)\]\(([^)]+)\)"#,
         options: []
     )
+
+    private let inlineCodeRegex = try! NSRegularExpression(
+        pattern: "(`+)([^`]*?)\\1",
+        options: []
+    )
     
     /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
@@ -122,11 +127,11 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         }
     }
     
-    private func parseLineWithImages(_ line: String) -> NSAttributedString {
-        let ns = line as NSString
-        let matches = imageRegex.matches(in: line, range: NSRange(location: 0, length: ns.length))
+    private func parseSegmentWithImages(_ text: String) -> NSAttributedString {
+        let ns = text as NSString
+        let matches = imageRegex.matches(in: text, range: NSRange(location: 0, length: ns.length))
         guard !matches.isEmpty else {
-            return parseInline(line)
+            return parseInline(text)
         }
         let result = NSMutableAttributedString()
         var location = 0
@@ -149,6 +154,30 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         if location < ns.length {
             let textPart = ns.substring(from: location)
             result.append(parseInline(textPart))
+        }
+        return result
+    }
+
+    private func parseLineWithImages(_ line: String) -> NSAttributedString {
+        let ns = line as NSString
+        let codeMatches = inlineCodeRegex.matches(in: line, range: NSRange(location: 0, length: ns.length))
+        guard !codeMatches.isEmpty else {
+            return parseSegmentWithImages(line)
+        }
+        let result = NSMutableAttributedString()
+        var location = 0
+        for match in codeMatches {
+            if match.range.location > location {
+                let textPart = ns.substring(with: NSRange(location: location, length: match.range.location - location))
+                result.append(parseSegmentWithImages(textPart))
+            }
+            let codeText = ns.substring(with: match.range)
+            result.append(parseInline(codeText))
+            location = match.range.location + match.range.length
+        }
+        if location < ns.length {
+            let textPart = ns.substring(from: location)
+            result.append(parseSegmentWithImages(textPart))
         }
         return result
     }
