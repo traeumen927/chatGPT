@@ -30,7 +30,6 @@ final class RemoteImageView: UIView {
     }
 
     private func bind() {
-        print("url: \(url)")
         imageRepository.fetchImage(from: url)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] image in
