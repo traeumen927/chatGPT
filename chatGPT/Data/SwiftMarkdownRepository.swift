@@ -13,7 +13,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     )
     
     private let imageRegex = try! NSRegularExpression(
-        pattern: "!\[([^\]]*)\]\(([^\)]+)\)",
+        pattern: #"!\[([^\]]*)\]\(([^)]+)\)"#,
         options: []
     )
 
