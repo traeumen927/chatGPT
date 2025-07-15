@@ -13,7 +13,7 @@ import RxCocoa
 final class MainViewController: UIViewController {
     
     // MARK: 모델조회 UseCase
-    private let fetchModelsUseCase: FetchAvailableModelsUseCase
+    private let fetchModelsUseCase: FetchModelConfigsUseCase
     
     // MARK: 채팅관련 ViewModel
     private let chatViewModel: ChatViewModel
@@ -30,7 +30,7 @@ final class MainViewController: UIViewController {
 
     private let disposeBag = DisposeBag()
 
-    private var availableModels: [OpenAIModel] = []
+    private var availableModels: [ModelConfig] = []
     
     
     // MARK: 선택된 chatGPT 모델
@@ -134,7 +134,7 @@ final class MainViewController: UIViewController {
     private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
 
     
-    init(fetchModelsUseCase: FetchAvailableModelsUseCase,
+    init(fetchModelsUseCase: FetchModelConfigsUseCase,
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
@@ -288,10 +288,11 @@ final class MainViewController: UIViewController {
     }
     
     private func preloadModels() {
-        fetchModelsUseCase.execute { [weak self] result in
-            guard case let .success(models) = result else { return }
-            self?.availableModels = models
-        }
+        fetchModelsUseCase.execute()
+            .subscribe(onSuccess: { [weak self] models in
+                self?.availableModels = models
+            })
+            .disposed(by: disposeBag)
     }
     
     
