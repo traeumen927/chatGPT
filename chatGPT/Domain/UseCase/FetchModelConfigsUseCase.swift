@@ -20,7 +20,7 @@ final class FetchModelConfigsUseCase {
     }
 
     private static func wrap(_ repo: OpenAIRepository) -> Single<[OpenAIModel]> {
-        Single.create { single in
+        Single<[OpenAIModel]>.create(subscribe: { single in
             repo.fetchAvailableModels { result in
                 switch result {
                 case .success(let models):
@@ -30,6 +30,6 @@ final class FetchModelConfigsUseCase {
                 }
             }
             return Disposables.create()
-        }
+        })
     }
 }

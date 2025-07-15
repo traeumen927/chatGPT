@@ -6,7 +6,7 @@ final class FirestoreModelConfigRepository: ModelConfigRepository {
     private let db = Firestore.firestore()
 
     func fetchConfigs() -> Single<[ModelConfig]> {
-        Single.create { single in
+        Single<[ModelConfig]>.create(subscribe: { single in
             self.db.collection("models").getDocuments { snapshot, error in
                 if let docs = snapshot?.documents {
                     let configs: [ModelConfig] = docs.compactMap { doc in
@@ -32,11 +32,11 @@ final class FirestoreModelConfigRepository: ModelConfigRepository {
                 }
             }
             return Disposables.create()
-        }
+        })
     }
 
     func syncConfigs(with models: [OpenAIModel]) -> Single<[ModelConfig]> {
-        Single.create { single in
+        Single<[ModelConfig]>.create(subscribe: { single in
             let collection = self.db.collection("models")
             collection.getDocuments { snapshot, error in
                 if let error = error { single(.failure(error)); return }
@@ -140,6 +140,6 @@ final class FirestoreModelConfigRepository: ModelConfigRepository {
                 }
             }
             return Disposables.create()
-        }
+        })
     }
 }
