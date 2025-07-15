@@ -8,6 +8,7 @@ final class RemoteImageView: UIView {
     private let url: URL
     private let disposeBag = DisposeBag()
     private let imageRepository = KingfisherImageRepository()
+    private var loadedImage: UIImage?
 
     init(url: URL) {
         self.url = url
@@ -26,6 +27,7 @@ final class RemoteImageView: UIView {
         clipsToBounds = true
         addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -36,7 +38,20 @@ final class RemoteImageView: UIView {
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] image in
                 self?.imageView.image = image
+                self?.loadedImage = image
             })
+            .disposed(by: disposeBag)
+
+        let tapGesture = UITapGestureRecognizer()
+        imageView.addGestureRecognizer(tapGesture)
+
+        tapGesture.rx.event
+            .compactMap { [weak self] _ in self?.loadedImage }
+            .bind { image in
+                let viewer = ImageViewerViewController(image: image)
+                viewer.modalPresentationStyle = .overFullScreen
+                UIApplication.topViewController?.present(viewer, animated: true)
+            }
             .disposed(by: disposeBag)
     }
 

@@ -35,6 +35,7 @@
 		F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */; };
 		F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* ChatViewModel.swift */; };
 		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
+                F2A30B1D2E30000100000101 /* ImageViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A30B1C2E30000100000101 /* ImageViewerViewController.swift */; };
 		F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */; };
 		F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111122F0A000100D00000 /* HorizontalRuleView.swift */; };
 		F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D12E0C034B006E81DD /* ConversationMessage.swift */; };
@@ -102,11 +103,11 @@
 		F1E571472E043CD100438A53 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571462E043CD100438A53 /* FirebaseStorage */; };
 		F1EF04ED2E044CDE005D2CF9 /* GoogleLoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF04EC2E044CDE005D2CF9 /* GoogleLoginButton.swift */; };
 		F1EF04EF2E044EC5005D2CF9 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF04EE2E044EC5005D2CF9 /* UIColor+Hex.swift */; };
+                F2A30B1F2E30000100000101 /* UIApplication+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A30B1E2E30000100000101 /* UIApplication+TopViewController.swift */; };
 		FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */; };
 		FDF214A9E94D3F7E2DA0DEED /* UpdateConversationTitleUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */; };
 		a0d99ba381b44d72b54327f6 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9d37b25c97b401d97ce1732 /* MenuViewController.swift */; };
 		aa711a251b034678b1e8a5c7 /* KingfisherImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */; };
-		c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
 		ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
 		d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */; };
 		edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */; };
@@ -171,11 +172,9 @@
 		F1452D862E09741F00795A9E /* GetCurrentUserUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCurrentUserUseCase.swift; sourceTree = "<group>"; };
 		F1452D882E09796F00795A9E /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		F15935252E1C127500739408 /* FirestoreUserPreferenceRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreUserPreferenceRepository.swift; sourceTree = "<group>"; };
-		F15935272E1C127F00739408 /* UserPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreference.swift; sourceTree = "<group>"; };
 		F15935292E1C128D00739408 /* PreferenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceError.swift; sourceTree = "<group>"; };
 		F159352B2E1C129700739408 /* UserPreferenceRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferenceRepository.swift; sourceTree = "<group>"; };
 		F159352D2E1C12B500739408 /* FetchUserPreferenceUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserPreferenceUseCase.swift; sourceTree = "<group>"; };
-		F159352E2E1C12B500739408 /* UpdateUserPreferenceUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserPreferenceUseCase.swift; sourceTree = "<group>"; };
 		F15BC4F52E0A955B00F25923 /* SaveConversationUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveConversationUseCase.swift; sourceTree = "<group>"; };
 		F15BC4F72E0A957300F25923 /* ConversationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepository.swift; sourceTree = "<group>"; };
 		F15BC4F92E0A959200F25923 /* FirestoreConversationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreConversationRepository.swift; sourceTree = "<group>"; };
@@ -225,6 +224,8 @@
 		ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarizeMessagesUseCase.swift; sourceTree = "<group>"; };
 		eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUserProfileImageUseCase.swift; sourceTree = "<group>"; };
 		f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
+                F2A30B1C2E30000100000101 /* ImageViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewerViewController.swift; sourceTree = "<group>"; };
+                F2A30B1E2E30000100000101 /* UIApplication+TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication+TopViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -298,6 +299,7 @@
 				F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */,
 				F1EF04EE2E044EC5005D2CF9 /* UIColor+Hex.swift */,
 				F1452D882E09796F00795A9E /* UIImage.swift */,
+                                F2A30B1E2E30000100000101 /* UIApplication+TopViewController.swift */,
 				6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */,
 			);
 			path = Helpers;
@@ -470,6 +472,7 @@
 				A1D564E2F8AC41B39D235947 /* LoginViewController.swift */,
 				e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
 				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
+                                F2A30B1C2E30000100000101 /* ImageViewerViewController.swift */,
 				F117E07C2E018AF400D1C95F /* Cells */,
 			);
 			path = Scene;
@@ -692,7 +695,7 @@
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F16D6E2F2E0D3DCA00E0718A /* UIColor+Dynamic.swift in Sources */,
 				F1EF04EF2E044EC5005D2CF9 /* UIColor+Hex.swift in Sources */,
-				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
+                                F2A30B1F2E30000100000101 /* UIApplication+TopViewController.swift in Sources */,
 				F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */,
 				F1452D852E09741500795A9E /* AuthUser.swift in Sources */,
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
@@ -701,6 +704,7 @@
 				FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */,
 				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
 				F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */,
+                                F2A30B1D2E30000100000101 /* ImageViewerViewController.swift in Sources */,
 				F17898942E1414AF000AEA35 /* TableBlockAttachment.swift in Sources */,
 				F17898952E1414AF000AEA35 /* TableBlockView.swift in Sources */,
 				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
