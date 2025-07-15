@@ -16,6 +16,8 @@ final class ImageViewerViewController: UIViewController {
 
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
+    private let headerView = UIView()
+    private let closeButton = UIButton(type: .system)
 
     init(image: UIImage) {
         self.image = image
@@ -40,13 +42,29 @@ final class ImageViewerViewController: UIViewController {
         scrollView.delegate = self
 
         view.addSubview(scrollView)
+        view.addSubview(headerView)
+        headerView.addSubview(closeButton)
         scrollView.addSubview(imageView)
 
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
 
+        headerView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        closeButton.tintColor = .white
+
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+
+        headerView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(44)
+        }
+
+        closeButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
         }
 
         imageView.snp.makeConstraints { make in
@@ -57,11 +75,9 @@ final class ImageViewerViewController: UIViewController {
     }
 
     private func bind() {
-        let tapGesture = UITapGestureRecognizer()
-        view.addGestureRecognizer(tapGesture)
-
-        tapGesture.rx.event
-            .bind { [weak self] _ in
+        closeButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .bind { [weak self] in
                 self?.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
