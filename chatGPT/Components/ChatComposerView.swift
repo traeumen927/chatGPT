@@ -227,8 +227,10 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             .disposed(by: disposeBag)
 
         selectedImages
-            .bind(to: imageCollectionView.rx.items(cellIdentifier: "ChatComposerImageCell", cellType: ChatComposerImageCell.self)) { index, image, cell in
-                cell.configure(image: image)
+            .bind(to: imageCollectionView.rx.items(cellIdentifier: "ChatComposerImageCell", cellType: ChatComposerImageCell.self)) { [weak self] index, image, cell in
+                cell.configure(image: image) { [weak self] in
+                    self?.removeSelectedImage(at: index)
+                }
             }
             .disposed(by: disposeBag)
 
@@ -263,5 +265,12 @@ final class ChatComposerView: UIView, UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         updatePlaceholderVisibility()
         adjustTextViewHeight()
+    }
+
+    private func removeSelectedImage(at index: Int) {
+        var images = selectedImages.value
+        guard images.indices.contains(index) else { return }
+        images.remove(at: index)
+        selectedImages.accept(images)
     }
 }

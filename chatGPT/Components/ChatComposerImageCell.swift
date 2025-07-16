@@ -1,8 +1,15 @@
 import UIKit
 import SnapKit
 
+import RxSwift
+import RxCocoa
+
 final class ChatComposerImageCell: UICollectionViewCell {
     private let imageView = UIImageView()
+    private let closeButton = UIButton(type: .system)
+    private var disposeBag = DisposeBag()
+
+    var removeHandler: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -14,8 +21,13 @@ final class ChatComposerImageCell: UICollectionViewCell {
         layout()
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
+
     private func layout() {
-        contentView.addSubview(imageView)
+        [imageView, closeButton].forEach(contentView.addSubview)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
@@ -23,9 +35,25 @@ final class ChatComposerImageCell: UICollectionViewCell {
             make.edges.equalToSuperview()
             make.width.equalTo(imageView.snp.height)
         }
+
+        let config = UIImage.SymbolConfiguration(pointSize: 10, weight: .bold)
+        closeButton.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
+        closeButton.tintColor = .white
+        closeButton.backgroundColor = .black
+        closeButton.layer.cornerRadius = 10
+        closeButton.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(2)
+            make.width.height.equalTo(20)
+        }
     }
 
-    func configure(image: UIImage) {
+    func configure(image: UIImage, onDelete: @escaping () -> Void) {
         imageView.image = image
+        removeHandler = onDelete
+        closeButton.rx.tap
+            .bind { [weak self] in
+                self?.removeHandler?()
+            }
+            .disposed(by: disposeBag)
     }
 }
