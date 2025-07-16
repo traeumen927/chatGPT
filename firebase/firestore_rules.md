@@ -7,7 +7,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // preferences 컬렉션
-    match /preferences/{userId} {
+    match /preferences/{userId}/items/{itemId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
