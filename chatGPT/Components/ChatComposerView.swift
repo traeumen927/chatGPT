@@ -31,7 +31,7 @@ final class ChatComposerView: UIView, UITextViewDelegate {
 
     private let plusButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.tintColor = ThemeColor.tintDark
         return button
     }()
