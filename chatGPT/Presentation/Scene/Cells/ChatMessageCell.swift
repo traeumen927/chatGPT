@@ -29,6 +29,7 @@ final class ChatMessageCell: UITableViewCell {
         let view = UIStackView()
         view.axis = .vertical
         view.spacing = 8
+        view.alignment = .leading
         return view
     }()
 
@@ -121,6 +122,34 @@ final class ChatMessageCell: UITableViewCell {
                 }
                 stackView.addArrangedSubview(attachment.view)
                 attachment.view.snp.makeConstraints { $0.width.equalToSuperview() }
+                currentLocation = range.location + range.length
+            } else if let attachment = value as? RemoteImageAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                    textView.snp.makeConstraints { $0.width.equalToSuperview() }
+                }
+                stackView.addArrangedSubview(attachment.view)
+                attachment.view.snp.makeConstraints { make in
+                    make.width.equalToSuperview().multipliedBy(0.65)
+                    make.height.equalTo(attachment.view.snp.width)
+                }
+                currentLocation = range.location + range.length
+            } else if let attachment = value as? RemoteImageGroupAttachment {
+                if range.location > currentLocation {
+                    let textRange = NSRange(location: currentLocation, length: range.location - currentLocation)
+                    let textView = makeTextView()
+                    textView.attributedText = attributed.attributedSubstring(from: textRange)
+                    stackView.addArrangedSubview(textView)
+                    textView.snp.makeConstraints { $0.width.equalToSuperview() }
+                }
+                stackView.addArrangedSubview(attachment.view)
+                attachment.view.snp.makeConstraints { make in
+                    make.width.equalToSuperview()
+                    make.height.equalTo(attachment.view.snp.width).multipliedBy(0.65)
+                }
                 currentLocation = range.location + range.length
             }
         }

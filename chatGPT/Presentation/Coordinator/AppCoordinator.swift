@@ -47,7 +47,11 @@ final class AppCoordinator {
         let service = OpenAIService(apiKeyRepository: KeychainAPIKeyRepository())
         let repository = OpenAIRepositoryImpl(service: service)
         let contextRepository = ChatContextRepositoryImpl()
-        let fetchModelsUseCase = FetchAvailableModelsUseCase(repository: repository)
+        let modelConfigRepository = FirestoreModelConfigRepository()
+        let fetchModelsUseCase = FetchModelConfigsUseCase(
+            configRepository: modelConfigRepository,
+            openAIRepository: repository
+        )
         let summarizeUseCase = SummarizeMessagesUseCase(repository: repository)
         let sendChatUseCase = SendChatWithContextUseCase(
             openAIRepository: repository,

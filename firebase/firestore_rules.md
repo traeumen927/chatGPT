@@ -15,6 +15,12 @@ service cloud.firestore {
     match /conversations/{userId}/items/{conversationId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // models 컬렉션
+    match /models/{modelId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }
 ```

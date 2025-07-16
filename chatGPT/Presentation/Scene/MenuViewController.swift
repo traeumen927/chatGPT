@@ -17,13 +17,13 @@ final class MenuViewController: UIViewController {
     }
 
     private var conversations: [ConversationSummary] = []
-    private var availableModels: [OpenAIModel] = []
+    private var availableModels: [ModelConfig] = []
     private var selectedModel: OpenAIModel
     private var streamEnabled: Bool
 
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let signOutUseCase: SignOutUseCase
-    private let fetchModelsUseCase: FetchAvailableModelsUseCase
+    private let fetchModelsUseCase: FetchModelConfigsUseCase
     private let updateTitleUseCase: UpdateConversationTitleUseCase
     private let deleteConversationUseCase: DeleteConversationUseCase
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
@@ -60,7 +60,7 @@ final class MenuViewController: UIViewController {
 
     init(observeConversationsUseCase: ObserveConversationsUseCase,
          signOutUseCase: SignOutUseCase,
-         fetchModelsUseCase: FetchAvailableModelsUseCase,
+         fetchModelsUseCase: FetchModelConfigsUseCase,
          updateTitleUseCase: UpdateConversationTitleUseCase,
          deleteConversationUseCase: DeleteConversationUseCase,
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
@@ -68,7 +68,7 @@ final class MenuViewController: UIViewController {
          streamEnabled: Bool,
          currentConversationID: String?,
          draftExists: Bool,
-         availableModels: [OpenAIModel] = [],
+         availableModels: [ModelConfig] = [],
          onClose: (() -> Void)? = nil) {
         self.observeConversationsUseCase = observeConversationsUseCase
         self.signOutUseCase = signOutUseCase
@@ -192,26 +192,26 @@ final class MenuViewController: UIViewController {
     }
 
     private func loadModels() {
-        fetchModelsUseCase.execute { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let models):
+        fetchModelsUseCase.execute()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] models in
+                guard let self else { return }
                 self.availableModels = models
                 let index = IndexSet(integer: Section.setting.rawValue)
                 self.tableView.reloadSections(index, with: .none)
-            case .failure(let error):
+            }, onFailure: { error in
                 print("❌ 모델 로딩 실패: \(error.localizedDescription)")
-            }
-        }
+            })
+            .disposed(by: disposeBag)
     }
 
     private func makeModelMenu() -> UIMenu? {
         guard !availableModels.isEmpty else { return nil }
         let actions = availableModels.map { model in
-            UIAction(title: model.displayName, state: model == selectedModel ? .on : .off) { [weak self] _ in
+            UIAction(title: model.displayName, state: model.modelId == selectedModel.id ? .on : .off) { [weak self] _ in
                 guard let self else { return }
-                self.selectedModel = model
-                self.onModelSelected?(model)
+                self.selectedModel = model.openAIModel
+                self.onModelSelected?(self.selectedModel)
                 let index = IndexPath(row: 0, section: Section.setting.rawValue)
                 self.tableView.reloadRows(at: [index], with: .none)
             }
@@ -269,7 +269,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                     return UITableViewCell()
                 }
                 let menu = makeModelMenu()
-                modelCell.configure(title: "모델", modelName: selectedModel.displayName, loading: availableModels.isEmpty, menu: menu)
+                let name = availableModels.first { $0.modelId == selectedModel.id }?.displayName ?? selectedModel.displayName
+                modelCell.configure(title: "모델", modelName: name, loading: availableModels.isEmpty, menu: menu)
                 return modelCell
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
