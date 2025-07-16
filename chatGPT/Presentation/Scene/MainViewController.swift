@@ -362,7 +362,7 @@ final class MainViewController: UIViewController {
     private func presentPhotoPicker() {
         var config = PHPickerConfiguration()
         config.filter = .images
-        config.selectionLimit = 1
+        config.selectionLimit = 0
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
         present(picker, animated: true)
@@ -417,7 +417,21 @@ extension MainViewController: KeyboardAdjustable {
 extension MainViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
-        // 이미지 처리 로직은 필요 시 추가합니다
+        guard !results.isEmpty else { return }
+
+        let providers = results.map { $0.itemProvider }
+        providers.forEach { provider in
+            if provider.canLoadObject(ofClass: UIImage.self) {
+                provider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+                    guard let self, let image = object as? UIImage else { return }
+                    DispatchQueue.main.async {
+                        var current = self.composerView.selectedImages.value
+                        current.append(image)
+                        self.composerView.selectedImages.accept(current)
+                    }
+                }
+            }
+        }
     }
 }
 

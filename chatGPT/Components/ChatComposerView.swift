@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxRelay
 
 final class ChatComposerView: UIView, UITextViewDelegate {
     
@@ -35,6 +36,20 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         button.tintColor = ThemeColor.tintDark
         return button
     }()
+
+    private let imageCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.isScrollEnabled = false
+        view.backgroundColor = .clear
+        return view
+    }()
+
+    private var collectionViewHeightConstraint: Constraint?
+
+    let selectedImages = BehaviorRelay<[UIImage]>(value: [])
     
     // MARK: - Output
     
@@ -129,7 +144,7 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         
         // MARK: 채팅과 관련된 컴포넌트가 담길 뷰
         let toolBoxView = UIView()
-        [self.textView, self.placeholderLabel, toolBoxView].forEach(addSubview(_:))
+        [self.imageCollectionView, self.textView, self.placeholderLabel, toolBoxView].forEach(addSubview(_:))
         [self.plusButton, self.sendButton].forEach(toolBoxView.addSubview(_:))
         
         // MARK: TextVeiw 설정
@@ -147,8 +162,16 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         placeholderLabel.numberOfLines = 1
         placeholderLabel.text = placeholder
         
-        textView.snp.makeConstraints { make in
+        imageCollectionView.register(ChatComposerImageCell.self, forCellWithReuseIdentifier: "ChatComposerImageCell")
+
+        imageCollectionView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(6)
+            make.leading.trailing.equalToSuperview().inset(16)
+            self.collectionViewHeightConstraint = make.height.equalTo(0).constraint
+        }
+
+        textView.snp.makeConstraints { make in
+            make.top.equalTo(imageCollectionView.snp.bottom).offset(6)
             make.leading.trailing.equalToSuperview().inset(16)
             self.textViewHeightConstraint = make.height.equalTo(minTextViewHeight).constraint
         }
@@ -200,6 +223,21 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         self.plusButton.rx.tap
             .bind { [weak self] in
                 self?.onPlusButtonTapped?()
+            }
+            .disposed(by: disposeBag)
+
+        selectedImages
+            .bind(to: imageCollectionView.rx.items(cellIdentifier: "ChatComposerImageCell", cellType: ChatComposerImageCell.self)) { index, image, cell in
+                cell.configure(image: image)
+            }
+            .disposed(by: disposeBag)
+
+        imageCollectionView.rx.observe(CGSize.self, "contentSize")
+            .compactMap { $0 }
+            .distinctUntilChanged { $0 == $1 }
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] size in
+                self?.collectionViewHeightConstraint?.update(offset: size.height)
             }
             .disposed(by: disposeBag)
     }
