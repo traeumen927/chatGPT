@@ -51,7 +51,7 @@ final class MainViewController: UIViewController {
     
     // MARK: 새 대화 버튼
     private lazy var newChatButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
+        let button = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: nil, action: nil)
         return button
     }()
     
@@ -351,8 +351,6 @@ final class MainViewController: UIViewController {
                 DispatchQueue.main.async {
                     if newStatus == .authorized || newStatus == .limited {
                         self?.presentPhotoPicker()
-                    } else {
-                        self?.presentPermissionAlert()
                     }
                 }
             }
