@@ -29,5 +29,8 @@
       </dict>
     </array>
 
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>사진 전송을 위해 앨범 접근이 필요합니다.</string>
+
 </dict>
 </plist>
