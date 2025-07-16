@@ -12,14 +12,10 @@ final class FetchModelConfigsUseCase {
     }
 
     func execute() -> Single<[ModelConfig]> {
-        configRepository.fetchConfigs()
-            .flatMap { [weak self] configs -> Single<[ModelConfig]> in
-                guard let self else { return .just(configs) }
-                return Self.wrap(self.openAIRepository)
-                    .map { available in
-                        let set = Set(available.map { $0.id })
-                        return configs.filter { set.contains($0.modelId) }
-                    }
+        Self.wrap(openAIRepository)
+            .flatMap { [weak self] models -> Single<[ModelConfig]> in
+                guard let self else { return .just([]) }
+                return self.configRepository.syncModels(with: models)
             }
     }
 
