@@ -28,11 +28,26 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         button.tintColor = ThemeColor.tintDark
         return button
     }()
+
+    private let plusButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+        button.tintColor = ThemeColor.tintDark
+        return button
+    }()
     
     // MARK: - Output
     
     // MARK: 외부 전달용 클로져
     var onSendButtonTapped: ((String) -> Void)?
+    var onPlusButtonTapped: (() -> Void)?
+
+    var plusButtonEnabled: Bool = false {
+        didSet {
+            plusButton.isEnabled = plusButtonEnabled
+            plusButton.tintColor = plusButtonEnabled ? ThemeColor.tintDark : .gray
+        }
+    }
     
     // MARK: - Constraints
     private var textViewHeightConstraint: Constraint?
@@ -115,7 +130,7 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         // MARK: 채팅과 관련된 컴포넌트가 담길 뷰
         let toolBoxView = UIView()
         [self.textView, self.placeholderLabel, toolBoxView].forEach(addSubview(_:))
-        [self.sendButton].forEach(toolBoxView.addSubview(_:))
+        [self.plusButton, self.sendButton].forEach(toolBoxView.addSubview(_:))
         
         // MARK: TextVeiw 설정
         textView.delegate = self
@@ -148,9 +163,13 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(self.safeAreaLayoutGuide)
         }
-        
+
         self.sendButton.snp.makeConstraints { make in
             make.top.trailing.bottom.equalToSuperview()
+            make.width.height.equalTo(44)
+        }
+        self.plusButton.snp.makeConstraints { make in
+            make.top.leading.bottom.equalToSuperview()
             make.width.height.equalTo(44)
         }
     }
@@ -176,6 +195,12 @@ final class ChatComposerView: UIView, UITextViewDelegate {
                 self?.updatePlaceholderVisibility()
                 self?.adjustTextViewHeight()
             })
+            .disposed(by: disposeBag)
+
+        self.plusButton.rx.tap
+            .bind { [weak self] in
+                self?.onPlusButtonTapped?()
+            }
             .disposed(by: disposeBag)
     }
     

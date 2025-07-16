@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import PhotosUI
 
 final class MainViewController: UIViewController {
     
@@ -37,6 +38,7 @@ final class MainViewController: UIViewController {
     private var selectedModel: OpenAIModel = ModelPreference.current {
         didSet {
             ModelPreference.save(selectedModel)
+            updatePlusButtonState()
         }
     }
     
@@ -230,6 +232,9 @@ final class MainViewController: UIViewController {
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
         }
+        self.composerView.onPlusButtonTapped = { [weak self] in
+            self?.handlePlusButton()
+        }
         
         // 메시지 상태 → UI 업데이트
         self.dataSource = createDataSource()
@@ -290,7 +295,9 @@ final class MainViewController: UIViewController {
     private func preloadModels() {
         fetchModelsUseCase.execute()
             .subscribe(onSuccess: { [weak self] models in
-                self?.availableModels = models
+                guard let self else { return }
+                self.availableModels = models
+                self.updatePlusButtonState()
             })
             .disposed(by: disposeBag)
     }
@@ -327,6 +334,53 @@ final class MainViewController: UIViewController {
         tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }
 
+    private func updatePlusButtonState() {
+        let config = availableModels.first { $0.modelId == selectedModel.id }
+        composerView.plusButtonEnabled = config?.vision ?? false
+    }
+
+    private func handlePlusButton() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        switch status {
+        case .authorized, .limited:
+            presentPhotoPicker()
+        case .denied, .restricted:
+            presentPermissionAlert()
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        self?.presentPhotoPicker()
+                    } else {
+                        self?.presentPermissionAlert()
+                    }
+                }
+            }
+        @unknown default:
+            break
+        }
+    }
+
+    private func presentPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 1
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func presentPermissionAlert() {
+        let alert = UIAlertController(title: "사진 접근 권한 필요", message: "설정에서 권한을 허용해주세요", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "설정", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        present(alert, animated: true)
+    }
+
     
     private func loadUserImage() {
         loadUserImageUseCase.execute()
@@ -359,6 +413,13 @@ extension MainViewController: KeyboardAdjustable {
     var adjustableBottomConstraint: Constraint? {
         get { return self.composerViewBottomConstraint }
         set { self.composerViewBottomConstraint = newValue }
+    }
+}
+
+extension MainViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        // 이미지 처리 로직은 필요 시 추가합니다
     }
 }
 
