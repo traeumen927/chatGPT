@@ -6,47 +6,80 @@ final class SwiftMarkdownRepository: MarkdownRepository {
     // 3개 이상의 백틱을 동일한 길이의 백틱으로 닫는 패턴으로 수정하여
     // 코드 블럭 내부에 ``` 문자열이 포함되어도 올바르게 파싱되도록 개선합니다.
     // 닫는 백틱 뒤에 공백이 올 수 있도록 패턴을 보강합니다.
-
+    
     private let openRegex = try! NSRegularExpression(
         pattern: "^([ \\t]*)(`{3,})([^\\n]*)$",
         options: []
     )
+    
+    private let imageRegex = try! NSRegularExpression(
+        pattern: #"!\[([^\]]*)\]\(([^)]+)\)"#,
+        options: []
+    )
+
+    private let inlineCodeRegex = try! NSRegularExpression(
+        pattern: "(`+)([^`]*?)\\1",
+        options: []
+    )
+
+    private func imagePartsIfImageOnly(_ line: String) -> [(URL, String)]? {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return nil }
+        let ns = trimmed as NSString
+        let matches = imageRegex.matches(in: trimmed, range: NSRange(location: 0, length: ns.length))
+        guard !matches.isEmpty else { return nil }
+        var remainder = trimmed
+        for match in matches.reversed() {
+            if let range = Range(match.range, in: remainder) {
+                remainder.removeSubrange(range)
+            }
+        }
+        guard remainder.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
+        var parts: [(URL, String)] = []
+        for match in matches {
+            let alt = ns.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespaces)
+            let urlString = ns.substring(with: match.range(at: 2)).trimmingCharacters(in: .whitespaces)
+            guard let url = URL(string: urlString) else { return nil }
+            parts.append((url, alt))
+        }
+        return parts
+    }
     
     /// 전체 마크다운 문자열을 코드 블럭 기준으로 분리하여 파싱한다
     func parse(_ markdown: String) -> NSAttributedString {
         let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         var parts: [NSAttributedString] = []
         var buffer: [String] = []
-
+        
         func flush() {
             guard !buffer.isEmpty else { return }
             parts.append(attributed(from: buffer.joined(separator: "\n")))
             buffer.removeAll()
         }
-
+        
         var index = 0
         while index < lines.count {
             let line = lines[index]
             if let match = openRegex.firstMatch(in: line, range: NSRange(location: 0, length: (line as NSString).length)) {
                 flush()
-
+                
                 let indent = (line as NSString).substring(with: match.range(at: 1))
                 let fence = (line as NSString).substring(with: match.range(at: 2))
                 let langRaw = (line as NSString).substring(with: match.range(at: 3)).trimmingCharacters(in: .whitespaces)
                 let language = langRaw.isEmpty ? nil : langRaw
-
+                
                 var j = index + 1
                 var codeLines: [String] = []
-
+                
                 func isFence(_ str: String) -> Bool {
                     str.trimmingCharacters(in: .whitespaces) == fence && str.hasPrefix(indent)
                 }
-
+                
                 if j < lines.count && isFence(lines[j]) {
                     codeLines.append(lines[j])
                     j += 1
                 }
-
+                
                 var closing: Int? = nil
                 while j < lines.count {
                     if isFence(lines[j]) {
@@ -64,7 +97,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                         j += 1
                     }
                 }
-
+                
                 if let close = closing {
                     let code = codeLines.joined(separator: "\n")
                     let attachment = CodeBlockAttachment(code: code, language: language)
@@ -80,13 +113,113 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 index += 1
             }
         }
-
+        
         flush()
-
+        
         let result = NSMutableAttributedString()
         parts.forEach { result.append($0) }
         while result.string.hasSuffix("\n") {
             result.deleteCharacters(in: NSRange(location: result.length - 1, length: 1))
+        }
+        return result
+    }
+    
+    private func parseInline(_ text: String) -> NSAttributedString {
+        var options = AttributedString.MarkdownParsingOptions()
+        options.interpretedSyntax = .inlineOnlyPreservingWhitespace
+        options.allowsExtendedAttributes = true
+        
+        if var attr = try? AttributedString(markdown: text, options: options) {
+            for run in attr.runs {
+                let range = run.range
+                if run.inlinePresentationIntent == .code {
+                    attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                    attr[range].foregroundColor = ThemeColor.negative
+                    attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                } else {
+                    attr[range].font = UIFont.systemFont(ofSize: 16)
+                    attr[range].foregroundColor = UIColor.label
+                }
+            }
+            return NSAttributedString(attr)
+        } else {
+            return NSAttributedString(string: text, attributes: [
+                .font: UIFont.systemFont(ofSize: 16),
+                .foregroundColor: UIColor.label
+            ])
+        }
+    }
+    
+    private func parseSegmentWithImages(_ text: String) -> NSAttributedString {
+        let ns = text as NSString
+        let matches = imageRegex.matches(in: text, range: NSRange(location: 0, length: ns.length))
+        guard !matches.isEmpty else {
+            return parseInline(text)
+        }
+        // detect continuous images without text
+        var remainder = text
+        for match in matches.reversed() {
+            if let range = Range(match.range, in: remainder) {
+                remainder.removeSubrange(range)
+            }
+        }
+        let onlySpaces = remainder.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if onlySpaces && matches.count > 1 {
+            var urls: [URL] = []
+            for match in matches {
+                let urlString = ns.substring(with: match.range(at: 2)).trimmingCharacters(in: .whitespaces)
+                guard let url = URL(string: urlString) else { return parseInline(text) }
+                urls.append(url)
+            }
+            let attachment = RemoteImageGroupAttachment(urls: urls)
+            return NSAttributedString(attachment: attachment)
+        }
+
+        let result = NSMutableAttributedString()
+        var location = 0
+        for match in matches {
+            if match.range.location > location {
+                let textPart = ns.substring(with: NSRange(location: location, length: match.range.location - location))
+                result.append(parseInline(textPart))
+            }
+            let alt = ns.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespaces)
+            let urlString = ns.substring(with: match.range(at: 2)).trimmingCharacters(in: .whitespaces)
+            if let url = URL(string: urlString) {
+                let attachment = RemoteImageAttachment(url: url, altText: alt)
+                result.append(NSAttributedString(attachment: attachment))
+            } else {
+                let raw = ns.substring(with: match.range)
+                result.append(parseInline(raw))
+            }
+            location = match.range.location + match.range.length
+        }
+        if location < ns.length {
+            let textPart = ns.substring(from: location)
+            result.append(parseInline(textPart))
+        }
+        return result
+    }
+
+    private func parseLineWithImages(_ line: String) -> NSAttributedString {
+        let ns = line as NSString
+        let codeMatches = inlineCodeRegex.matches(in: line, range: NSRange(location: 0, length: ns.length))
+        guard !codeMatches.isEmpty else {
+            return parseSegmentWithImages(line)
+        }
+        let result = NSMutableAttributedString()
+        var location = 0
+        for match in codeMatches {
+            if match.range.location > location {
+                let textPart = ns.substring(with: NSRange(location: location, length: match.range.location - location))
+                result.append(parseSegmentWithImages(textPart))
+            }
+            let codeText = ns.substring(with: match.range)
+            result.append(parseInline(codeText))
+            location = match.range.location + match.range.length
+        }
+        if location < ns.length {
+            let textPart = ns.substring(from: location)
+            result.append(parseSegmentWithImages(textPart))
         }
         return result
     }
@@ -96,17 +229,38 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         // 줄 단위로 분리
         let lines = markdown.split(separator: "\n", omittingEmptySubsequences: false)
         let result = NSMutableAttributedString()
-
+        
         var index = 0
         while index < lines.count {
             let line = String(lines[index])
 
+            if let parts = imagePartsIfImageOnly(line) {
+                var urls: [URL] = parts.map { $0.0 }
+                var j = index + 1
+                while j < lines.count, let more = imagePartsIfImageOnly(String(lines[j])) {
+                    urls.append(contentsOf: more.map { $0.0 })
+                    j += 1
+                }
+                if urls.count > 1 {
+                    let attachment = RemoteImageGroupAttachment(urls: urls)
+                    result.append(NSAttributedString(attachment: attachment))
+                } else if let url = urls.first {
+                    let attachment = RemoteImageAttachment(url: url, altText: parts.first?.1 ?? "")
+                    result.append(NSAttributedString(attachment: attachment))
+                }
+                index = j
+                if index < lines.count {
+                    result.append(NSAttributedString(string: "\n"))
+                }
+                continue
+            }
+            
             // 수평선(`---`)
             if line.trimmingCharacters(in: .whitespaces) == "---" {
                 let attachment = HorizontalRuleAttachment()
                 result.append(NSAttributedString(attachment: attachment))
                 index += 1
-            // 테이블(`|`로 시작하는 라인들)
+                // 테이블(`|`로 시작하는 라인들)
             } else if line.starts(with: "|") {
                 var tableLines: [String] = []
                 while index < lines.count && lines[index].starts(with: "|") {
@@ -116,42 +270,32 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 if let attachment = makeTableAttachment(from: tableLines) {
                     result.append(NSAttributedString(attachment: attachment))
                 }
-            // 헤딩(`#`, `##`, `###`)
+                // 헤딩(`#`, `##`, `###`)
             } else if let headingLevel = headingLevel(in: line) {
                 let content = headingContent(from: line, level: headingLevel)
-
-                var options = AttributedString.MarkdownParsingOptions()
-                options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-                options.allowsExtendedAttributes = true
-
+                
                 let fontSize: CGFloat
                 switch headingLevel {
                 case 1: fontSize = 28
                 case 2: fontSize = 24
                 default: fontSize = 20
                 }
-
-                if var attr = try? AttributedString(markdown: content, options: options) {
-                    for run in attr.runs {
-                        let range = run.range
-                        if run.inlinePresentationIntent == .code {
-                            attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                            attr[range].foregroundColor = ThemeColor.negative
-                            attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                        } else {
-                            attr[range].font = UIFont.boldSystemFont(ofSize: fontSize)
-                            attr[range].foregroundColor = UIColor.label
-                        }
+                
+                var attr = AttributedString(parseLineWithImages(content))
+                for run in attr.runs {
+                    let range = run.range
+                    if run.inlinePresentationIntent == .code {
+                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+                        attr[range].foregroundColor = ThemeColor.negative
+                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
+                    } else {
+                        attr[range].font = UIFont.boldSystemFont(ofSize: fontSize)
+                        attr[range].foregroundColor = UIColor.label
                     }
-                    result.append(NSAttributedString(attr))
-                } else {
-                    result.append(NSAttributedString(string: content, attributes: [
-                        .font: UIFont.boldSystemFont(ofSize: fontSize),
-                        .foregroundColor: UIColor.label
-                    ]))
                 }
+                result.append(NSAttributedString(attr))
                 index += 1
-            // 순번(`1. `) 목록
+                // 순번(`1. `) 목록
             } else if orderedListNumber(in: line) != nil {
                 var listLines: [String] = []
                 while index < lines.count && orderedListNumber(in: String(lines[index])) != nil {
@@ -159,7 +303,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     index += 1
                 }
                 result.append(makeOrderedList(from: listLines))
-            // 글머리표(`- `) 목록
+                // 글머리표(`- `) 목록
             } else if line.trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
                 var listLines: [String] = []
                 while index < lines.count && lines[index].trimmingCharacters(in: .whitespaces).hasPrefix("- ") {
@@ -167,44 +311,20 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     index += 1
                 }
                 result.append(makeBulletList(from: listLines))
-            // 그 외 일반 텍스트 라인
+                // 그 외 일반 텍스트 라인
             } else {
-                var options = AttributedString.MarkdownParsingOptions()
-                options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-                options.allowsExtendedAttributes = true
-
-                if var attr = try? AttributedString(markdown: line, options: options) {
-
-                    for run in attr.runs {
-                        let range = run.range
-                        if run.inlinePresentationIntent == .code {
-                            attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                            attr[range].foregroundColor = ThemeColor.negative
-                            attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                        } else {
-                            attr[range].font = UIFont.systemFont(ofSize: 16)
-                            attr[range].foregroundColor = UIColor.label
-                        }
-                    }
-
-                    result.append(NSAttributedString(attr))
-                } else {
-                    result.append(NSAttributedString(string: line, attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]))
-                }
+                result.append(parseLineWithImages(line))
                 index += 1
             }
-
+            
             if index < lines.count {
                 result.append(NSAttributedString(string: "\n"))
             }
         }
-
+        
         return result
     }
-
+    
     /// `-` 로 시작하는 목록을 NSAttributedString으로 변환
     private func makeBulletList(from lines: [String]) -> NSAttributedString {
         let result = NSMutableAttributedString()
@@ -213,93 +333,51 @@ final class SwiftMarkdownRepository: MarkdownRepository {
             if let range = item.range(of: "- ") {
                 item = String(item[range.upperBound...])
             }
-
-            var options = AttributedString.MarkdownParsingOptions()
-            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-            options.allowsExtendedAttributes = true
-
-            if var attr = try? AttributedString(markdown: item, options: options) {
-                for run in attr.runs {
-                    let range = run.range
-                    if run.inlinePresentationIntent == .code {
-                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                        attr[range].foregroundColor = ThemeColor.negative
-                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                    } else {
-                        attr[range].font = UIFont.systemFont(ofSize: 16)
-                        attr[range].foregroundColor = UIColor.label
-                    }
-                }
-
-                let bullet = NSAttributedString(
-                    string: "\u{2022} ",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]
-                )
-                result.append(bullet)
-                result.append(NSAttributedString(attr))
-            } else {
-                result.append(NSAttributedString(string: "\u{2022} " + item, attributes: [
+            
+            let bullet = NSAttributedString(
+                string: "\u{2022} ",
+                attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
-                ]))
-            }
+                ]
+            )
+            result.append(bullet)
+            result.append(parseLineWithImages(item))
             if idx != lines.count - 1 {
                 result.append(NSAttributedString(string: "\n"))
             }
         }
         return result
     }
-
+    
     /// `1. ` 형태의 순번 목록을 NSAttributedString으로 변환
     private func makeOrderedList(from lines: [String]) -> NSAttributedString {
         let result = NSMutableAttributedString()
         for (idx, line) in lines.enumerated() {
             var item = line
+            var numberText = "\(idx + 1). "
             if let range = item.range(of: "^\\d+\\. ", options: .regularExpression) {
+                let prefix = item[item.startIndex..<range.upperBound]
+                numberText = String(prefix)
                 item = String(item[range.upperBound...])
             }
-
-            var options = AttributedString.MarkdownParsingOptions()
-            options.interpretedSyntax = .inlineOnlyPreservingWhitespace
-            options.allowsExtendedAttributes = true
-
-            if var attr = try? AttributedString(markdown: item, options: options) {
-                for run in attr.runs {
-                    let range = run.range
-                    if run.inlinePresentationIntent == .code {
-                        attr[range].font = UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-                        attr[range].foregroundColor = ThemeColor.negative
-                        attr[range].backgroundColor = ThemeColor.inlineCodeBackground
-                    } else {
-                        attr[range].font = UIFont.systemFont(ofSize: 16)
-                        attr[range].foregroundColor = UIColor.label
-                    }
-                }
-                let bullet = NSAttributedString(
-                    string: "\(idx + 1). ",
-                    attributes: [
-                        .font: UIFont.systemFont(ofSize: 16),
-                        .foregroundColor: UIColor.label
-                    ]
-                )
-                result.append(bullet)
-                result.append(NSAttributedString(attr))
-            } else {
-                result.append(NSAttributedString(string: "\(idx + 1). " + item, attributes: [
+            
+            let bullet = NSAttributedString(
+                string: numberText,
+                attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.label
-                ]))
-            }
+                ]
+            )
+            result.append(bullet)
+            result.append(parseLineWithImages(item))
             if idx != lines.count - 1 {
                 result.append(NSAttributedString(string: "\n"))
             }
         }
         return result
     }
-
+    
     /// 순번 목록 여부를 판별
     private func orderedListNumber(in line: String) -> Int? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
@@ -316,7 +394,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         guard idx < trimmed.endIndex, trimmed[idx] == " " else { return nil }
         return Int(digits)
     }
-
+    
     /// `|` 로 이루어진 마크다운 테이블을 Attachment로 변환
     private func makeTableAttachment(from lines: [String]) -> TableBlockAttachment? {
         guard lines.count >= 2 else { return nil }
@@ -327,7 +405,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         }
         return TableBlockAttachment(rows: rows)
     }
-
+    
     /// 테이블 한 줄을 셀 배열로 변환
     private func parseCells(from line: String) -> [String] {
         var temp = line
@@ -336,7 +414,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         if temp.hasSuffix("|") { temp.removeLast() }
         return temp.split(separator: "|").map { $0.trimmingCharacters(in: .whitespaces) }
     }
-
+    
     /// 헤딩 레벨(`###`, `##`, `#`)을 판별
     private func headingLevel(in line: String) -> Int? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
@@ -345,7 +423,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
         if trimmed.hasPrefix("# ") { return 1 }
         return nil
     }
-
+    
     /// 헤딩에서 `#` 표시를 제외한 본문 추출
     private func headingContent(from line: String, level: Int) -> String {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
