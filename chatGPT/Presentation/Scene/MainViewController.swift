@@ -268,6 +268,18 @@ final class MainViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
+
+        chatViewModel.errorMessage
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] text in
+                self?.showAlert(message: text)
+                if let self,
+                   let config = self.availableModels.first(where: { $0.modelId == self.selectedModel.id }),
+                   config.vision {
+                    print("⚠️ vision flag mismatch for model \(self.selectedModel.id)")
+                }
+            })
+            .disposed(by: disposeBag)
         
 
         
@@ -406,6 +418,12 @@ final class MainViewController: UIViewController {
                 UIApplication.shared.open(url)
             }
         })
+        present(alert, animated: true)
+    }
+
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
     }
 

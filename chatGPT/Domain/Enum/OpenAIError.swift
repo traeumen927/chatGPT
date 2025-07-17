@@ -31,6 +31,9 @@ enum OpenAIError: Error {
     
     /// 응답은 왔지만 JSON 디코딩에 실패했을 때 (응답 형식이 예상과 다를 경우)
     case decodingError
+
+    /// vision 기능을 지원하지 않는 모델에 이미지 요청 시 발생
+    case visionCapabilityMissing
 }
 
 extension OpenAIError {
@@ -44,6 +47,7 @@ extension OpenAIError {
         case .rateLimitExceeded: return "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."
         case .serverError(let code): return "서버 에러가 발생했습니다. (코드: \(code))"
         case .decodingError: return "응답 해석에 실패했습니다."
+        case .visionCapabilityMissing: return "선택한 모델은 이미지 첨부를 지원하지 않습니다"
         }
     }
 }
