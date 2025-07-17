@@ -17,6 +17,13 @@ enum OpenAIEndpoint {
         stream: Bool = false,
         temperature: Double = 0.7
     )
+
+    case vision(
+        messages: [VisionMessage],
+        model: OpenAIModel,
+        stream: Bool = false,
+        temperature: Double = 0.7
+    )
     
     /// 사용가능모델
     case models
@@ -25,7 +32,9 @@ enum OpenAIEndpoint {
         switch self {
         case .chat:
             return "/chat/completions"
-            
+        case .vision:
+            return "/chat/completions"
+
         case .models:
             return "/models"
         }
@@ -33,7 +42,7 @@ enum OpenAIEndpoint {
     
     var method: HTTPMethod {
         switch self {
-        case .chat:
+        case .chat, .vision:
             return .post
         case .models:
             return .get
@@ -46,10 +55,17 @@ enum OpenAIEndpoint {
         ]
     }
     
-    var encodableBody: OpenAIChatRequest? {
+    var encodableBody: Encodable? {
         switch self {
         case .chat(let messages, let model, let stream, let temp):
             return OpenAIChatRequest(
+                model: model.id,
+                messages: messages,
+                temperature: temp,
+                stream: stream
+            )
+        case .vision(let messages, let model, let stream, let temp):
+            return OpenAIVisionChatRequest(
                 model: model.id,
                 messages: messages,
                 temperature: temp,
