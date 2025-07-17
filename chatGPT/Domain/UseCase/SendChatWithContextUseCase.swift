@@ -87,7 +87,11 @@ final class SendChatWithContextUseCase {
         }
     }
 
-    func stream(prompt: String, model: OpenAIModel, preference: String?) -> Observable<String> {
+    func stream(prompt: String,
+                model: OpenAIModel,
+                preference: String?,
+                images: [Data] = [],
+                files: [Data] = []) -> Observable<String> {
         var messages = [Message]()
         if let preference {
             messages.append(Message(role: .system, content: preference))
