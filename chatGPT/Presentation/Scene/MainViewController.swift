@@ -228,9 +228,11 @@ final class MainViewController: UIViewController {
         
         
         // MARK: ChatComposerView 전송버튼 클로져
-        self.composerView.onSendButtonTapped = { [weak self] text in
+        self.composerView.onSendButtonTapped = { [weak self] text, images, files in
             guard let self = self else { return }
             self.chatViewModel.send(prompt: text,
+                                    images: images,
+                                    files: files,
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
         }
@@ -483,7 +485,10 @@ extension MainViewController: UIImagePickerControllerDelegate, UINavigationContr
 extension MainViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true)
-        // 파일 처리 로직 추가 가능
+        guard !urls.isEmpty else { return }
+        var current = composerView.selectedFiles.value
+        current.append(contentsOf: urls)
+        composerView.selectedFiles.accept(current)
     }
 }
 

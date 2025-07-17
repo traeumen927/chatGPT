@@ -71,7 +71,7 @@ final class ChatViewModel {
         self.updatePreferenceUseCase = updatePreferenceUseCase
     }
     
-    func send(prompt: String, model: OpenAIModel, stream: Bool) {
+    func send(prompt: String, images: [UIImage] = [], files: [URL] = [], model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
 
@@ -91,6 +91,8 @@ final class ChatViewModel {
             .catchAndReturn(nil)
             .subscribe(onSuccess: { [weak self] preference in
                 self?.sendInternal(prompt: prompt,
+                                   images: images,
+                                   files: files,
                                    model: model,
                                    stream: stream,
                                    preference: preference,
@@ -100,16 +102,22 @@ final class ChatViewModel {
     }
 
     private func sendInternal(prompt: String,
+                              images: [UIImage],
+                              files: [URL],
                               model: OpenAIModel,
                               stream: Bool,
                               preference: UserPreference?,
                               isFirst: Bool) {
         guard stream else {
             let prefMessage = self.preferenceText(from: preference)
+            let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
+            let fileData = files.compactMap { try? Data(contentsOf: $0) }
             sendMessageUseCase.execute(prompt: prompt,
                                       model: model,
                                       stream: false,
-                                      preference: prefMessage) { [weak self] result in
+                                      preference: prefMessage,
+                                      images: imageData,
+                                      files: fileData) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success(let reply):
@@ -137,7 +145,9 @@ final class ChatViewModel {
         var fullText = ""
 
         let prefMessage = self.preferenceText(from: preference)
-        sendMessageUseCase.stream(prompt: prompt, model: model, preference: prefMessage)
+        let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
+        let fileData = files.compactMap { try? Data(contentsOf: $0) }
+        sendMessageUseCase.stream(prompt: prompt, model: model, preference: prefMessage, images: imageData, files: fileData)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }

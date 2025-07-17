@@ -31,6 +31,8 @@ final class SendChatWithContextUseCase {
                  model: OpenAIModel,
                  stream: Bool,
                  preference: String?,
+                 images: [Data] = [],
+                 files: [Data] = [],
                  completion: @escaping (Result<String, Error>) -> Void) {
         var messages = [Message]()
         if let preference {
@@ -40,9 +42,37 @@ final class SendChatWithContextUseCase {
             messages.append(Message(role: .system, content: summary))
         }
         messages += contextRepository.messages
-        messages.append(Message(role: .user, content: prompt))
+        if images.isEmpty && files.isEmpty {
+            messages.append(Message(role: .user, content: prompt))
+            openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success(let reply):
+                    self.contextRepository.append(role: .user, content: prompt)
+                    self.contextRepository.append(role: .assistant, content: reply)
+                    self.contextRepository.trim(to: self.maxHistory)
+                    completion(.success(reply))
+                    self.summarizeIfNeeded(model: model)
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+            return
+        }
 
-        openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
+        var visionMessages = messages.map { VisionMessage(role: $0.role, content: [.init(type: "text", text: $0.content, imageURL: nil)]) }
+        var contents: [VisionContent] = [.init(type: "text", text: prompt, imageURL: nil)]
+        images.forEach { data in
+            let b64 = data.base64EncodedString()
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:image/jpeg;base64,\(b64)"))
+        }
+        files.forEach { data in
+            let b64 = data.base64EncodedString()
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:application/pdf;base64,\(b64)"))
+        }
+        visionMessages.append(VisionMessage(role: .user, content: contents))
+
+        openAIRepository.sendVision(messages: visionMessages, model: model, stream: stream) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let reply):
@@ -66,9 +96,24 @@ final class SendChatWithContextUseCase {
             messages.append(Message(role: .system, content: summary))
         }
         messages += contextRepository.messages
-        messages.append(Message(role: .user, content: prompt))
+        if images.isEmpty && files.isEmpty {
+            messages.append(Message(role: .user, content: prompt))
+            return openAIRepository.sendChatStream(messages: messages, model: model)
+        }
 
-        return openAIRepository.sendChatStream(messages: messages, model: model)
+        var visionMessages = messages.map { VisionMessage(role: $0.role, content: [.init(type: "text", text: $0.content, imageURL: nil)]) }
+        var contents: [VisionContent] = [.init(type: "text", text: prompt, imageURL: nil)]
+        images.forEach { data in
+            let b64 = data.base64EncodedString()
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:image/jpeg;base64,\(b64)"))
+        }
+        files.forEach { data in
+            let b64 = data.base64EncodedString()
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:application/pdf;base64,\(b64)"))
+        }
+        visionMessages.append(VisionMessage(role: .user, content: contents))
+
+        return openAIRepository.sendVisionStream(messages: visionMessages, model: model)
     }
 
     func finalize(prompt: String, reply: String, model: OpenAIModel) {

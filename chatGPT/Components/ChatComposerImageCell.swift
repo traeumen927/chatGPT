@@ -4,6 +4,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+enum Attachment {
+    case image(UIImage)
+    case file(URL)
+}
+
 final class ChatComposerImageCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let closeButton = UIButton(type: .system)
@@ -47,8 +52,15 @@ final class ChatComposerImageCell: UICollectionViewCell {
         }
     }
 
-    func configure(image: UIImage, onDelete: @escaping () -> Void) {
-        imageView.image = image
+    func configure(attachment: Attachment, onDelete: @escaping () -> Void) {
+        switch attachment {
+        case .image(let image):
+            imageView.image = image
+            imageView.contentMode = .scaleAspectFill
+        case .file:
+            imageView.image = UIImage(systemName: "doc.fill")
+            imageView.contentMode = .scaleAspectFit
+        }
         removeHandler = onDelete
         closeButton.rx.tap
             .bind { [weak self] in
