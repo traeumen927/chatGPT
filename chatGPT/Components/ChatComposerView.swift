@@ -10,6 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import RxRelay
+import chatGPT
 
 final class ChatComposerView: UIView, UITextViewDelegate {
     

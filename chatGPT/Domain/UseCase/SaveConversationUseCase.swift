@@ -13,6 +13,7 @@ final class SaveConversationUseCase {
 
     func execute(title: String,
                  question: String,
+                 files: [String],
                  answer: String,
                  timestamp: Date = Date()) -> Single<String> {
         guard let user = getCurrentUserUseCase.execute() else {
@@ -21,6 +22,7 @@ final class SaveConversationUseCase {
         return repository.createConversation(uid: user.uid,
                                              title: title,
                                              question: question,
+                                             files: files,
                                              answer: answer,
                                              timestamp: timestamp)
     }

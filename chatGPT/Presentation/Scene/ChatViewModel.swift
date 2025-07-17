@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxRelay
 
+
 final class ChatViewModel {
     enum MessageType {
         case user
@@ -21,11 +22,21 @@ final class ChatViewModel {
         let id: UUID
         let type: MessageType
         let text: String
-        
-        init(id: UUID = UUID(), type: MessageType, text: String) {
+        let attachments: [Attachment]
+
+        init(id: UUID = UUID(), type: MessageType, text: String, attachments: [Attachment] = []) {
             self.id = id
             self.type = type
             self.text = text
+            self.attachments = attachments
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+
+        static func == (lhs: ChatMessage, rhs: ChatMessage) -> Bool {
+            lhs.id == rhs.id
         }
     }
     
@@ -41,6 +52,7 @@ final class ChatViewModel {
     private let saveConversationUseCase: SaveConversationUseCase
     private let appendMessageUseCase: AppendMessageUseCase
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
+    private let uploadFilesUseCase: UploadFilesUseCase
     private let contextRepository: ChatContextRepository
     private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
@@ -59,6 +71,7 @@ final class ChatViewModel {
          saveConversationUseCase: SaveConversationUseCase,
          appendMessageUseCase: AppendMessageUseCase,
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
+         uploadFilesUseCase: UploadFilesUseCase,
          contextRepository: ChatContextRepository,
          fetchPreferenceUseCase: FetchUserPreferenceUseCase,
          updatePreferenceUseCase: UpdateUserPreferenceUseCase) {
@@ -67,6 +80,7 @@ final class ChatViewModel {
         self.saveConversationUseCase = saveConversationUseCase
         self.appendMessageUseCase = appendMessageUseCase
         self.fetchMessagesUseCase = fetchMessagesUseCase
+        self.uploadFilesUseCase = uploadFilesUseCase
         self.contextRepository = contextRepository
         self.fetchPreferenceUseCase = fetchPreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
@@ -74,14 +88,11 @@ final class ChatViewModel {
     
     func send(prompt: String, images: [UIImage] = [], files: [URL] = [], model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
-        appendMessage(ChatMessage(type: .user, text: prompt))
+        let localAttachments: [Attachment] = images.map { .image($0) } + files.map { .file($0) }
+        appendMessage(ChatMessage(type: .user, text: prompt, attachments: localAttachments))
 
-        if let id = conversationID {
-            appendMessageUseCase.execute(conversationID: id,
-                                         role: .user,
-                                         text: prompt)
-                .subscribe()
-                .disposed(by: disposeBag)
+        if conversationID != nil {
+            // will be saved after receiving reply
         }
 
         updatePreferenceUseCase.execute(prompt: prompt)
@@ -109,16 +120,42 @@ final class ChatViewModel {
                               stream: Bool,
                               preference: UserPreference?,
                               isFirst: Bool) {
+        let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
+        let fileData = files.compactMap { try? Data(contentsOf: $0) }
+        let allData = imageData + fileData
+        let exts = images.map { _ in "jpg" } + files.map { $0.pathExtension }
+
+        uploadFilesUseCase.execute(datas: allData, extensions: exts)
+            .catchAndReturn([])
+            .subscribe(onSuccess: { [weak self] urls in
+                self?.sendToOpenAI(prompt: prompt,
+                                   images: imageData,
+                                   files: fileData,
+                                   urls: urls,
+                                   model: model,
+                                   stream: stream,
+                                   preference: preference,
+                                   isFirst: isFirst)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func sendToOpenAI(prompt: String,
+                              images: [Data],
+                              files: [Data],
+                              urls: [String],
+                              model: OpenAIModel,
+                              stream: Bool,
+                              preference: UserPreference?,
+                              isFirst: Bool) {
         guard stream else {
             let prefMessage = self.preferenceText(from: preference)
-            let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
-            let fileData = files.compactMap { try? Data(contentsOf: $0) }
             sendMessageUseCase.execute(prompt: prompt,
                                       model: model,
                                       stream: false,
                                       preference: prefMessage,
-                                      images: imageData,
-                                      files: fileData) { [weak self] result in
+                                      images: images,
+                                      files: files) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success(let reply):
@@ -126,12 +163,19 @@ final class ChatViewModel {
                     if let id = self.conversationID, !isFirst {
                         self.appendMessageUseCase.execute(conversationID: id,
                                                           role: .assistant,
-                                                          text: reply)
+                                                          text: reply,
+                                                          files: [])
+                            .subscribe()
+                            .disposed(by: self.disposeBag)
+                        self.appendMessageUseCase.execute(conversationID: id,
+                                                          role: .user,
+                                                          text: prompt,
+                                                          files: urls)
                             .subscribe()
                             .disposed(by: self.disposeBag)
                     }
                     if isFirst {
-                        self.saveFirstConversation(question: prompt, answer: reply, model: model)
+                        self.saveFirstConversation(question: prompt, files: urls, answer: reply, model: model)
                     }
                 case .failure(let error):
                     let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
@@ -164,12 +208,19 @@ final class ChatViewModel {
                 if let id = self.conversationID, !isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
                                                       role: .assistant,
-                                                      text: fullText)
+                                                      text: fullText,
+                                                      files: [])
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
+                    self.appendMessageUseCase.execute(conversationID: id,
+                                                      role: .user,
+                                                      text: prompt,
+                                                      files: urls)
                         .subscribe()
                         .disposed(by: self.disposeBag)
                 }
                 if isFirst {
-                    self.saveFirstConversation(question: prompt, answer: fullText, model: model)
+                    self.saveFirstConversation(question: prompt, files: urls, answer: fullText, model: model)
                 }
             })
             .disposed(by: disposeBag)
@@ -183,7 +234,7 @@ final class ChatViewModel {
         return result.isEmpty ? nil : result
     }
     
-    private func saveFirstConversation(question: String, answer: String, model: OpenAIModel) {
+    private func saveFirstConversation(question: String, files: [String], answer: String, model: OpenAIModel) {
         let history = [
             Message(role: .user, content: question),
             Message(role: .assistant, content: answer)
@@ -193,7 +244,7 @@ final class ChatViewModel {
             guard let self = self else { return }
             if case .success(let title) = result {
                 let cleanTitle = title.removingQuotes()
-                self.saveConversationUseCase.execute(title: cleanTitle, question: question, answer: answer)
+                self.saveConversationUseCase.execute(title: cleanTitle, question: question, files: files, answer: answer)
                     .subscribe(onSuccess: { [weak self] id in
                         self?.conversationIDRelay.accept(id)
                         self?.draftMessages = nil
@@ -216,7 +267,7 @@ final class ChatViewModel {
         var current = messages.value
         guard let index = current.firstIndex(where: { $0.id == id }) else { return }
         let old = current[index]
-        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
+        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text, attachments: old.attachments)
         current[index] = newMsg
         if updateList { messages.accept(current) }
         streamingMessageRelay.accept(newMsg)
@@ -246,7 +297,12 @@ final class ChatViewModel {
             .subscribe(onSuccess: { [weak self] list in
                 guard let self else { return }
                 let chatMessages = list.map { item in
-                    ChatMessage(type: item.role == .user ? .user : .assistant, text: item.text)
+                    let attachments = item.files.compactMap { URL(string: $0) }.map { url -> Attachment in
+                        url.pathExtension.lowercased() == "pdf" ? .remoteFile(url) : .remoteImage(url)
+                    }
+                    return ChatMessage(type: item.role == .user ? .user : .assistant,
+                                       text: item.text,
+                                       attachments: attachments)
                 }
                 self.conversationChanged.accept(())
                 self.messages.accept(chatMessages)

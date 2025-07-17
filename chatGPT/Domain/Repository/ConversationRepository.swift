@@ -5,12 +5,14 @@ protocol ConversationRepository {
     func createConversation(uid: String,
                             title: String,
                             question: String,
+                            files: [String],
                             answer: String,
                             timestamp: Date) -> Single<String>
     func appendMessage(uid: String,
                        conversationID: String,
                        role: RoleType,
                        text: String,
+                       files: [String],
                        timestamp: Date) -> Single<Void>
     func fetchConversations(uid: String) -> Single<[ConversationSummary]>
     func fetchMessages(uid: String, conversationID: String) -> Single<[ConversationMessage]>

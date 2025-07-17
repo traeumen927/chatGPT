@@ -3,11 +3,8 @@ import SnapKit
 
 import RxSwift
 import RxCocoa
+import Kingfisher
 
-enum Attachment {
-    case image(UIImage)
-    case file(URL)
-}
 
 final class ChatComposerImageCell: UICollectionViewCell {
     private let imageView = UIImageView()
@@ -58,6 +55,12 @@ final class ChatComposerImageCell: UICollectionViewCell {
             imageView.image = image
             imageView.contentMode = .scaleAspectFill
         case .file:
+            imageView.image = UIImage(systemName: "doc.fill")
+            imageView.contentMode = .scaleAspectFit
+        case .remoteImage(let url):
+            imageView.kf.setImage(with: url)
+            imageView.contentMode = .scaleAspectFill
+        case .remoteFile:
             imageView.image = UIImage(systemName: "doc.fill")
             imageView.contentMode = .scaleAspectFit
         }

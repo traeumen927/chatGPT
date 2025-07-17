@@ -70,6 +70,7 @@ final class AppCoordinator {
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let conversationRepository = FirestoreConversationRepository()
+        let storageRepository = FirebaseStorageRepository()
         
         let saveConversationUseCase = SaveConversationUseCase(
             repository: conversationRepository,
@@ -77,6 +78,10 @@ final class AppCoordinator {
         )
         let appendMessageUseCase = AppendMessageUseCase(
             repository: conversationRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let uploadFilesUseCase = UploadFilesUseCase(
+            repository: storageRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let fetchConversationMessagesUseCase = FetchConversationMessagesUseCase(
@@ -125,7 +130,8 @@ final class AppCoordinator {
             parseMarkdownUseCase: parseMarkdownUseCase
         ,
             fetchPreferenceUseCase: fetchPreferenceUseCase,
-            updatePreferenceUseCase: updatePreferenceUseCase
+            updatePreferenceUseCase: updatePreferenceUseCase,
+            uploadFilesUseCase: uploadFilesUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)

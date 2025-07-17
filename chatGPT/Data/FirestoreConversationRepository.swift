@@ -15,6 +15,7 @@ final class FirestoreConversationRepository: ConversationRepository {
     func createConversation(uid: String,
                             title: String,
                             question: String,
+                            files: [String],
                             answer: String,
                             timestamp: Date) -> Single<String> {
         Single.create { single in
@@ -26,7 +27,8 @@ final class FirestoreConversationRepository: ConversationRepository {
                     [
                         "role": "user",
                         "text": question,
-                        "timestamp": Timestamp(date: timestamp)
+                        "timestamp": Timestamp(date: timestamp),
+                        "files": files
                     ],
                     [
                         "role": "assistant",
@@ -50,12 +52,14 @@ final class FirestoreConversationRepository: ConversationRepository {
                        conversationID: String,
                        role: RoleType,
                        text: String,
+                       files: [String],
                        timestamp: Date) -> Single<Void> {
         Single.create { single in
             let message: [String: Any] = [
                 "role": role.rawValue,
                 "text": text,
-                "timestamp": Timestamp(date: timestamp)
+                "timestamp": Timestamp(date: timestamp),
+                "files": files
             ]
             self.userCollection(uid)
                 .document(conversationID)
@@ -123,7 +127,8 @@ final class FirestoreConversationRepository: ConversationRepository {
                               let role = RoleType(rawValue: roleStr),
                               let text = dict["text"] as? String else { return nil }
                         let timestamp = (dict["timestamp"] as? Timestamp)?.dateValue() ?? Date()
-                        return ConversationMessage(role: role, text: text, timestamp: timestamp)
+                        let files = dict["files"] as? [String] ?? []
+                        return ConversationMessage(role: role, text: text, timestamp: timestamp, files: files)
                     }
                     single(.success(messages))
                 } else if let error = error {

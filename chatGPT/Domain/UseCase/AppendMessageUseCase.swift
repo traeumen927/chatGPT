@@ -14,6 +14,7 @@ final class AppendMessageUseCase {
     func execute(conversationID: String,
                  role: RoleType,
                  text: String,
+                 files: [String],
                  timestamp: Date = Date()) -> Single<Void> {
         guard let user = getCurrentUserUseCase.execute() else {
             return .error(ConversationError.noUser)
@@ -22,6 +23,7 @@ final class AppendMessageUseCase {
                                         conversationID: conversationID,
                                         role: role,
                                         text: text,
+                                        files: files,
                                         timestamp: timestamp)
     }
 }
