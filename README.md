@@ -268,3 +268,6 @@ Firestore에 저장되는 `preferences`와 `conversations` 컬렉션은 인증�
 
 Firebase 콘솔의 **Firestore Database > 규칙** 탭에서 [`firebase/firestore_rules.md`](firebase/firestore_rules.md) 파일의 내용을 적용하세요.
 또한 `/models` 컬렉션에 대한 규칙도 동일하게 설정해야 합니다.
+
+Firebase 콘솔의 **Storage > 규칙** 탭에서는 [`firebase/storage_rules.md`](firebase/storage_rules.md) 파일을 적용해
+각 사용자의 `attachments/<uid>` 폴더만 접근 가능하도록 제한하세요.
