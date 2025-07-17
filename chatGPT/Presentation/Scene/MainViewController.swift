@@ -10,6 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import PhotosUI
+import UniformTypeIdentifiers
 
 final class MainViewController: UIViewController {
     
@@ -185,9 +186,10 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.layout()
         self.bind()
+        self.configurePlusButtonMenu()
         self.preloadModels()
     }
     
@@ -233,7 +235,7 @@ final class MainViewController: UIViewController {
                                     stream: self.streamEnabled)
         }
         self.composerView.onPlusButtonTapped = { [weak self] in
-            self?.handlePlusButton()
+            self?.handleAlbumOption()
         }
         
         // 메시지 상태 → UI 업데이트
@@ -339,7 +341,21 @@ final class MainViewController: UIViewController {
         composerView.plusButtonEnabled = config?.vision ?? false
     }
 
-    private func handlePlusButton() {
+    private func configurePlusButtonMenu() {
+        let photoAction = UIAction(title: "사진", image: UIImage(systemName: "camera")) { [weak self] _ in
+            self?.presentCamera()
+        }
+        let albumAction = UIAction(title: "앨범", image: UIImage(systemName: "photo")) { [weak self] _ in
+            self?.handleAlbumOption()
+        }
+        let fileAction = UIAction(title: "파일", image: UIImage(systemName: "doc")) { [weak self] _ in
+            self?.presentDocumentPicker()
+        }
+        composerView.plusButtonMenu = UIMenu(title: "", children: [photoAction, albumAction, fileAction])
+        composerView.onPlusButtonTapped = nil
+    }
+
+    private func handleAlbumOption() {
         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         switch status {
         case .authorized, .limited:
@@ -364,6 +380,20 @@ final class MainViewController: UIViewController {
         config.filter = .images
         config.selectionLimit = 0
         let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func presentCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else { return }
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func presentDocumentPicker() {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.data], asCopy: true)
         picker.delegate = self
         present(picker, animated: true)
     }
@@ -432,6 +462,28 @@ extension MainViewController: PHPickerViewControllerDelegate {
                 }
             }
         }
+    }
+}
+
+extension MainViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        if let image = info[.originalImage] as? UIImage {
+            var current = composerView.selectedImages.value
+            current.append(image)
+            composerView.selectedImages.accept(current)
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+}
+
+extension MainViewController: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        controller.dismiss(animated: true)
+        // 파일 처리 로직 추가 가능
     }
 }
 

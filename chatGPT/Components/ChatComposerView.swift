@@ -57,6 +57,14 @@ final class ChatComposerView: UIView, UITextViewDelegate {
     var onSendButtonTapped: ((String) -> Void)?
     var onPlusButtonTapped: (() -> Void)?
 
+    var plusButtonMenu: UIMenu? {
+        get { plusButton.menu }
+        set {
+            plusButton.menu = newValue
+            plusButton.showsMenuAsPrimaryAction = newValue != nil
+        }
+    }
+
     var plusButtonEnabled: Bool = false {
         didSet {
             plusButton.isEnabled = plusButtonEnabled
@@ -222,7 +230,10 @@ final class ChatComposerView: UIView, UITextViewDelegate {
 
         self.plusButton.rx.tap
             .bind { [weak self] in
-                self?.onPlusButtonTapped?()
+                guard let self else { return }
+                if self.plusButton.menu == nil {
+                    self.onPlusButtonTapped?()
+                }
             }
             .disposed(by: disposeBag)
 
