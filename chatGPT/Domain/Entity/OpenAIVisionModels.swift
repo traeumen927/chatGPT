@@ -1,9 +1,14 @@
 import Foundation
 
+struct VisionImageURL: Encodable {
+    let url: String
+    let detail: String?
+}
+
 struct VisionContent: Encodable {
     let type: String
     let text: String?
-    let imageURL: String?
+    let imageURL: VisionImageURL?
 
     enum CodingKeys: String, CodingKey {
         case type, text

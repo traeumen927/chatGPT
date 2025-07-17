@@ -64,11 +64,13 @@ final class SendChatWithContextUseCase {
         var contents: [VisionContent] = [.init(type: "text", text: prompt, imageURL: nil)]
         images.forEach { data in
             let b64 = data.base64EncodedString()
-            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:image/jpeg;base64,\(b64)"))
+            let url = VisionImageURL(url: "data:image/jpeg;base64,\(b64)", detail: nil)
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: url))
         }
         files.forEach { data in
             let b64 = data.base64EncodedString()
-            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:application/pdf;base64,\(b64)"))
+            let url = VisionImageURL(url: "data:application/pdf;base64,\(b64)", detail: nil)
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: url))
         }
         visionMessages.append(VisionMessage(role: .user, content: contents))
 
@@ -109,11 +111,13 @@ final class SendChatWithContextUseCase {
         var contents: [VisionContent] = [.init(type: "text", text: prompt, imageURL: nil)]
         images.forEach { data in
             let b64 = data.base64EncodedString()
-            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:image/jpeg;base64,\(b64)"))
+            let url = VisionImageURL(url: "data:image/jpeg;base64,\(b64)", detail: nil)
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: url))
         }
         files.forEach { data in
             let b64 = data.base64EncodedString()
-            contents.append(VisionContent(type: "image_url", text: nil, imageURL: "data:application/pdf;base64,\(b64)"))
+            let url = VisionImageURL(url: "data:application/pdf;base64,\(b64)", detail: nil)
+            contents.append(VisionContent(type: "image_url", text: nil, imageURL: url))
         }
         visionMessages.append(VisionMessage(role: .user, content: contents))
 
