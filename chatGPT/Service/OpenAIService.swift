@@ -51,16 +51,39 @@ final class OpenAIService {
             )
         }
         
-        request
-            .validate()
-            .responseDecodable(of: T.self) { response in
-                switch response.result {
-                case .success(let decoded):
-                    completion(.success(decoded))
-                case .failure(let error):
-                    completion(.failure(error as Error))
+        request.responseData { response in
+            if let code = response.response?.statusCode,
+               !(200..<300).contains(code) {
+                if let data = response.data,
+                   let apiError = try? JSONDecoder().decode(OpenAIErrorResponse.self, from: data),
+                   apiError.error.message.contains("vision") {
+                    completion(.failure(OpenAIError.visionCapabilityMissing))
+                    return
                 }
+                switch code {
+                case 404:
+                    completion(.failure(OpenAIError.modelNotFound))
+                case 429:
+                    completion(.failure(OpenAIError.rateLimitExceeded))
+                case 500...599:
+                    completion(.failure(OpenAIError.serverError(statusCode: code)))
+                default:
+                    completion(.failure(OpenAIError.serverError(statusCode: code)))
+                }
+                return
             }
+
+            switch response.result {
+            case .success(let data):
+                if let decoded = try? JSONDecoder().decode(T.self, from: data) {
+                    completion(.success(decoded))
+                } else {
+                    completion(.failure(OpenAIError.decodingError))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 
     func requestStream(_ endpoint: OpenAIEndpoint) -> Observable<String> {
@@ -97,7 +120,7 @@ final class OpenAIService {
                 )
             }
 
-            request.validate().responseStream { stream in
+            request.responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
                     switch result {
@@ -121,6 +144,19 @@ final class OpenAIService {
                         observer.onError(error)
                     }
                 case let .complete(completion):
+                    if let code = completion.response?.statusCode,
+                       !(200..<300).contains(code) {
+                        if code == 404 {
+                            observer.onError(OpenAIError.modelNotFound)
+                        } else if code == 429 {
+                            observer.onError(OpenAIError.rateLimitExceeded)
+                        } else if (500...599).contains(code) {
+                            observer.onError(OpenAIError.serverError(statusCode: code))
+                        } else {
+                            observer.onError(OpenAIError.serverError(statusCode: code))
+                        }
+                        return
+                    }
                     if let error = completion.error {
                         observer.onError(error)
                     } else {

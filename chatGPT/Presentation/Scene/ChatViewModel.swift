@@ -34,6 +34,8 @@ final class ChatViewModel {
     let conversationChanged = PublishRelay<Void>()
     private let streamingMessageRelay = PublishRelay<ChatMessage>()
     var streamingMessage: Observable<ChatMessage> { streamingMessageRelay.asObservable() }
+    private let errorMessageRelay = PublishRelay<String>()
+    var errorMessage: Observable<String> { errorMessageRelay.asObservable() }
     
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
@@ -134,6 +136,9 @@ final class ChatViewModel {
                     }
                 case .failure(let error):
                     let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
+                    if case OpenAIError.visionCapabilityMissing = error {
+                        self.errorMessageRelay.accept(message)
+                    }
                     self.appendMessage(ChatMessage(type: .error, text: message))
                 }
             }
@@ -153,6 +158,10 @@ final class ChatViewModel {
                 self.updateMessage(id: assistantID, text: fullText, updateList: false)
             }, onError: { [weak self] error in
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
+                if let self,
+                   case OpenAIError.visionCapabilityMissing = error {
+                    self.errorMessageRelay.accept(message)
+                }
                 self?.updateMessage(id: assistantID, text: message, type: .error)
             }, onCompleted: { [weak self] in
                 guard let self else { return }
