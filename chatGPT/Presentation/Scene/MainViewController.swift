@@ -141,18 +141,19 @@ final class MainViewController: UIViewController {
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-        appendMessageUseCase: AppendMessageUseCase,
-        fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
-        contextRepository: ChatContextRepository,
-       observeConversationsUseCase: ObserveConversationsUseCase,
-       signOutUseCase: SignOutUseCase,
-       updateTitleUseCase: UpdateConversationTitleUseCase,
-       deleteConversationUseCase: DeleteConversationUseCase,
-       loadUserImageUseCase: LoadUserProfileImageUseCase,
-       observeAuthStateUseCase: ObserveAuthStateUseCase,
-       parseMarkdownUseCase: ParseMarkdownUseCase,
-       fetchPreferenceUseCase: FetchUserPreferenceUseCase,
-       updatePreferenceUseCase: UpdateUserPreferenceUseCase) {
+       appendMessageUseCase: AppendMessageUseCase,
+       fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+       contextRepository: ChatContextRepository,
+      observeConversationsUseCase: ObserveConversationsUseCase,
+      signOutUseCase: SignOutUseCase,
+      updateTitleUseCase: UpdateConversationTitleUseCase,
+      deleteConversationUseCase: DeleteConversationUseCase,
+      loadUserImageUseCase: LoadUserProfileImageUseCase,
+      observeAuthStateUseCase: ObserveAuthStateUseCase,
+      parseMarkdownUseCase: ParseMarkdownUseCase,
+      fetchPreferenceUseCase: FetchUserPreferenceUseCase,
+       updatePreferenceUseCase: UpdateUserPreferenceUseCase,
+       uploadFilesUseCase: UploadFilesUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -161,7 +162,8 @@ final class MainViewController: UIViewController {
                                            fetchMessagesUseCase: fetchConversationMessagesUseCase,
                                            contextRepository: contextRepository,
                                            fetchPreferenceUseCase: fetchPreferenceUseCase,
-                                           updatePreferenceUseCase: updatePreferenceUseCase)
+                                           updatePreferenceUseCase: updatePreferenceUseCase,
+                                           uploadFilesUseCase: uploadFilesUseCase)
         self.fetchConversationMessagesUseCase = fetchConversationMessagesUseCase
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase

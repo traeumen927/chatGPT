@@ -15,7 +15,9 @@ final class FirestoreConversationRepository: ConversationRepository {
     func createConversation(uid: String,
                             title: String,
                             question: String,
+                            questionURLs: [String],
                             answer: String,
+                            answerURLs: [String],
                             timestamp: Date) -> Single<String> {
         Single.create { single in
             let conversationID = UUID().uuidString
@@ -26,11 +28,13 @@ final class FirestoreConversationRepository: ConversationRepository {
                     [
                         "role": "user",
                         "text": question,
+                        "urls": questionURLs,
                         "timestamp": Timestamp(date: timestamp)
                     ],
                     [
                         "role": "assistant",
                         "text": answer,
+                        "urls": answerURLs,
                         "timestamp": Timestamp(date: timestamp)
                     ]
                 ]
@@ -50,11 +54,13 @@ final class FirestoreConversationRepository: ConversationRepository {
                        conversationID: String,
                        role: RoleType,
                        text: String,
+                       urls: [String],
                        timestamp: Date) -> Single<Void> {
         Single.create { single in
             let message: [String: Any] = [
                 "role": role.rawValue,
                 "text": text,
+                "urls": urls,
                 "timestamp": Timestamp(date: timestamp)
             ]
             self.userCollection(uid)
@@ -123,7 +129,8 @@ final class FirestoreConversationRepository: ConversationRepository {
                               let role = RoleType(rawValue: roleStr),
                               let text = dict["text"] as? String else { return nil }
                         let timestamp = (dict["timestamp"] as? Timestamp)?.dateValue() ?? Date()
-                        return ConversationMessage(role: role, text: text, timestamp: timestamp)
+                        let urls = dict["urls"] as? [String] ?? []
+                        return ConversationMessage(role: role, text: text, urls: urls, timestamp: timestamp)
                     }
                     single(.success(messages))
                 } else if let error = error {
