@@ -16,6 +16,12 @@ struct OpenAIVisionChatRequest: Encodable {
         }
         struct ImageURL: Encodable {
             let url: String
+            let detail: String?
+
+            init(url: String, detail: String? = "auto") {
+                self.url = url
+                self.detail = detail
+            }
         }
         let role: RoleType
         let content: [VisionContent]

@@ -77,7 +77,11 @@ enum OpenAIEndpoint {
             let userContents = [
                 OpenAIVisionChatRequest.VisionMessage.VisionContent(type: "text", text: messages.last?.content ?? "", image_url: nil)
             ] + images.map {
-                OpenAIVisionChatRequest.VisionMessage.VisionContent(type: "image_url", text: nil, image_url: .init(url: $0))
+                OpenAIVisionChatRequest.VisionMessage.VisionContent(
+                    type: "image_url",
+                    text: nil,
+                    image_url: .init(url: $0, detail: "auto")
+                )
             }
             var final = visMessages
             if !final.isEmpty { final.removeLast() }
