@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 import RxSwift
 
 final class OpenAIRepositoryImpl: OpenAIRepository {
@@ -16,8 +17,15 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     }
     
     /// 채팅전송
-    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
-        service.request(.chat(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
+    func sendChat(messages: [Message], images: [UIImage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+        let endpoint: OpenAIEndpoint
+        if images.isEmpty {
+            endpoint = .chat(messages: messages, model: model, stream: stream)
+        } else {
+            let datas = images.compactMap { $0.pngData() }
+            endpoint = .vision(messages: messages, imageDatas: datas, model: model, stream: stream)
+        }
+        service.request(endpoint) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
                 let reply = decoded.choices.first?.message.content ?? ""
@@ -28,8 +36,13 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         }
     }
 
-    func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> {
-        service.requestStream(.chat(messages: messages, model: model, stream: true))
+    func sendChatStream(messages: [Message], images: [UIImage], model: OpenAIModel) -> Observable<String> {
+        if images.isEmpty {
+            return service.requestStream(.chat(messages: messages, model: model, stream: true))
+        } else {
+            let datas = images.compactMap { $0.pngData() }
+            return service.requestStream(.vision(messages: messages, imageDatas: datas, model: model, stream: true))
+        }
     }
     
     /// 사용가능한 모델 조회

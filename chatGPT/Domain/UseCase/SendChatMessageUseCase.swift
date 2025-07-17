@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class SendChatMessageUseCase {
     private let repository: OpenAIRepository
@@ -14,7 +15,7 @@ final class SendChatMessageUseCase {
         self.repository = repository
     }
 
-    func execute(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
-        repository.sendChat(messages: messages, model: model, stream: stream, completion: completion)
+    func execute(messages: [Message], images: [UIImage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+        repository.sendChat(messages: messages, images: images, model: model, stream: stream, completion: completion)
     }
 }

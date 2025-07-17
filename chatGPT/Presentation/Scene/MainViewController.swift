@@ -230,9 +230,12 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text in
             guard let self = self else { return }
+            let images = self.composerView.selectedImages.value
             self.chatViewModel.send(prompt: text,
+                                    images: images,
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
+            self.composerView.selectedImages.accept([])
         }
         self.composerView.onPlusButtonTapped = { [weak self] in
             self?.handleAlbumOption()
