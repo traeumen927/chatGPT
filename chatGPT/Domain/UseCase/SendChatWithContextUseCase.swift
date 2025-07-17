@@ -28,6 +28,7 @@ final class SendChatWithContextUseCase {
     }
 
     func execute(prompt: String,
+                 images: [UIImage],
                  model: OpenAIModel,
                  stream: Bool,
                  preference: String?,
@@ -42,7 +43,7 @@ final class SendChatWithContextUseCase {
         messages += contextRepository.messages
         messages.append(Message(role: .user, content: prompt))
 
-        openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
+        openAIRepository.sendChat(messages: messages, images: images, model: model, stream: stream) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let reply):
@@ -57,7 +58,7 @@ final class SendChatWithContextUseCase {
         }
     }
 
-    func stream(prompt: String, model: OpenAIModel, preference: String?) -> Observable<String> {
+    func stream(prompt: String, images: [UIImage], model: OpenAIModel, preference: String?) -> Observable<String> {
         var messages = [Message]()
         if let preference {
             messages.append(Message(role: .system, content: preference))
@@ -68,7 +69,7 @@ final class SendChatWithContextUseCase {
         messages += contextRepository.messages
         messages.append(Message(role: .user, content: prompt))
 
-        return openAIRepository.sendChatStream(messages: messages, model: model)
+        return openAIRepository.sendChatStream(messages: messages, images: images, model: model)
     }
 
     func finalize(prompt: String, reply: String, model: OpenAIModel) {

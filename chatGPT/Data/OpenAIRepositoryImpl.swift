@@ -16,8 +16,8 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     }
     
     /// 채팅전송
-    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
-        service.request(.chat(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
+    func sendChat(messages: [Message], images: [UIImage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+        service.request(.chat(messages: messages, images: images, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
                 let reply = decoded.choices.first?.message.content ?? ""
@@ -28,8 +28,8 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         }
     }
 
-    func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> {
-        service.requestStream(.chat(messages: messages, model: model, stream: true))
+    func sendChatStream(messages: [Message], images: [UIImage], model: OpenAIModel) -> Observable<String> {
+        service.requestStream(.chat(messages: messages, images: images, model: model, stream: true))
     }
     
     /// 사용가능한 모델 조회

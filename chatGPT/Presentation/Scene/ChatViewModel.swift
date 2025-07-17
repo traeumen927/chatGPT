@@ -73,7 +73,7 @@ final class ChatViewModel {
         self.updatePreferenceUseCase = updatePreferenceUseCase
     }
     
-    func send(prompt: String, model: OpenAIModel, stream: Bool) {
+    func send(prompt: String, images: [UIImage], model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         appendMessage(ChatMessage(type: .user, text: prompt))
 
@@ -93,6 +93,7 @@ final class ChatViewModel {
             .catchAndReturn(nil)
             .subscribe(onSuccess: { [weak self] preference in
                 self?.sendInternal(prompt: prompt,
+                                   images: images,
                                    model: model,
                                    stream: stream,
                                    preference: preference,
@@ -102,6 +103,7 @@ final class ChatViewModel {
     }
 
     private func sendInternal(prompt: String,
+                              images: [UIImage],
                               model: OpenAIModel,
                               stream: Bool,
                               preference: UserPreference?,
@@ -109,6 +111,7 @@ final class ChatViewModel {
         guard stream else {
             let prefMessage = self.preferenceText(from: preference)
             sendMessageUseCase.execute(prompt: prompt,
+                                      images: images,
                                       model: model,
                                       stream: false,
                                       preference: prefMessage) { [weak self] result in
@@ -142,7 +145,7 @@ final class ChatViewModel {
         var fullText = ""
 
         let prefMessage = self.preferenceText(from: preference)
-        sendMessageUseCase.stream(prompt: prompt, model: model, preference: prefMessage)
+        sendMessageUseCase.stream(prompt: prompt, images: images, model: model, preference: prefMessage)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
