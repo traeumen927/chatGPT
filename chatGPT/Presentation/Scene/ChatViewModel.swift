@@ -21,11 +21,13 @@ final class ChatViewModel {
         let id: UUID
         let type: MessageType
         let text: String
-        
-        init(id: UUID = UUID(), type: MessageType, text: String) {
+        let urls: [String]
+
+        init(id: UUID = UUID(), type: MessageType, text: String, urls: [String] = []) {
             self.id = id
             self.type = type
             self.text = text
+            self.urls = urls
         }
     }
     
@@ -77,7 +79,8 @@ final class ChatViewModel {
     
     func send(prompt: String, images: [UIImage] = [], files: [URL] = [], model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
-        appendMessage(ChatMessage(type: .user, text: prompt))
+        let messageID = UUID()
+        appendMessage(ChatMessage(id: messageID, type: .user, text: prompt))
         
         
         updatePreferenceUseCase.execute(prompt: prompt)
@@ -92,6 +95,7 @@ final class ChatViewModel {
             .catchAndReturn([])
             .flatMap { [weak self] urls -> Single<UserPreference?> in
                 guard let self else { return .just(nil) }
+                self.updateMessage(id: messageID, text: prompt, urls: urls.map { $0.absoluteString })
                 if let id = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: id,
                                                       role: .user,
@@ -245,11 +249,15 @@ final class ChatViewModel {
     private func updateMessage(id: UUID,
                                text: String,
                                type: MessageType? = nil,
+                               urls: [String]? = nil,
                                updateList: Bool = true) {
         var current = messages.value
         guard let index = current.firstIndex(where: { $0.id == id }) else { return }
         let old = current[index]
-        let newMsg = ChatMessage(id: old.id, type: type ?? old.type, text: text)
+        let newMsg = ChatMessage(id: old.id,
+                                 type: type ?? old.type,
+                                 text: text,
+                                 urls: urls ?? old.urls)
         current[index] = newMsg
         if updateList { messages.accept(current) }
         streamingMessageRelay.accept(newMsg)
@@ -279,13 +287,9 @@ final class ChatViewModel {
             .subscribe(onSuccess: { [weak self] list in
                 guard let self else { return }
                 let chatMessages = list.map { item in
-                    let attachments = (item.urls ?? [])
-                        .map { url -> String in
-                            "![image](\(url))"
-                        }
-                        .joined(separator: "\n")
-                    let text = attachments.isEmpty ? item.text : item.text + "\n" + attachments
-                    return ChatMessage(type: item.role == .user ? .user : .assistant, text: text)
+                    ChatMessage(type: item.role == .user ? .user : .assistant,
+                                text: item.text,
+                                urls: item.urls ?? [])
                 }
                 self.conversationChanged.accept(())
                 self.messages.accept(chatMessages)

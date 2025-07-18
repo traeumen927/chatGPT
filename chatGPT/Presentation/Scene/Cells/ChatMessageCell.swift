@@ -7,10 +7,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ChatMessageCell: UITableViewCell {
 
     private var lastHeight: CGFloat = 0
+
+    private var disposeBag = DisposeBag()
 
     private let bubbleView = UIView()
     private let messageView: UITextView = {
@@ -32,6 +36,15 @@ final class ChatMessageCell: UITableViewCell {
         view.alignment = .leading
         return view
     }()
+    private let attachmentsStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.spacing = 4
+        view.alignment = .leading
+        return view
+    }()
+    private var messageTopConstraint: Constraint?
+    private var stackTopConstraint: Constraint?
 
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -50,8 +63,7 @@ final class ChatMessageCell: UITableViewCell {
         bubbleView.clipsToBounds = true
 
         contentView.addSubview(bubbleView)
-        bubbleView.addSubview(messageView)
-        bubbleView.addSubview(stackView)
+        [attachmentsStackView, messageView, stackView].forEach(bubbleView.addSubview)
 
         stackView.isHidden = true
         messageView.isHidden = false
@@ -62,12 +74,20 @@ final class ChatMessageCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(16)
         }
 
+        attachmentsStackView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview().inset(12).priority(999)
+        }
+
         messageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(12).priority(999)
+            self.messageTopConstraint = make.top.equalTo(attachmentsStackView.snp.bottom).constraint
+            make.leading.trailing.equalToSuperview().inset(12).priority(999)
+            make.bottom.equalToSuperview().inset(12).priority(999)
         }
 
         stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(12).priority(999)
+            self.stackTopConstraint = make.top.equalTo(attachmentsStackView.snp.bottom).constraint
+            make.leading.trailing.equalToSuperview().inset(12).priority(999)
+            make.bottom.equalToSuperview().inset(12).priority(999)
         }
     }
 
@@ -168,8 +188,13 @@ final class ChatMessageCell: UITableViewCell {
         messageView.text = nil
         messageView.attributedText = nil
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        attachmentsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         stackView.isHidden = true
         messageView.isHidden = false
+        attachmentsStackView.isHidden = true
+        messageTopConstraint?.update(offset: 0)
+        stackTopConstraint?.update(offset: 0)
+        disposeBag = DisposeBag()
         lastHeight = 0
     }
 
@@ -179,6 +204,37 @@ final class ChatMessageCell: UITableViewCell {
 
     func configure(with message: ChatViewModel.ChatMessage,
                    parser: ParseMarkdownUseCase) {
+
+        attachmentsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        if message.urls.isEmpty {
+            attachmentsStackView.isHidden = true
+            messageTopConstraint?.update(offset: 0)
+            stackTopConstraint?.update(offset: 0)
+        } else {
+            attachmentsStackView.isHidden = false
+            messageTopConstraint?.update(offset: 8)
+            stackTopConstraint?.update(offset: 8)
+            for urlString in message.urls {
+                guard let url = URL(string: urlString) else { continue }
+                if ["png","jpg","jpeg","gif","heic","heif","webp"].contains(url.pathExtension.lowercased()) {
+                    let view = RemoteImageView(url: url)
+                    attachmentsStackView.addArrangedSubview(view)
+                    view.snp.makeConstraints { make in
+                        make.width.equalToSuperview().multipliedBy(0.65)
+                        make.height.equalTo(view.snp.width)
+                    }
+                } else {
+                    let button = UIButton(type: .system)
+                    let image = UIImage(systemName: "doc.fill")
+                    button.setImage(image, for: .normal)
+                    button.setTitle(" " + url.lastPathComponent, for: .normal)
+                    button.contentHorizontalAlignment = .left
+                    button.rx.tap.bind { UIApplication.shared.open(url) }.disposed(by: disposeBag)
+                    attachmentsStackView.addArrangedSubview(button)
+                    button.snp.makeConstraints { $0.width.equalToSuperview() }
+                }
+            }
+        }
 
         switch message.type {
         case .assistant:
@@ -237,11 +293,12 @@ final class ChatMessageCell: UITableViewCell {
         }
 
         layoutIfNeeded()
+        let attachmentHeight = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
         if stackView.isHidden {
             messageView.addAttachmentViews()
-            lastHeight = messageView.contentSize.height
+            lastHeight = messageView.contentSize.height + attachmentHeight
         } else {
-            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attachmentHeight
         }
 
     }
@@ -252,14 +309,16 @@ final class ChatMessageCell: UITableViewCell {
             messageView.attributedText = parser.execute(markdown: text)
             layoutIfNeeded()
             messageView.addAttachmentViews()
-            let newHeight = messageView.contentSize.height
+            let attach = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
+            let newHeight = messageView.contentSize.height + attach
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
         } else {
             let attributed = parser.execute(markdown: text)
             buildStack(from: attributed)
             layoutIfNeeded()
-            let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            let attach = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
+            let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attach
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
         }
