@@ -52,7 +52,7 @@ final class ChatComposerImageCell: UICollectionViewCell {
         }
     }
 
-    func configure(attachment: Attachment, onDelete: @escaping () -> Void) {
+    func configure(attachment: Attachment, onDelete: (() -> Void)? = nil) {
         switch attachment {
         case .image(let image):
             imageView.image = image
@@ -62,6 +62,7 @@ final class ChatComposerImageCell: UICollectionViewCell {
             imageView.contentMode = .scaleAspectFit
         }
         removeHandler = onDelete
+        closeButton.isHidden = onDelete == nil
         closeButton.rx.tap
             .bind { [weak self] in
                 self?.removeHandler?()

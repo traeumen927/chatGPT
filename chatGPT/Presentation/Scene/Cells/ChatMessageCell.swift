@@ -43,6 +43,14 @@ final class ChatMessageCell: UITableViewCell {
         view.alignment = .leading
         return view
     }()
+    private let userImageScrollView = UIScrollView()
+    private let userImageStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .horizontal
+        view.spacing = 8
+        return view
+    }()
+    private var userImageHeightConstraint: Constraint?
     private var messageTopConstraint: Constraint?
     private var stackTopConstraint: Constraint?
 
@@ -50,6 +58,7 @@ final class ChatMessageCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         layout()
+        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -62,14 +71,30 @@ final class ChatMessageCell: UITableViewCell {
 
         bubbleView.clipsToBounds = true
 
-        contentView.addSubview(bubbleView)
+        [userImageScrollView, bubbleView].forEach(contentView.addSubview)
+        userImageScrollView.addSubview(userImageStackView)
         [attachmentsStackView, messageView, stackView].forEach(bubbleView.addSubview)
 
         stackView.isHidden = true
         messageView.isHidden = false
 
+        userImageScrollView.showsHorizontalScrollIndicator = true
+        userImageScrollView.isHidden = true
+        userImageStackView.axis = .horizontal
+        userImageStackView.spacing = 8
+
+        userImageScrollView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview().inset(16)
+            userImageHeightConstraint = make.height.equalTo(0).constraint
+        }
+
+        userImageStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
         bubbleView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview().inset(8).priority(999)
+            make.top.equalTo(userImageScrollView.snp.bottom).offset(8).priority(999)
+            make.bottom.equalToSuperview().inset(8).priority(999)
             make.leading.equalToSuperview().inset(16)
             make.trailing.equalToSuperview().inset(16)
         }
@@ -89,6 +114,10 @@ final class ChatMessageCell: UITableViewCell {
             make.leading.trailing.equalToSuperview().inset(12).priority(999)
             make.bottom.equalToSuperview().inset(12).priority(999)
         }
+    }
+
+    private func bind() {
+        // no reactive bindings yet
     }
 
     private func makeTextView() -> UITextView {
@@ -194,6 +223,9 @@ final class ChatMessageCell: UITableViewCell {
         attachmentsStackView.isHidden = true
         messageTopConstraint?.update(offset: 0)
         stackTopConstraint?.update(offset: 0)
+        userImageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        userImageScrollView.isHidden = true
+        userImageHeightConstraint?.update(offset: 0)
         disposeBag = DisposeBag()
         lastHeight = 0
     }
@@ -204,26 +236,40 @@ final class ChatMessageCell: UITableViewCell {
 
     func configure(with message: ChatViewModel.ChatMessage,
                    parser: ParseMarkdownUseCase) {
-
         attachmentsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        if message.urls.isEmpty {
-            attachmentsStackView.isHidden = true
-            messageTopConstraint?.update(offset: 0)
-            stackTopConstraint?.update(offset: 0)
-        } else {
-            attachmentsStackView.isHidden = false
-            messageTopConstraint?.update(offset: 8)
-            stackTopConstraint?.update(offset: 8)
-            for urlString in message.urls {
-                guard let url = URL(string: urlString) else { continue }
-                if ["png","jpg","jpeg","gif","heic","heif","webp"].contains(url.pathExtension.lowercased()) {
+        userImageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        let urls = message.urls.compactMap { URL(string: $0) }
+        let imageExts = ["png","jpg","jpeg","gif","heic","heif","webp"]
+        let imageUrls = urls.filter { imageExts.contains($0.pathExtension.lowercased()) }
+        let fileUrls = urls.filter { !imageExts.contains($0.pathExtension.lowercased()) }
+
+        if message.type == .user {
+            if imageUrls.isEmpty {
+                userImageScrollView.isHidden = true
+                userImageHeightConstraint?.update(offset: 0)
+            } else {
+                userImageScrollView.isHidden = false
+                userImageHeightConstraint?.update(offset: 80)
+                for url in imageUrls {
                     let view = RemoteImageView(url: url)
-                    attachmentsStackView.addArrangedSubview(view)
+                    userImageStackView.addArrangedSubview(view)
                     view.snp.makeConstraints { make in
-                        make.width.equalToSuperview().multipliedBy(0.65)
-                        make.height.equalTo(view.snp.width)
+                        make.width.equalTo(80)
+                        make.height.equalToSuperview()
                     }
-                } else {
+                }
+            }
+
+            if fileUrls.isEmpty {
+                attachmentsStackView.isHidden = true
+                messageTopConstraint?.update(offset: 0)
+                stackTopConstraint?.update(offset: 0)
+            } else {
+                attachmentsStackView.isHidden = false
+                messageTopConstraint?.update(offset: 8)
+                stackTopConstraint?.update(offset: 8)
+                for url in fileUrls {
                     let button = UIButton(type: .system)
                     let image = UIImage(systemName: "doc.fill")
                     button.setImage(image, for: .normal)
@@ -232,6 +278,37 @@ final class ChatMessageCell: UITableViewCell {
                     button.rx.tap.bind { UIApplication.shared.open(url) }.disposed(by: disposeBag)
                     attachmentsStackView.addArrangedSubview(button)
                     button.snp.makeConstraints { $0.width.equalToSuperview() }
+                }
+            }
+        } else {
+            userImageScrollView.isHidden = true
+            userImageHeightConstraint?.update(offset: 0)
+            if urls.isEmpty {
+                attachmentsStackView.isHidden = true
+                messageTopConstraint?.update(offset: 0)
+                stackTopConstraint?.update(offset: 0)
+            } else {
+                attachmentsStackView.isHidden = false
+                messageTopConstraint?.update(offset: 8)
+                stackTopConstraint?.update(offset: 8)
+                for url in urls {
+                    if imageExts.contains(url.pathExtension.lowercased()) {
+                        let view = RemoteImageView(url: url)
+                        attachmentsStackView.addArrangedSubview(view)
+                        view.snp.makeConstraints { make in
+                            make.width.equalToSuperview().multipliedBy(0.65)
+                            make.height.equalTo(view.snp.width)
+                        }
+                    } else {
+                        let button = UIButton(type: .system)
+                        let image = UIImage(systemName: "doc.fill")
+                        button.setImage(image, for: .normal)
+                        button.setTitle(" " + url.lastPathComponent, for: .normal)
+                        button.contentHorizontalAlignment = .left
+                        button.rx.tap.bind { UIApplication.shared.open(url) }.disposed(by: disposeBag)
+                        attachmentsStackView.addArrangedSubview(button)
+                        button.snp.makeConstraints { $0.width.equalToSuperview() }
+                    }
                 }
             }
         }
@@ -259,7 +336,8 @@ final class ChatMessageCell: UITableViewCell {
                 make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
-                make.top.bottom.equalToSuperview().inset(8).priority(999)
+                make.top.equalTo(userImageScrollView.snp.bottom).offset(8).priority(999)
+                make.bottom.equalToSuperview().inset(8).priority(999)
                 make.trailing.equalToSuperview().inset(16)
                 make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
             }
@@ -273,7 +351,8 @@ final class ChatMessageCell: UITableViewCell {
                 make.edges.equalToSuperview().priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
-                make.top.bottom.equalToSuperview().inset(8).priority(999)
+                make.top.equalTo(userImageScrollView.snp.bottom).offset(8).priority(999)
+                make.bottom.equalToSuperview().inset(8).priority(999)
                 make.leading.trailing.equalToSuperview().inset(16)
             }
 
@@ -286,7 +365,8 @@ final class ChatMessageCell: UITableViewCell {
                 make.edges.equalToSuperview().inset(12).priority(999)
             }
             bubbleView.snp.remakeConstraints { make in
-                make.top.bottom.equalToSuperview().inset(8).priority(999)
+                make.top.equalTo(userImageScrollView.snp.bottom).offset(8).priority(999)
+                make.bottom.equalToSuperview().inset(8).priority(999)
                 make.leading.equalToSuperview().inset(16)
                 make.trailing.lessThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
             }
@@ -294,11 +374,12 @@ final class ChatMessageCell: UITableViewCell {
 
         layoutIfNeeded()
         let attachmentHeight = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
+        let imageHeight = userImageScrollView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? 80) + 8
         if stackView.isHidden {
             messageView.addAttachmentViews()
-            lastHeight = messageView.contentSize.height + attachmentHeight
+            lastHeight = messageView.contentSize.height + attachmentHeight + imageHeight
         } else {
-            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attachmentHeight
+            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attachmentHeight + imageHeight
         }
 
     }
@@ -310,7 +391,8 @@ final class ChatMessageCell: UITableViewCell {
             layoutIfNeeded()
             messageView.addAttachmentViews()
             let attach = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
-            let newHeight = messageView.contentSize.height + attach
+            let images = userImageScrollView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? 80) + 8
+            let newHeight = messageView.contentSize.height + attach + images
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
         } else {
@@ -318,7 +400,8 @@ final class ChatMessageCell: UITableViewCell {
             buildStack(from: attributed)
             layoutIfNeeded()
             let attach = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
-            let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attach
+            let images = userImageScrollView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? 80) + 8
+            let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attach + images
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
         }
