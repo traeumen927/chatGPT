@@ -2,12 +2,12 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class RemoteImageView: UIView {
     private let imageView = UIImageView()
     private let url: URL
     private let disposeBag = DisposeBag()
-    private let imageRepository = KingfisherImageRepository()
     private var loadedImage: UIImage?
 
     init(url: URL) {
@@ -34,13 +34,11 @@ final class RemoteImageView: UIView {
     }
 
     private func bind() {
-        imageRepository.fetchImage(from: url)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] image in
-                self?.imageView.image = image
-                self?.loadedImage = image
-            })
-            .disposed(by: disposeBag)
+        imageView.kf.setImage(with: url) { [weak self] result in
+            if case .success(let value) = result {
+                self?.loadedImage = value.image
+            }
+        }
         
         let tapGesture = UITapGestureRecognizer()
                 imageView.addGestureRecognizer(tapGesture)
