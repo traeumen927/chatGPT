@@ -26,7 +26,8 @@ final class RemoteImageView: UIView {
         layer.cornerRadius = 8
         clipsToBounds = true
         addSubview(imageView)
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -34,7 +35,9 @@ final class RemoteImageView: UIView {
     }
 
     private func bind() {
-        imageView.kf.setImage(with: url) { [weak self] result in
+        imageView.kf.indicatorType = .activity
+        let options: KingfisherOptionsInfo = [.transition(.fade(0.2))]
+        imageView.kf.setImage(with: url, placeholder: nil, options: options) { [weak self] result in
             if case .success(let value) = result {
                 self?.loadedImage = value.image
             }
