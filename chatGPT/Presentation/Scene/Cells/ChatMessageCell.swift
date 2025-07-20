@@ -89,7 +89,8 @@ final class ChatMessageCell: UITableViewCell {
         }
 
         userImageStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.bottom.trailing.equalToSuperview()
+            make.leading.greaterThanOrEqualToSuperview()
         }
 
         bubbleView.snp.makeConstraints { make in
@@ -257,6 +258,11 @@ final class ChatMessageCell: UITableViewCell {
                     view.snp.makeConstraints { make in
                         make.width.equalTo(80)
                     }
+                }
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    let offset = max(0, self.userImageScrollView.contentSize.width - self.userImageScrollView.bounds.width)
+                    self.userImageScrollView.contentOffset.x = offset
                 }
             }
 
