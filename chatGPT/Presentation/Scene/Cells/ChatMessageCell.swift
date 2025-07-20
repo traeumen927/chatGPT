@@ -233,6 +233,17 @@ final class ChatMessageCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        guard !userImageCollectionView.isHidden else { return }
+        let height = userImageCollectionView.collectionViewLayout.collectionViewContentSize.height
+        userImageHeightConstraint?.update(offset: height)
+        contentView.layoutIfNeeded()
+        let attachmentHeight = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
+        let imageHeight = userImageCollectionView.isHidden ? 0 : height + 8
+        if stackView.isHidden {
+            lastHeight = messageView.contentSize.height + attachmentHeight + imageHeight
+        } else {
+            lastHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attachmentHeight + imageHeight
+        }
     }
 
     func configure(with message: ChatViewModel.ChatMessage,
