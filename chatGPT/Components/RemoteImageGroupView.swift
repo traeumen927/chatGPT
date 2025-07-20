@@ -42,7 +42,6 @@ final class RemoteImageGroupView: UIView {
             stackView.addArrangedSubview(imageView)
             imageView.snp.makeConstraints { make in
                 make.width.equalTo(self.snp.width).multipliedBy(itemWidthRatio)
-                make.height.equalTo(imageView.snp.width)
             }
         }
     }
