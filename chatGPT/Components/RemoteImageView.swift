@@ -33,6 +33,9 @@ final class RemoteImageView: UIView {
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        snp.makeConstraints { make in
+            ratioConstraint = make.height.equalTo(self.snp.width).constraint
+        }
     }
 
     private func bind() {
@@ -41,7 +44,6 @@ final class RemoteImageView: UIView {
         imageView.kf.setImage(with: url, placeholder: nil, options: options) { [weak self] result in
             if case .success(let value) = result {
                 self?.loadedImage = value.image
-                self?.updateRatio(with: value.image)
             }
         }
         
@@ -63,11 +65,4 @@ final class RemoteImageView: UIView {
         CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
     }
 
-    private func updateRatio(with image: UIImage) {
-        ratioConstraint?.deactivate()
-        snp.makeConstraints { make in
-            ratioConstraint = make.height.equalTo(self.snp.width).multipliedBy(image.size.height / image.size.width).constraint
-        }
-        setNeedsLayout()
-    }
 }
