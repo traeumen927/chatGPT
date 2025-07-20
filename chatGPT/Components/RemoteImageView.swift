@@ -9,6 +9,7 @@ final class RemoteImageView: UIView {
     private let url: URL
     private let disposeBag = DisposeBag()
     private var loadedImage: UIImage?
+    private var ratioConstraint: Constraint?
 
     init(url: URL) {
         self.url = url
@@ -22,11 +23,11 @@ final class RemoteImageView: UIView {
     }
 
     private func layout() {
-        backgroundColor = ThemeColor.background2
+        backgroundColor = .clear
         layer.cornerRadius = 8
         clipsToBounds = true
         addSubview(imageView)
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.snp.makeConstraints { make in
@@ -40,6 +41,7 @@ final class RemoteImageView: UIView {
         imageView.kf.setImage(with: url, placeholder: nil, options: options) { [weak self] result in
             if case .success(let value) = result {
                 self?.loadedImage = value.image
+                self?.updateRatio(with: value.image)
             }
         }
         
@@ -59,5 +61,13 @@ final class RemoteImageView: UIView {
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
+    }
+
+    private func updateRatio(with image: UIImage) {
+        ratioConstraint?.deactivate()
+        snp.makeConstraints { make in
+            ratioConstraint = make.height.equalTo(self.snp.width).multipliedBy(image.size.height / image.size.width).constraint
+        }
+        setNeedsLayout()
     }
 }

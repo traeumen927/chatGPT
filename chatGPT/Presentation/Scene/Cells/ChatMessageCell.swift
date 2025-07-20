@@ -256,7 +256,6 @@ final class ChatMessageCell: UITableViewCell {
                     userImageStackView.addArrangedSubview(view)
                     view.snp.makeConstraints { make in
                         make.width.equalTo(80)
-                        make.height.equalToSuperview()
                     }
                 }
             }
@@ -297,7 +296,6 @@ final class ChatMessageCell: UITableViewCell {
                         attachmentsStackView.addArrangedSubview(view)
                         view.snp.makeConstraints { make in
                             make.width.equalToSuperview().multipliedBy(0.65)
-                            make.height.equalTo(view.snp.width)
                         }
                     } else {
                         let button = UIButton(type: .system)
