@@ -27,7 +27,7 @@ final class RemoteImageView: UIView {
         layer.cornerRadius = 8
         clipsToBounds = true
         addSubview(imageView)
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.snp.makeConstraints { make in
