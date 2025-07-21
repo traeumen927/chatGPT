@@ -4,9 +4,9 @@ final class RemoteImageGroupAttachment: NSTextAttachment {
     let urls: [URL]
     let view: RemoteImageGroupView
 
-    init(urls: [URL]) {
+    init(urls: [URL], style: RemoteImageGroupView.Style = .horizontal) {
         self.urls = urls
-        self.view = RemoteImageGroupView(urls: urls)
+        self.view = RemoteImageGroupView(urls: urls, style: style)
         super.init(data: nil, ofType: nil)
     }
 
