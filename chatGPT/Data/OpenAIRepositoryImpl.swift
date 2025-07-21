@@ -31,6 +31,22 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> {
         service.requestStream(.chat(messages: messages, model: model, stream: true))
     }
+
+    func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+        service.request(.vision(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
+            switch result {
+            case .success(let decoded):
+                let reply = decoded.choices.first?.message.content ?? ""
+                completion(.success(reply))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String> {
+        service.requestStream(.vision(messages: messages, model: model, stream: true))
+    }
     
     /// 사용가능한 모델 조회
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {

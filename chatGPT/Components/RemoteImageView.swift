@@ -2,13 +2,14 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class RemoteImageView: UIView {
     private let imageView = UIImageView()
     private let url: URL
     private let disposeBag = DisposeBag()
-    private let imageRepository = KingfisherImageRepository()
     private var loadedImage: UIImage?
+    private var ratioConstraint: Constraint?
 
     init(url: URL) {
         self.url = url
@@ -22,25 +23,29 @@ final class RemoteImageView: UIView {
     }
 
     private func layout() {
-        backgroundColor = ThemeColor.background2
+        backgroundColor = .clear
         layer.cornerRadius = 8
         clipsToBounds = true
         addSubview(imageView)
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        snp.makeConstraints { make in
+            ratioConstraint = make.height.equalTo(self.snp.width).constraint
+        }
     }
 
     private func bind() {
-        imageRepository.fetchImage(from: url)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] image in
-                self?.imageView.image = image
-                self?.loadedImage = image
-            })
-            .disposed(by: disposeBag)
+        imageView.kf.indicatorType = .activity
+        let options: KingfisherOptionsInfo = [.transition(.fade(0.2))]
+        imageView.kf.setImage(with: url, placeholder: nil, options: options) { [weak self] result in
+            if case .success(let value) = result {
+                self?.loadedImage = value.image
+            }
+        }
         
         let tapGesture = UITapGestureRecognizer()
                 imageView.addGestureRecognizer(tapGesture)
@@ -59,4 +64,5 @@ final class RemoteImageView: UIView {
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
     }
+
 }

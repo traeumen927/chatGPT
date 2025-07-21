@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import PhotosUI
+import UniformTypeIdentifiers
 
 final class MainViewController: UIViewController {
     
@@ -37,6 +39,7 @@ final class MainViewController: UIViewController {
     private var selectedModel: OpenAIModel = ModelPreference.current {
         didSet {
             ModelPreference.save(selectedModel)
+            updatePlusButtonState()
         }
     }
     
@@ -49,7 +52,7 @@ final class MainViewController: UIViewController {
     
     // MARK: 새 대화 버튼
     private lazy var newChatButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
+        let button = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: nil, action: nil)
         return button
     }()
     
@@ -138,18 +141,19 @@ final class MainViewController: UIViewController {
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-        appendMessageUseCase: AppendMessageUseCase,
-        fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
-        contextRepository: ChatContextRepository,
-       observeConversationsUseCase: ObserveConversationsUseCase,
-       signOutUseCase: SignOutUseCase,
-       updateTitleUseCase: UpdateConversationTitleUseCase,
-       deleteConversationUseCase: DeleteConversationUseCase,
-       loadUserImageUseCase: LoadUserProfileImageUseCase,
-       observeAuthStateUseCase: ObserveAuthStateUseCase,
-       parseMarkdownUseCase: ParseMarkdownUseCase,
-       fetchPreferenceUseCase: FetchUserPreferenceUseCase,
-       updatePreferenceUseCase: UpdateUserPreferenceUseCase) {
+       appendMessageUseCase: AppendMessageUseCase,
+       fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+       contextRepository: ChatContextRepository,
+      observeConversationsUseCase: ObserveConversationsUseCase,
+      signOutUseCase: SignOutUseCase,
+      updateTitleUseCase: UpdateConversationTitleUseCase,
+      deleteConversationUseCase: DeleteConversationUseCase,
+      loadUserImageUseCase: LoadUserProfileImageUseCase,
+      observeAuthStateUseCase: ObserveAuthStateUseCase,
+      parseMarkdownUseCase: ParseMarkdownUseCase,
+      fetchPreferenceUseCase: FetchUserPreferenceUseCase,
+       updatePreferenceUseCase: UpdateUserPreferenceUseCase,
+       uploadFilesUseCase: UploadFilesUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -158,7 +162,8 @@ final class MainViewController: UIViewController {
                                            fetchMessagesUseCase: fetchConversationMessagesUseCase,
                                            contextRepository: contextRepository,
                                            fetchPreferenceUseCase: fetchPreferenceUseCase,
-                                           updatePreferenceUseCase: updatePreferenceUseCase)
+                                           updatePreferenceUseCase: updatePreferenceUseCase,
+                                           uploadFilesUseCase: uploadFilesUseCase)
         self.fetchConversationMessagesUseCase = fetchConversationMessagesUseCase
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
@@ -183,9 +188,10 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.layout()
         self.bind()
+        self.configurePlusButtonMenu()
         self.preloadModels()
     }
     
@@ -224,11 +230,16 @@ final class MainViewController: UIViewController {
         
         
         // MARK: ChatComposerView 전송버튼 클로져
-        self.composerView.onSendButtonTapped = { [weak self] text in
+        self.composerView.onSendButtonTapped = { [weak self] text, images, files in
             guard let self = self else { return }
             self.chatViewModel.send(prompt: text,
+                                    images: images,
+                                    files: files,
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
+        }
+        self.composerView.onPlusButtonTapped = { [weak self] in
+            self?.handleAlbumOption()
         }
         
         // 메시지 상태 → UI 업데이트
@@ -290,7 +301,9 @@ final class MainViewController: UIViewController {
     private func preloadModels() {
         fetchModelsUseCase.execute()
             .subscribe(onSuccess: { [weak self] models in
-                self?.availableModels = models
+                guard let self else { return }
+                self.availableModels = models
+                self.updatePlusButtonState()
             })
             .disposed(by: disposeBag)
     }
@@ -327,6 +340,79 @@ final class MainViewController: UIViewController {
         tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }
 
+    private func updatePlusButtonState() {
+        let config = availableModels.first { $0.modelId == selectedModel.id }
+        composerView.plusButtonEnabled = config?.vision ?? false
+    }
+
+    private func configurePlusButtonMenu() {
+        let photoAction = UIAction(title: "사진", image: UIImage(systemName: "camera")) { [weak self] _ in
+            self?.presentCamera()
+        }
+        let albumAction = UIAction(title: "앨범", image: UIImage(systemName: "photo")) { [weak self] _ in
+            self?.handleAlbumOption()
+        }
+        let fileAction = UIAction(title: "파일", image: UIImage(systemName: "doc")) { [weak self] _ in
+            self?.presentDocumentPicker()
+        }
+        composerView.plusButtonMenu = UIMenu(title: "", children: [photoAction, albumAction, fileAction])
+        composerView.onPlusButtonTapped = nil
+    }
+
+    private func handleAlbumOption() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        switch status {
+        case .authorized, .limited:
+            presentPhotoPicker()
+        case .denied, .restricted:
+            presentPermissionAlert()
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        self?.presentPhotoPicker()
+                    }
+                }
+            }
+        @unknown default:
+            break
+        }
+    }
+
+    private func presentPhotoPicker() {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 0
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func presentCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else { return }
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func presentDocumentPicker() {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.data], asCopy: true)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func presentPermissionAlert() {
+        let alert = UIAlertController(title: "사진 접근 권한 필요", message: "설정에서 권한을 허용해주세요", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "설정", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        present(alert, animated: true)
+    }
+
     
     private func loadUserImage() {
         loadUserImageUseCase.execute()
@@ -359,6 +445,52 @@ extension MainViewController: KeyboardAdjustable {
     var adjustableBottomConstraint: Constraint? {
         get { return self.composerViewBottomConstraint }
         set { self.composerViewBottomConstraint = newValue }
+    }
+}
+
+extension MainViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
+
+        let providers = results.map { $0.itemProvider }
+        providers.forEach { provider in
+            if provider.canLoadObject(ofClass: UIImage.self) {
+                provider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+                    guard let self, let image = object as? UIImage else { return }
+                    DispatchQueue.main.async {
+                        var current = self.composerView.selectedImages.value
+                        current.append(image)
+                        self.composerView.selectedImages.accept(current)
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension MainViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        if let image = info[.originalImage] as? UIImage {
+            var current = composerView.selectedImages.value
+            current.append(image)
+            composerView.selectedImages.accept(current)
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+}
+
+extension MainViewController: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        controller.dismiss(animated: true)
+        guard !urls.isEmpty else { return }
+        var current = composerView.selectedFiles.value
+        current.append(contentsOf: urls)
+        composerView.selectedFiles.accept(current)
     }
 }
 
