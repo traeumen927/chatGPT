@@ -49,13 +49,12 @@ final class ChatComposerView: UIView, UITextViewDelegate {
 
     private var collectionViewHeightConstraint: Constraint?
 
-    let selectedImages = BehaviorRelay<[UIImage]>(value: [])
-    let selectedFiles = BehaviorRelay<[URL]>(value: [])
+    let attachments = BehaviorRelay<[Attachment]>(value: [])
     
     // MARK: - Output
     
     // MARK: 외부 전달용 클로져
-    var onSendButtonTapped: ((String, [UIImage], [URL]) -> Void)?
+    var onSendButtonTapped: ((String, [Attachment]) -> Void)?
     var onPlusButtonTapped: (() -> Void)?
 
     var plusButtonMenu: UIMenu? {
@@ -223,10 +222,9 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             .filter { !$0.isEmpty }
             .subscribe(onNext: { [weak self] text in
                 guard let self else { return }
-                self.onSendButtonTapped?(text, self.selectedImages.value, self.selectedFiles.value)
+                self.onSendButtonTapped?(text, self.attachments.value)
                 self.textView.text = ""
-                self.selectedImages.accept([])
-                self.selectedFiles.accept([])
+                self.attachments.accept([])
                 self.updatePlaceholderVisibility()
                 self.adjustTextViewHeight()
             })
@@ -241,12 +239,7 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             }
             .disposed(by: disposeBag)
 
-        Observable.combineLatest(selectedImages, selectedFiles)
-            .map { images, files -> [Attachment] in
-                var result: [Attachment] = images.map { .image($0) }
-                result.append(contentsOf: files.map { .file($0) })
-                return result
-            }
+        attachments
             .bind(to: imageCollectionView.rx.items(cellIdentifier: "ChatComposerImageCell", cellType: ChatComposerImageCell.self)) { [weak self] index, item, cell in
                 cell.configure(attachment: item) { [weak self] in
                     self?.removeAttachment(at: index)
@@ -288,15 +281,9 @@ final class ChatComposerView: UIView, UITextViewDelegate {
     }
 
     private func removeAttachment(at index: Int) {
-        var images = selectedImages.value
-        var files = selectedFiles.value
-        let imageCount = images.count
-        if index < imageCount {
-            images.remove(at: index)
-        } else if index - imageCount < files.count {
-            files.remove(at: index - imageCount)
-        }
-        selectedImages.accept(images)
-        selectedFiles.accept(files)
+        var items = attachments.value
+        guard index < items.count else { return }
+        items.remove(at: index)
+        attachments.accept(items)
     }
 }

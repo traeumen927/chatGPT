@@ -77,7 +77,7 @@ final class ChatViewModel {
         self.uploadFilesUseCase = uploadFilesUseCase
     }
     
-    func send(prompt: String, images: [UIImage] = [], files: [URL] = [], model: OpenAIModel, stream: Bool) {
+    func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         let messageID = UUID()
         appendMessage(ChatMessage(id: messageID, type: .user, text: prompt))
@@ -87,9 +87,14 @@ final class ChatViewModel {
             .subscribe()
             .disposed(by: disposeBag)
         
-        let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
-        let fileData = files.compactMap { try? Data(contentsOf: $0) }
-        let allData = imageData + fileData
+        let allData = attachments.compactMap { item -> Data? in
+            switch item {
+            case .image(let img):
+                return img.jpegData(compressionQuality: 0.8)
+            case .file(let url):
+                return try? Data(contentsOf: url)
+            }
+        }
         
         uploadFilesUseCase.execute(datas: allData)
             .catchAndReturn([])
@@ -106,8 +111,7 @@ final class ChatViewModel {
                 }
                 return self.fetchPreferenceUseCase.execute().catchAndReturn(nil).map { pref in
                     self.sendInternal(prompt: prompt,
-                                      images: images,
-                                      files: files,
+                                      attachments: attachments,
                                       urls: urls.map { $0.absoluteString },
                                       model: model,
                                       stream: stream,
@@ -121,8 +125,7 @@ final class ChatViewModel {
     }
     
     private func sendInternal(prompt: String,
-                              images: [UIImage],
-                              files: [URL],
+                              attachments: [Attachment],
                               urls: [String],
                               model: OpenAIModel,
                               stream: Bool,
@@ -130,8 +133,14 @@ final class ChatViewModel {
                               isFirst: Bool) {
         guard stream else {
             let prefMessage = self.preferenceText(from: preference)
-            let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
-            let fileData = files.compactMap { try? Data(contentsOf: $0) }
+            let imageData = attachments.compactMap { item -> Data? in
+                if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
+                return nil
+            }
+            let fileData = attachments.compactMap { item -> Data? in
+                if case let .file(url) = item { return try? Data(contentsOf: url) }
+                return nil
+            }
             sendMessageUseCase.execute(prompt: prompt,
                                        model: model,
                                        stream: false,
@@ -170,8 +179,14 @@ final class ChatViewModel {
         var fullText = ""
         
         let prefMessage = self.preferenceText(from: preference)
-        let imageData = images.compactMap { $0.jpegData(compressionQuality: 0.8) }
-        let fileData = files.compactMap { try? Data(contentsOf: $0) }
+        let imageData = attachments.compactMap { item -> Data? in
+            if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
+            return nil
+        }
+        let fileData = attachments.compactMap { item -> Data? in
+            if case let .file(url) = item { return try? Data(contentsOf: url) }
+            return nil
+        }
         sendMessageUseCase.stream(prompt: prompt, model: model, preference: prefMessage, images: imageData, files: fileData)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
