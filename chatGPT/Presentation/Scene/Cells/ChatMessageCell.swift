@@ -57,7 +57,7 @@ final class ChatMessageCell: UITableViewCell {
     private var attachmentsImageHeightConstraint: Constraint?
     private var attachmentsImageDisposeBag = DisposeBag()
     private let userImageCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = TrailingFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 8
         layout.minimumInteritemSpacing = 8
