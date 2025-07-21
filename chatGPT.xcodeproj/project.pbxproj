@@ -69,8 +69,9 @@
 		F16D6E2F2E0D3DCA00E0718A /* UIColor+Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */; };
 		F17898942E1414AF000AEA35 /* TableBlockAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */; };
 		F17898952E1414AF000AEA35 /* TableBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17898932E1414AF000AEA35 /* TableBlockView.swift */; };
-		F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AD2E25175E009B8527 /* RemoteImageView.swift */; };
-		F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */; };
+                F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AD2E25175E009B8527 /* RemoteImageView.swift */; };
+                FAAAAAA12EAAAAAA00000001 /* RemoteImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */; };
+                F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */; };
 		F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B12E251760009B8527 /* RemoteImageGroupView.swift */; };
 		F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */; };
 		F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
@@ -212,10 +213,11 @@
 		F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableBlockAttachment.swift; sourceTree = "<group>"; };
 		F17898932E1414AF000AEA35 /* TableBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableBlockView.swift; sourceTree = "<group>"; };
 		F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageAttachment.swift; sourceTree = "<group>"; };
-		F18040AD2E25175E009B8527 /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
-		F18040B12E251760009B8527 /* RemoteImageGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupView.swift; sourceTree = "<group>"; };
-		F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
-		F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
+                F18040AD2E25175E009B8527 /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
+                F18040B12E251760009B8527 /* RemoteImageGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupView.swift; sourceTree = "<group>"; };
+                F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
+                FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageCollectionCell.swift; sourceTree = "<group>"; };
+                F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
                 F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
                 4D72D81EC3779FD6C571F839 /* ChatComposerImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerImageCell.swift; sourceTree = "<group>"; };
                 F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
@@ -530,10 +532,11 @@
 			isa = PBXGroup;
 			children = (
 				F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */,
-				F18040AD2E25175E009B8527 /* RemoteImageView.swift */,
-				F18040B12E251760009B8527 /* RemoteImageGroupView.swift */,
-				F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */,
-				F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */,
+                                F18040AD2E25175E009B8527 /* RemoteImageView.swift */,
+                                F18040B12E251760009B8527 /* RemoteImageGroupView.swift */,
+                                F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */,
+                                FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */,
+                                F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */,
 				F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */,
 				F17898932E1414AF000AEA35 /* TableBlockView.swift */,
 				F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */,
@@ -769,9 +772,10 @@
 				7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */,
 				F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */,
 				F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */,
-				F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */,
-				F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */,
-				F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
+                                F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */,
+                                F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */,
+                                FAAAAAA12EAAAAAA00000001 /* RemoteImageCollectionCell.swift in Sources */,
+                                F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
 				0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
 				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
 				F15935262E1C127500739408 /* FirestoreUserPreferenceRepository.swift in Sources */,
