@@ -76,6 +76,7 @@
 		F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
                 F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
                 3777336EB7FFED779D382136 /* ChatComposerImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D72D81EC3779FD6C571F839 /* ChatComposerImageCell.swift */; };
+                F21A45A12E299AE000ABCD01 /* RemoteImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21A45A02E299AE000ABCD01 /* RemoteImageCollectionCell.swift */; };
                 F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
 		F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */; };
@@ -218,6 +219,7 @@
 		F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
                 F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
                 4D72D81EC3779FD6C571F839 /* ChatComposerImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerImageCell.swift; sourceTree = "<group>"; };
+                F21A45A02E299AE000ABCD01 /* RemoteImageCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageCollectionCell.swift; sourceTree = "<group>"; };
                 F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
 		F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSelectCell.swift; sourceTree = "<group>"; };
@@ -541,6 +543,7 @@
                                 F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */,
                                 F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */,
                                 4D72D81EC3779FD6C571F839 /* ChatComposerImageCell.swift */,
+                                F21A45A02E299AE000ABCD01 /* RemoteImageCollectionCell.swift */,
                                 F1EF04EC2E044CDE005D2CF9 /* GoogleLoginButton.swift */,
 				717BADADF1E39907F7A046E9 /* CodeBlockView.swift */,
 				7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */,
@@ -745,6 +748,7 @@
 				F1D52BC92E267A0300239002 /* ModelConfigRepository.swift in Sources */,
                                 F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */,
                                 3777336EB7FFED779D382136 /* ChatComposerImageCell.swift in Sources */,
+                                F21A45A12E299AE000ABCD01 /* RemoteImageCollectionCell.swift in Sources */,
                                 F1051DF32E004E17008D5D80 /* OpenAIResponse.swift in Sources */,
 				F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */,
 				8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */,
