@@ -453,18 +453,29 @@ extension MainViewController: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         guard !results.isEmpty else { return }
 
-        let providers = results.map { $0.itemProvider }
-        providers.forEach { provider in
+        let group = DispatchGroup()
+        var images: [UIImage?] = Array(repeating: nil, count: results.count)
+
+        for (index, result) in results.enumerated() {
+            let provider = result.itemProvider
             if provider.canLoadObject(ofClass: UIImage.self) {
-                provider.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
-                    guard let self, let image = object as? UIImage else { return }
-                    DispatchQueue.main.async {
-                        var current = self.composerView.selectedImages.value
-                        current.append(image)
-                        self.composerView.selectedImages.accept(current)
+                group.enter()
+                provider.loadObject(ofClass: UIImage.self) { object, _ in
+                    if let image = object as? UIImage {
+                        images[index] = image
                     }
+                    group.leave()
                 }
             }
+        }
+
+        group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+            let newImages = images.compactMap { $0 }
+            guard !newImages.isEmpty else { return }
+            var current = self.composerView.selectedImages.value
+            current.append(contentsOf: newImages)
+            self.composerView.selectedImages.accept(current)
         }
     }
 }

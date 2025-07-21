@@ -13,10 +13,10 @@ final class FirebaseFileRepository: FileRepository {
 
     func uploadFiles(uid: String, datas: [Data]) -> Single<[URL]> {
         Single.create { single in
-            var urls: [URL] = []
+            var urls: [URL?] = Array(repeating: nil, count: datas.count)
             let group = DispatchGroup()
 
-            for data in datas {
+            for (index, data) in datas.enumerated() {
                 group.enter()
                 let id = UUID().uuidString
                 let info = self.fileInfo(for: data)
@@ -31,7 +31,7 @@ final class FirebaseFileRepository: FileRepository {
                     }
                     ref.downloadURL { url, error in
                         if let url = url {
-                            urls.append(url)
+                            urls[index] = url
                         }
                         group.leave()
                         if let error = error {
@@ -42,7 +42,7 @@ final class FirebaseFileRepository: FileRepository {
             }
 
             group.notify(queue: .main) {
-                single(.success(urls))
+                single(.success(urls.compactMap { $0 }))
             }
 
             return Disposables.create()
