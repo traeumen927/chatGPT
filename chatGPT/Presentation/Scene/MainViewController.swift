@@ -230,11 +230,10 @@ final class MainViewController: UIViewController {
         
         
         // MARK: ChatComposerView 전송버튼 클로져
-        self.composerView.onSendButtonTapped = { [weak self] text, images, files in
-            guard let self = self else { return }
+        self.composerView.onSendButtonTapped = { [weak self] text, items in
+            guard let self else { return }
             self.chatViewModel.send(prompt: text,
-                                    images: images,
-                                    files: files,
+                                    attachments: items,
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
         }
@@ -473,9 +472,9 @@ extension MainViewController: PHPickerViewControllerDelegate {
             guard let self else { return }
             let newImages = images.compactMap { $0 }
             guard !newImages.isEmpty else { return }
-            var current = self.composerView.selectedImages.value
-            current.append(contentsOf: newImages)
-            self.composerView.selectedImages.accept(current)
+            var current = self.composerView.attachments.value
+            current.append(contentsOf: newImages.map { .image($0) })
+            self.composerView.attachments.accept(current)
         }
     }
 }
@@ -484,9 +483,9 @@ extension MainViewController: UIImagePickerControllerDelegate, UINavigationContr
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
         if let image = info[.originalImage] as? UIImage {
-            var current = composerView.selectedImages.value
-            current.append(image)
-            composerView.selectedImages.accept(current)
+            var current = composerView.attachments.value
+            current.append(.image(image))
+            composerView.attachments.accept(current)
         }
     }
 
@@ -499,9 +498,9 @@ extension MainViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true)
         guard !urls.isEmpty else { return }
-        var current = composerView.selectedFiles.value
-        current.append(contentsOf: urls)
-        composerView.selectedFiles.accept(current)
+        var current = composerView.attachments.value
+        current.append(contentsOf: urls.map { .file($0) })
+        composerView.attachments.accept(current)
     }
 }
 
