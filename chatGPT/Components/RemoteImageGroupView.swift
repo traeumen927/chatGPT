@@ -4,10 +4,18 @@ import RxSwift
 import RxCocoa
 
 final class RemoteImageGroupView: UIView {
-    private let scrollView = UIScrollView()
-    private let stackView = UIStackView()
     private let urls: [URL]
     private let disposeBag = DisposeBag()
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
+        layout.scrollDirection = .vertical
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.isScrollEnabled = false
+        cv.backgroundColor = .clear
+        return cv
+    }()
 
     init(urls: [URL]) {
         self.urls = urls
@@ -22,35 +30,31 @@ final class RemoteImageGroupView: UIView {
 
     private func layout() {
         backgroundColor = ThemeColor.background1
-        addSubview(scrollView)
-        scrollView.addSubview(stackView)
-        scrollView.showsHorizontalScrollIndicator = true
-        stackView.axis = .horizontal
-        stackView.spacing = 8
-
-        scrollView.snp.makeConstraints { make in
+        addSubview(collectionView)
+        collectionView.register(RemoteImageCell.self, forCellWithReuseIdentifier: "RemoteImageCell")
+        collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-        }
-
-        stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-
-        let itemWidthRatio: CGFloat = 0.65
-        urls.forEach { url in
-            let imageView = RemoteImageView(url: url)
-            stackView.addArrangedSubview(imageView)
-            imageView.snp.makeConstraints { make in
-                make.width.equalTo(self.snp.width).multipliedBy(itemWidthRatio)
-            }
         }
     }
 
     private func bind() {
-        // nothing dynamic for now
+        Observable.just(urls)
+            .bind(to: collectionView.rx.items(cellIdentifier: "RemoteImageCell", cellType: RemoteImageCell.self)) { index, url, cell in
+                cell.configure(url: url)
+            }
+            .disposed(by: disposeBag)
     }
 
     override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
+        collectionView.layoutIfNeeded()
+        return collectionView.collectionViewLayout.collectionViewContentSize
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            let size: CGFloat = 80
+            layout.itemSize = CGSize(width: size, height: size)
+        }
     }
 }
