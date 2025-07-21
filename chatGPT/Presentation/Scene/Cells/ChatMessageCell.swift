@@ -82,6 +82,8 @@ final class ChatMessageCell: UITableViewCell {
         userImageScrollView.isHidden = true
         userImageStackView.axis = .horizontal
         userImageStackView.spacing = 8
+        userImageStackView.semanticContentAttribute = .forceRightToLeft
+        userImageScrollView.semanticContentAttribute = .forceRightToLeft
 
         userImageScrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(16)
@@ -258,11 +260,6 @@ final class ChatMessageCell: UITableViewCell {
                     view.snp.makeConstraints { make in
                         make.width.equalTo(80)
                     }
-                }
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-                    let offset = max(0, self.userImageScrollView.contentSize.width - self.userImageScrollView.bounds.width)
-                    self.userImageScrollView.contentOffset.x = offset
                 }
             }
 
