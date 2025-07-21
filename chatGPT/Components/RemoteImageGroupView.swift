@@ -16,7 +16,7 @@ final class RemoteImageGroupView: UIView {
         layout.minimumInteritemSpacing = 8
         self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         super.init(frame: .zero)
-        layout()
+        self.layout()
         bind()
     }
 
