@@ -314,6 +314,23 @@ final class ChatMessageCell: UITableViewCell {
             }
         }
 
+        let height = userImageHeightConstraint?.layoutConstraints.first?.constant ?? 0
+
+        switch message.type {
+        case .user:
+            userImageScrollView.snp.remakeConstraints { make in
+                make.top.equalToSuperview().inset(16)
+                make.trailing.equalToSuperview().inset(16)
+                make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
+                userImageHeightConstraint = make.height.equalTo(height).constraint
+            }
+        default:
+            userImageScrollView.snp.remakeConstraints { make in
+                make.top.leading.trailing.equalToSuperview().inset(16)
+                userImageHeightConstraint = make.height.equalTo(height).constraint
+            }
+        }
+
         switch message.type {
         case .assistant:
             let attributed = parser.execute(markdown: message.text)
