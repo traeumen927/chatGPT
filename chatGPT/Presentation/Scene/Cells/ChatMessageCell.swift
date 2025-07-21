@@ -84,13 +84,14 @@ final class ChatMessageCell: UITableViewCell {
         userImageStackView.spacing = 8
 
         userImageScrollView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
             userImageHeightConstraint = make.height.equalTo(0).constraint
         }
 
         userImageStackView.snp.makeConstraints { make in
-            make.top.bottom.trailing.equalToSuperview()
-            make.leading.greaterThanOrEqualToSuperview()
+            make.edges.equalToSuperview()
         }
 
         bubbleView.snp.makeConstraints { make in
