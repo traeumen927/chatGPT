@@ -82,8 +82,8 @@ final class ChatMessageCell: UITableViewCell {
         userImageScrollView.isHidden = true
         userImageStackView.axis = .horizontal
         userImageStackView.spacing = 8
-        userImageStackView.semanticContentAttribute = .forceRightToLeft
-        userImageScrollView.semanticContentAttribute = .forceRightToLeft
+        userImageStackView.semanticContentAttribute = .forceLeftToRight
+        userImageScrollView.semanticContentAttribute = .forceLeftToRight
 
         userImageScrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().inset(16)
