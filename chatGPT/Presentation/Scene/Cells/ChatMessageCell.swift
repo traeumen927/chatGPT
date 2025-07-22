@@ -90,7 +90,7 @@ final class ChatMessageCell: UITableViewCell {
         guard count > 0 else { return 0 }
         let width = UIScreen.main.bounds.width - 32
         let spacing: CGFloat = 8
-        let item = (width - spacing * 3) / 4
+        let item = floor((width - spacing * 3) / 4)
         let rows = Int(ceil(Double(count) / 4.0))
         return CGFloat(rows) * item + CGFloat(max(rows - 1, 0)) * spacing
     }
@@ -496,7 +496,7 @@ extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
         if collectionView == userImageCollectionView {
             let layout = collectionViewLayout as? UICollectionViewFlowLayout
             let spacing = layout?.minimumInteritemSpacing ?? 8
-            let width = (collectionView.bounds.width - spacing * 3) / 4
+            let width = floor((collectionView.bounds.width - spacing * 3) / 4)
             return CGSize(width: width, height: width)
         }
         let width = collectionView.bounds.width * 0.65
@@ -508,7 +508,7 @@ extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
         let layout = collectionViewLayout as? UICollectionViewFlowLayout
         let spacing = layout?.minimumInteritemSpacing ?? 8
         let itemCount = collectionView.numberOfItems(inSection: section)
-        let width = (collectionView.bounds.width - spacing * 3) / 4
+        let width = floor((collectionView.bounds.width - spacing * 3) / 4)
         let rowCount = min(itemCount, 4)
         let rowWidth = CGFloat(rowCount) * width + CGFloat(max(rowCount - 1, 0)) * spacing
         let inset = max((collectionView.bounds.width - rowWidth) / 2, 0)
