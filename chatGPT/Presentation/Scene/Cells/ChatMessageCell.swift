@@ -122,8 +122,7 @@ final class ChatMessageCell: UITableViewCell {
         userImageCollectionView.register(RemoteImageCollectionCell.self, forCellWithReuseIdentifier: "RemoteImageCollectionCell")
 
         userImageCollectionView.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(16)
-            make.leading.lessThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
+            make.top.leading.trailing.equalToSuperview().inset(16)
             userImageHeightConstraint = make.height.equalTo(0).constraint
         }
 
