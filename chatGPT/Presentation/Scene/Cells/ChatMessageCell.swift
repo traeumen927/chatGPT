@@ -496,7 +496,9 @@ extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
         if collectionView == userImageCollectionView {
             let layout = collectionViewLayout as? UICollectionViewFlowLayout
             let spacing = layout?.minimumInteritemSpacing ?? 8
-            let width = floor((collectionView.bounds.width - spacing * 3) / 4)
+            let boundsWidth = collectionView.bounds.width
+            let baseWidth = boundsWidth > 0 ? boundsWidth : UIScreen.main.bounds.width - 32
+            let width = floor((baseWidth - spacing * 3) / 4)
             return CGSize(width: width, height: width)
         }
         let width = collectionView.bounds.width * 0.65
@@ -508,7 +510,9 @@ extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
         let layout = collectionViewLayout as? UICollectionViewFlowLayout
         let spacing = layout?.minimumInteritemSpacing ?? 8
         let itemCount = collectionView.numberOfItems(inSection: section)
-        let width = floor((collectionView.bounds.width - spacing * 3) / 4)
+        let boundsWidth = collectionView.bounds.width
+        let baseWidth = boundsWidth > 0 ? boundsWidth : UIScreen.main.bounds.width - 32
+        let width = floor((baseWidth - spacing * 3) / 4)
         let rowCount = min(itemCount, 4)
         let rowWidth = CGFloat(rowCount) * width + CGFloat(max(rowCount - 1, 0)) * spacing
         let inset = max((collectionView.bounds.width - rowWidth) / 2, 0)
