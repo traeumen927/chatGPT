@@ -88,7 +88,8 @@ final class ChatMessageCell: UITableViewCell {
     // 유저 이미지 행 수 기반 높이 계산
     private func expectedUserImageHeight(for count: Int) -> CGFloat {
         guard count > 0 else { return 0 }
-        let width = UIScreen.main.bounds.width - 32
+        layoutIfNeeded()
+        let width = userImageCollectionView.bounds.width
         let spacing: CGFloat = 8
         let item = (width - spacing * 3) / 4
         let rows = Int(ceil(Double(count) / 4.0))
@@ -328,6 +329,7 @@ final class ChatMessageCell: UITableViewCell {
                         cell.configure(url: url)
                     }
                     .disposed(by: userImageDisposeBag)
+                userImageCollectionView.collectionViewLayout.invalidateLayout()
             }
 
             if fileUrls.isEmpty {
