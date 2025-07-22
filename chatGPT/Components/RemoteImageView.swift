@@ -40,8 +40,10 @@ final class RemoteImageView: UIView {
 
     private func bind() {
         imageView.kf.indicatorType = .activity
+        let placeholder = UIImage(systemName: "photo")
         let options: KingfisherOptionsInfo = [.transition(.fade(0.2))]
-        imageView.kf.setImage(with: url, placeholder: nil, options: options) { [weak self] result in
+        imageView.backgroundColor = ThemeColor.background3
+        imageView.kf.setImage(with: url, placeholder: placeholder, options: options) { [weak self] result in
             if case .success(let value) = result {
                 self?.loadedImage = value.image
             }

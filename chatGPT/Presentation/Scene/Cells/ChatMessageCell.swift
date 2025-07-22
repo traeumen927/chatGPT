@@ -317,7 +317,11 @@ final class ChatMessageCell: UITableViewCell {
                 userImageHeightConstraint?.update(offset: 0)
             } else {
                 userImageCollectionView.isHidden = false
-                userImageHeightConstraint?.update(offset: 80)
+                let itemSize: CGFloat = 80
+                let spacing: CGFloat = 8
+                let rows = Int(ceil(Double(imageUrls.count) / 3.0))
+                let height = CGFloat(rows) * itemSize + CGFloat(max(rows - 1, 0)) * spacing
+                userImageHeightConstraint?.update(offset: height)
                 userImageDisposeBag = DisposeBag()
                 Observable.just(imageUrls)
                     .bind(to: userImageCollectionView.rx.items(cellIdentifier: "RemoteImageCollectionCell", cellType: RemoteImageCollectionCell.self)) { _, url, cell in
