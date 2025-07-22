@@ -85,6 +85,15 @@ final class ChatMessageCell: UITableViewCell {
     private var messageTopConstraint: Constraint?
     private var stackTopConstraint: Constraint?
 
+    // 유저 이미지 행 수 기반 높이 계산
+    private func expectedUserImageHeight(for count: Int) -> CGFloat {
+        guard count > 0 else { return 0 }
+        let item: CGFloat = 80
+        let spacing: CGFloat = 8
+        let rows = Int(ceil(Double(count) / 3.0))
+        return CGFloat(rows) * item + CGFloat(max(rows - 1, 0)) * spacing
+    }
+
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -317,7 +326,7 @@ final class ChatMessageCell: UITableViewCell {
                 userImageHeightConstraint?.update(offset: 0)
             } else {
                 userImageCollectionView.isHidden = false
-                userImageHeightConstraint?.update(offset: 80)
+                userImageHeightConstraint?.update(offset: expectedUserImageHeight(for: imageUrls.count))
                 userImageDisposeBag = DisposeBag()
                 Observable.just(imageUrls)
                     .bind(to: userImageCollectionView.rx.items(cellIdentifier: "RemoteImageCollectionCell", cellType: RemoteImageCollectionCell.self)) { _, url, cell in
