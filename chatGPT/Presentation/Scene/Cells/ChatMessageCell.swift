@@ -282,6 +282,7 @@ final class ChatMessageCell: UITableViewCell {
         disposeBag = DisposeBag()
         userImageDisposeBag = DisposeBag()
         attachmentsImageDisposeBag = DisposeBag()
+        bind()
         lastHeight = 0
     }
 
