@@ -68,12 +68,13 @@ final class ChatMessageCell: UITableViewCell {
     // 사용자가 전송한 이미지를 표시하는 컬렉션뷰
     private let userImageCollectionView: UICollectionView = {
         let layout = TrailingFlowLayout()
-        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 8
         layout.minimumInteritemSpacing = 8
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = .clear
         view.isHidden = true
+        view.isScrollEnabled = false
         return view
     }()
     // 유저 이미지 컬렉션뷰 높이 제약
@@ -108,7 +109,7 @@ final class ChatMessageCell: UITableViewCell {
         stackView.isHidden = true
         messageView.isHidden = false
 
-        userImageCollectionView.showsHorizontalScrollIndicator = true
+        userImageCollectionView.showsHorizontalScrollIndicator = false
         userImageCollectionView.register(RemoteImageCollectionCell.self, forCellWithReuseIdentifier: "RemoteImageCollectionCell")
 
         userImageCollectionView.snp.makeConstraints { make in
