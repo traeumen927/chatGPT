@@ -67,7 +67,7 @@ final class ChatMessageCell: UITableViewCell {
     private var attachmentsImageDisposeBag = DisposeBag()
     // 사용자가 전송한 이미지를 표시하는 컬렉션뷰
     private let userImageCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = TrailingFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 8
         layout.minimumInteritemSpacing = 8
