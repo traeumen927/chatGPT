@@ -453,7 +453,7 @@ final class ChatMessageCell: UITableViewCell {
 
         layoutIfNeeded()
         let attachmentHeight = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
-        let defaultSize = UIScreen.main.bounds.width * 0.2
+        let defaultSize = UIScreen.main.bounds.width * 0.15
         let imageHeight = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? defaultSize) + 8
         if stackView.isHidden {
             messageView.addAttachmentViews()
@@ -467,6 +467,9 @@ final class ChatMessageCell: UITableViewCell {
     // 텍스트가 변경되었을 때 높이 변화를 계산
     @discardableResult
     func update(text: String, parser: ParseMarkdownUseCase) -> Bool {
+        
+        let defaultSize = UIScreen.main.bounds.width * 0.15
+        
         if stackView.isHidden {
             messageView.attributedText = parser.execute(markdown: text)
             layoutIfNeeded()
