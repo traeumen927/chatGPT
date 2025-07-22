@@ -505,13 +505,6 @@ extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         guard collectionView == userImageCollectionView else { return .zero }
-        let layout = collectionViewLayout as? UICollectionViewFlowLayout
-        let spacing = layout?.minimumInteritemSpacing ?? 8
-        let itemCount = collectionView.numberOfItems(inSection: section)
-        let width = floor((collectionView.bounds.width - spacing * 3) / 4)
-        let rowCount = min(itemCount, 4)
-        let rowWidth = CGFloat(rowCount) * width + CGFloat(max(rowCount - 1, 0)) * spacing
-        let inset = max((collectionView.bounds.width - rowWidth) / 2, 0)
-        return UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
 }
