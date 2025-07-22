@@ -249,7 +249,15 @@ final class ChatMessageCell: UITableViewCell {
                 stackView.addArrangedSubview(attachment.view)
                 attachment.view.snp.makeConstraints { make in
                     make.width.equalToSuperview()
-                    make.height.equalTo(attachment.view.snp.width).multipliedBy(0.65)
+                    if attachment.view.style == .grid {
+                        let spacing: CGFloat = 8
+                        let itemWidth = (UIScreen.main.bounds.width - 32 - spacing * 2) / 3
+                        let rows = Int(ceil(Double(attachment.urls.count) / 3.0))
+                        let height = CGFloat(rows) * itemWidth + CGFloat(max(rows - 1, 0)) * spacing
+                        make.height.equalTo(height)
+                    } else {
+                        make.height.equalTo(attachment.view.snp.width).multipliedBy(0.65)
+                    }
                 }
                 currentLocation = range.location + range.length
             }

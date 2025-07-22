@@ -11,7 +11,7 @@ final class RemoteImageGroupView: UIView {
 
     private let collectionView: UICollectionView
     private let urls: [URL]
-    private let style: Style
+    let style: Style
     private let disposeBag = DisposeBag()
 
     init(urls: [URL], style: Style = .horizontal) {
