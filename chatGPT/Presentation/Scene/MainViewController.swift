@@ -127,6 +127,7 @@ final class MainViewController: UIViewController {
         tableView.keyboardDismissMode = .interactive
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 60
+        tableView.prefetchDataSource = nil
         return tableView
     }()
     
