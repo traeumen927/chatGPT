@@ -88,7 +88,7 @@ final class ChatMessageCell: UITableViewCell {
     // 유저 이미지 행 수 기반 높이 계산
     private func expectedUserImageHeight(for count: Int) -> CGFloat {
         guard count > 0 else { return 0 }
-        let item = UIScreen.main.bounds.width * 0.2
+        let item = UIScreen.main.bounds.width * 0.15
         let spacing: CGFloat = 8
         let rows = Int(ceil(Double(count) / 4.0))
         return CGFloat(rows) * item + CGFloat(max(rows - 1, 0)) * spacing
@@ -165,6 +165,10 @@ final class ChatMessageCell: UITableViewCell {
             .distinctUntilChanged { $0 == $1 }
             .bind { [weak self] size in
                 self?.userImageHeightConstraint?.update(offset: size.height)
+                if let tableView = self?.superview as? UITableView {
+                    tableView.beginUpdates()
+                    tableView.endUpdates()
+                }
             }
             .disposed(by: disposeBag)
 
@@ -174,6 +178,10 @@ final class ChatMessageCell: UITableViewCell {
             .distinctUntilChanged { $0 == $1 }
             .bind { [weak self] size in
                 self?.attachmentsImageHeightConstraint?.update(offset: size.height)
+                if let tableView = self?.superview as? UITableView {
+                    tableView.beginUpdates()
+                    tableView.endUpdates()
+                }
             }
             .disposed(by: disposeBag)
     }
@@ -497,10 +505,20 @@ final class ChatMessageCell: UITableViewCell {
 extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == userImageCollectionView {
-            let size = UIScreen.main.bounds.width * 0.2
+            let size = UIScreen.main.bounds.width * 0.15
             return CGSize(width: size, height: size)
         }
         let width = collectionView.bounds.width * 0.65
         return CGSize(width: width, height: width)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        guard collectionView == userImageCollectionView else { return .zero }
+        let layout = collectionViewLayout as? UICollectionViewFlowLayout
+        let spacing = layout?.minimumInteritemSpacing ?? 8
+        let item = UIScreen.main.bounds.width * 0.15
+        let rowWidth = item * 4 + spacing * 3
+        let inset = max((collectionView.bounds.width - rowWidth) / 2, 0)
+        return UIEdgeInsets(top: 0, left: inset, bottom: 0, right: inset)
     }
 }
