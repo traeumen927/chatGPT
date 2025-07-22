@@ -88,9 +88,9 @@ final class ChatMessageCell: UITableViewCell {
     // 유저 이미지 행 수 기반 높이 계산
     private func expectedUserImageHeight(for count: Int) -> CGFloat {
         guard count > 0 else { return 0 }
-        let item: CGFloat = 80
+        let item = UIScreen.main.bounds.width * 0.2
         let spacing: CGFloat = 8
-        let rows = Int(ceil(Double(count) / 3.0))
+        let rows = Int(ceil(Double(count) / 4.0))
         return CGFloat(rows) * item + CGFloat(max(rows - 1, 0)) * spacing
     }
 
@@ -453,7 +453,8 @@ final class ChatMessageCell: UITableViewCell {
 
         layoutIfNeeded()
         let attachmentHeight = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
-        let imageHeight = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? 80) + 8
+        let defaultSize = UIScreen.main.bounds.width * 0.2
+        let imageHeight = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? defaultSize) + 8
         if stackView.isHidden {
             messageView.addAttachmentViews()
             lastHeight = messageView.contentSize.height + attachmentHeight + imageHeight
@@ -471,7 +472,7 @@ final class ChatMessageCell: UITableViewCell {
             layoutIfNeeded()
             messageView.addAttachmentViews()
             let attach = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
-            let images = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? 80) + 8
+            let images = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? defaultSize) + 8
             let newHeight = messageView.contentSize.height + attach + images
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
@@ -480,7 +481,7 @@ final class ChatMessageCell: UITableViewCell {
             buildStack(from: attributed)
             layoutIfNeeded()
             let attach = attachmentsStackView.isHidden ? 0 : attachmentsStackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + 8
-            let images = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? 80) + 8
+            let images = userImageCollectionView.isHidden ? 0 : (userImageHeightConstraint?.layoutConstraints.first?.constant ?? defaultSize) + 8
             let newHeight = stackView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height + attach + images
             defer { lastHeight = newHeight }
             return newHeight != lastHeight
@@ -493,7 +494,8 @@ final class ChatMessageCell: UITableViewCell {
 extension ChatMessageCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == userImageCollectionView {
-            return CGSize(width: 80, height: 80)
+            let size = UIScreen.main.bounds.width * 0.2
+            return CGSize(width: size, height: size)
         }
         let width = collectionView.bounds.width * 0.65
         return CGSize(width: width, height: width)
