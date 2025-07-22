@@ -94,6 +94,13 @@ final class ChatMessageCell: UITableViewCell {
         return CGFloat(rows) * item + CGFloat(max(rows - 1, 0)) * spacing
     }
 
+    // 첨부 이미지 개수 기반 높이 계산
+    private func expectedAttachmentImageHeight(for count: Int) -> CGFloat {
+        bubbleView.layoutIfNeeded()
+        let item = bubbleView.bounds.width * 0.65
+        return CGFloat(count) * item + CGFloat(max(count - 1, 0)) * 4
+    }
+
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -160,30 +167,7 @@ final class ChatMessageCell: UITableViewCell {
     // 컬렉션뷰 바인딩 및 사이즈 관찰
     private func bind() {
         userImageCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
-        userImageCollectionView.rx.observe(CGSize.self, "contentSize")
-            .compactMap { $0 }
-            .distinctUntilChanged { $0 == $1 }
-            .bind { [weak self] size in
-                self?.userImageHeightConstraint?.update(offset: size.height)
-                if let tableView = self?.superview as? UITableView {
-                    tableView.beginUpdates()
-                    tableView.endUpdates()
-                }
-            }
-            .disposed(by: disposeBag)
-
         attachmentsImageCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
-        attachmentsImageCollectionView.rx.observe(CGSize.self, "contentSize")
-            .compactMap { $0 }
-            .distinctUntilChanged { $0 == $1 }
-            .bind { [weak self] size in
-                self?.attachmentsImageHeightConstraint?.update(offset: size.height)
-                if let tableView = self?.superview as? UITableView {
-                    tableView.beginUpdates()
-                    tableView.endUpdates()
-                }
-            }
-            .disposed(by: disposeBag)
     }
 
     // 스택뷰에 사용될 텍스트뷰 생성
@@ -334,6 +318,7 @@ final class ChatMessageCell: UITableViewCell {
             } else {
                 userImageCollectionView.isHidden = false
                 userImageHeightConstraint?.update(offset: expectedUserImageHeight(for: imageUrls.count))
+                layoutIfNeeded()
 
                 userImageDisposeBag = DisposeBag()
                 Observable.just(imageUrls)
@@ -381,6 +366,8 @@ final class ChatMessageCell: UITableViewCell {
                     attachmentsImageHeightConstraint?.update(offset: 0)
                 } else {
                     attachmentsImageCollectionView.isHidden = false
+                    attachmentsImageHeightConstraint?.update(offset: expectedAttachmentImageHeight(for: attachImageUrls.count))
+                    layoutIfNeeded()
                     Observable.just(attachImageUrls)
                         .bind(to: attachmentsImageCollectionView.rx.items(cellIdentifier: "RemoteImageCollectionCell", cellType: RemoteImageCollectionCell.self)) { _, url, cell in
                             cell.configure(url: url)
