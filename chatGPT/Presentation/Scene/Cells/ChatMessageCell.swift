@@ -67,7 +67,7 @@ final class ChatMessageCell: UITableViewCell {
     private var attachmentsImageDisposeBag = DisposeBag()
     // 사용자가 전송한 이미지를 표시하는 컬렉션뷰
     private let userImageCollectionView: UICollectionView = {
-        let layout = TrailingFlowLayout()
+        let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 8
         layout.minimumInteritemSpacing = 8
@@ -426,7 +426,7 @@ final class ChatMessageCell: UITableViewCell {
                 make.top.equalTo(userImageCollectionView.snp.bottom).offset(8).priority(999)
                 make.bottom.equalToSuperview().inset(8).priority(999)
                 make.trailing.equalToSuperview().inset(16)
-                make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
+                make.leading.greaterThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.15)
             }
 
         case .assistant:
@@ -455,7 +455,7 @@ final class ChatMessageCell: UITableViewCell {
                 make.top.equalTo(userImageCollectionView.snp.bottom).offset(8).priority(999)
                 make.bottom.equalToSuperview().inset(8).priority(999)
                 make.leading.equalToSuperview().inset(16)
-                make.trailing.lessThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.2)
+                make.trailing.lessThanOrEqualToSuperview().inset(UIScreen.main.bounds.width * 0.15)
             }
         }
 
