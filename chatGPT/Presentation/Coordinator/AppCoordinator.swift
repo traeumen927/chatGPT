@@ -99,6 +99,7 @@ final class AppCoordinator {
         let uploadFilesUseCase = UploadFilesUseCase(repository: fileRepository,
                                                    getCurrentUserUseCase: getCurrentUserUseCase)
         let generateImageUseCase = GenerateImageUseCase(repository: repository)
+        let detectImageRequestUseCase = DetectImageRequestUseCase()
         observeConversationsUseCase.execute()
             .subscribe()
             .disposed(by: disposeBag)
@@ -132,7 +133,8 @@ final class AppCoordinator {
             updatePreferenceUseCase: updatePreferenceUseCase,
             uploadFilesUseCase: uploadFilesUseCase
         ,
-            generateImageUseCase: generateImageUseCase
+            generateImageUseCase: generateImageUseCase,
+            detectImageRequestUseCase: detectImageRequestUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)

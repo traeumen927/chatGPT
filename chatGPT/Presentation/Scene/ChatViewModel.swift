@@ -48,6 +48,7 @@ final class ChatViewModel {
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
+    private let detectImageRequestUseCase: DetectImageRequestUseCase
     private let disposeBag = DisposeBag()
     
     private var draftMessages: [ChatMessage]? = nil
@@ -67,7 +68,8 @@ final class ChatViewModel {
          fetchPreferenceUseCase: FetchUserPreferenceUseCase,
          updatePreferenceUseCase: UpdateUserPreferenceUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
-         generateImageUseCase: GenerateImageUseCase) {
+         generateImageUseCase: GenerateImageUseCase,
+         detectImageRequestUseCase: DetectImageRequestUseCase) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
@@ -78,9 +80,14 @@ final class ChatViewModel {
         self.updatePreferenceUseCase = updatePreferenceUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
+        self.detectImageRequestUseCase = detectImageRequestUseCase
     }
     
     func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
+        if detectImageRequestUseCase.execute(prompt: prompt) {
+            generateImage(prompt: prompt, size: "1024x1024")
+            return
+        }
         let isFirst = messages.value.isEmpty
         let messageID = UUID()
         appendMessage(ChatMessage(id: messageID, type: .user, text: prompt))
