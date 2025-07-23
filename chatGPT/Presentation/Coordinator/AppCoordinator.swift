@@ -99,7 +99,7 @@ final class AppCoordinator {
         let uploadFilesUseCase = UploadFilesUseCase(repository: fileRepository,
                                                    getCurrentUserUseCase: getCurrentUserUseCase)
         let generateImageUseCase = GenerateImageUseCase(repository: repository)
-        let detectImageRequestUseCase = DetectImageRequestUseCase()
+        let detectImageRequestUseCase = DetectImageRequestUseCase(repository: repository)
         observeConversationsUseCase.execute()
             .subscribe()
             .disposed(by: disposeBag)

@@ -1,14 +1,15 @@
 import Foundation
+import RxSwift
 
 final class DetectImageRequestUseCase {
-    private let keywords: [String]
+    private let repository: OpenAIRepository
 
-    init(keywords: [String] = ["이미지", "그림", "사진", "image", "picture"]) {
-        self.keywords = keywords
+    init(repository: OpenAIRepository) {
+        self.repository = repository
     }
 
-    func execute(prompt: String) -> Bool {
-        let lowerPrompt = prompt.lowercased()
-        return keywords.contains { lowerPrompt.contains($0.lowercased()) }
+    func execute(prompt: String) -> Single<Bool> {
+        repository.detectImageIntent(prompt: prompt)
+            .catchAndReturn(false)
     }
 }

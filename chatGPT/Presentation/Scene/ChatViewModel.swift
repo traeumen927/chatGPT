@@ -84,10 +84,22 @@ final class ChatViewModel {
     }
     
     func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
-        if detectImageRequestUseCase.execute(prompt: prompt) {
-            generateImage(prompt: prompt, size: "1024x1024")
-            return
-        }
+        detectImageRequestUseCase.execute(prompt: prompt)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] isImage in
+                guard let self else { return }
+                if isImage {
+                    self.generateImage(prompt: prompt, size: "1024x1024")
+                } else {
+                    self.processSend(prompt: prompt, attachments: attachments, model: model, stream: stream)
+                }
+            }, onFailure: { [weak self] _ in
+                self?.processSend(prompt: prompt, attachments: attachments, model: model, stream: stream)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func processSend(prompt: String, attachments: [Attachment], model: OpenAIModel, stream: Bool) {
         let isFirst = messages.value.isEmpty
         let messageID = UUID()
         appendMessage(ChatMessage(id: messageID, type: .user, text: prompt))

@@ -59,6 +59,24 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
             }
         }
     }
+
+    func detectImageIntent(prompt: String) -> Single<Bool> {
+        Single.create { single in
+            let system = Message(role: .system,
+                                 content: "Respond with 'true' if the user wants an image. Otherwise respond 'false'.")
+            let user = Message(role: .user, content: prompt)
+            self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
+                switch result {
+                case .success(let decoded):
+                    let reply = decoded.choices.first?.message.content.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+                    single(.success(reply.contains("true")))
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
     
     /// 사용가능한 모델 조회
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {
