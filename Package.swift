@@ -3,19 +3,26 @@
 
 import PackageDescription
 
+var targets: [Target] = []
+#if os(iOS)
+targets.append(
+    .executableTarget(
+        name: "chatGPT",
+        path: "chatGPT"
+    )
+)
+#endif
+targets.append(
+    .testTarget(
+        name: "chatGPTTests",
+        dependencies: [],
+        path: "chatGPTTests"
+    )
+)
+
 let package = Package(
     name: "chatGPT",
     defaultLocalization: "ko",
     platforms: [.iOS(.v18)],
-    targets: [
-        .executableTarget(
-            name: "chatGPT",
-            path: "chatGPT"
-        ),
-        .testTarget(
-            name: "chatGPTTests",
-            dependencies: ["chatGPT"],
-            path: "chatGPTTests"
-        )
-    ]
+    targets: targets
 )

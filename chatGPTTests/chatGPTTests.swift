@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import chatGPT
 
 final class chatGPTTests: XCTestCase {
 
