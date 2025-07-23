@@ -47,6 +47,18 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String> {
         service.requestStream(.vision(messages: messages, model: model, stream: true))
     }
+
+    func generateImage(prompt: String, size: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        service.request(.image(prompt: prompt, size: size)) { (result: Result<OpenAIImageResponse, Error>) in
+            switch result {
+            case .success(let response):
+                let urls = response.data.map { $0.url }
+                completion(.success(urls))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
     
     /// 사용가능한 모델 조회
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {

@@ -14,4 +14,6 @@ protocol OpenAIRepository {
     func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String>
     func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void)
     func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String>
+
+    func generateImage(prompt: String, size: String, completion: @escaping (Result<[String], Error>) -> Void)
 }
