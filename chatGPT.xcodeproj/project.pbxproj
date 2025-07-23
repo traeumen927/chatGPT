@@ -43,6 +43,8 @@
 		F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */; };
 		F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */; };
 		F13C62542E2E60EB0028EE88 /* TrailingFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13C62532E2E60EB0028EE88 /* TrailingFlowLayout.swift */; };
+		F13DAC982E310EB0005A1A67 /* OpenAIImageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */; };
+		F13DAC9A2E310EC4005A1A67 /* GenerateImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */; };
 		F13EB5992E12BFED00171AFC /* MarkdownRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */; };
 		F13EB59B2E12BFF400171AFC /* ParseMarkdownUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB59A2E12BFF400171AFC /* ParseMarkdownUseCase.swift */; };
 		F1452D832E095F7D00795A9E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F1452D822E095F7D00795A9E /* GoogleService-Info.plist */; };
@@ -180,6 +182,8 @@
 		F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConversationMessagesUseCase.swift; sourceTree = "<group>"; };
 		F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Sanitize.swift"; sourceTree = "<group>"; };
 		F13C62532E2E60EB0028EE88 /* TrailingFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailingFlowLayout.swift; sourceTree = "<group>"; };
+		F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIImageRequest.swift; sourceTree = "<group>"; };
+		F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateImageUseCase.swift; sourceTree = "<group>"; };
 		F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRepository.swift; sourceTree = "<group>"; };
 		F13EB59A2E12BFF400171AFC /* ParseMarkdownUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParseMarkdownUseCase.swift; sourceTree = "<group>"; };
 		F1452D822E095F7D00795A9E /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -311,6 +315,7 @@
 				F1452D842E09741500795A9E /* AuthUser.swift */,
 				F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
 				F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
+				F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */,
 				ABCDEF012345678900ABCDE0 /* OpenAIVisionModels.swift */,
 				F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
 				F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
@@ -453,6 +458,7 @@
 		F1DF3B0D2DF9B02C00D8445A /* UseCase */ = {
 			isa = PBXGroup;
 			children = (
+				F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */,
 				F1D52BCA2E267A0C00239002 /* FetchModelConfigsUseCase.swift */,
 				F159352D2E1C12B500739408 /* FetchUserPreferenceUseCase.swift */,
 				F159352E2E1C12B500739408 /* UpdateUserPreferenceUseCase.swift */,
@@ -740,6 +746,7 @@
 				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				E6BFBABECC6C47DA818A13E5 /* LoginViewController.swift in Sources */,
 				F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */,
+				F13DAC9A2E310EC4005A1A67 /* GenerateImageUseCase.swift in Sources */,
 				F1D52BC32E266CCF00239002 /* ImageViewerViewController.swift in Sources */,
 				FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */,
 				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
@@ -808,6 +815,7 @@
 				F1DF3B152DF9B09200D8445A /* AppCoordinator.swift in Sources */,
 				F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */,
 				F159352F2E1C12B500739408 /* UpdateUserPreferenceUseCase.swift in Sources */,
+				F13DAC982E310EB0005A1A67 /* OpenAIImageRequest.swift in Sources */,
 				F15935302E1C12B500739408 /* FetchUserPreferenceUseCase.swift in Sources */,
 				a0d99ba381b44d72b54327f6 /* MenuViewController.swift in Sources */,
 				F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */,
