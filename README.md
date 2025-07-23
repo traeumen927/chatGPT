@@ -271,6 +271,8 @@ viewModel.generateImage(prompt: "A cute cat", size: "512x512")
 
 실행 결과 이미지는 메시지와 동일한 형태로 채팅 화면에 표시됩니다.
 
+메시지 전송 시 이미지 생성 의도를 먼저 판별합니다. 이 과정은 OpenAI 분류 API를 활용하며 `DetectImageRequestUseCase`가 `Single<Bool>` 형태로 결과를 반환합니다. 분류 결과가 참일 때만 `generateImage`가 호출되어 불필요한 이미지 생성 요청을 막습니다.
+
 
 
 ---
