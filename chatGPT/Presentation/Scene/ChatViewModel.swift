@@ -150,20 +150,20 @@ final class ChatViewModel {
                 guard let self = self else { return }
                 switch result {
                 case .success(let reply):
-                    self.appendMessage(ChatMessage(type: .assistant, text: reply))
+                    self.appendMessage(ChatMessage(type: .assistant, text: reply.text, urls: reply.urls))
                     if let id = self.conversationID, !isFirst {
                         self.appendMessageUseCase.execute(conversationID: id,
                                                           role: .assistant,
-                                                          text: reply,
-                                                          urls: [])
+                                                          text: reply.text,
+                                                          urls: reply.urls)
                         .subscribe()
                         .disposed(by: self.disposeBag)
                     }
                     if isFirst {
                         self.saveFirstConversation(question: prompt,
                                                    questionURLs: urls,
-                                                   answer: reply,
-                                                   answerURLs: [],
+                                                   answer: reply.text,
+                                                   answerURLs: reply.urls,
                                                    model: model)
                     }
                 case .failure(let error):

@@ -16,12 +16,14 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     }
     
     /// 채팅전송
-    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<OpenAIChatResult, Error>) -> Void) {
         service.request(.chat(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
-                let reply = decoded.choices.first?.message.content ?? ""
-                completion(.success(reply))
+                let msg = decoded.choices.first?.message
+                let reply = msg?.content ?? ""
+                let urls = msg?.urls ?? []
+                completion(.success(OpenAIChatResult(text: reply, urls: urls)))
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -32,12 +34,14 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         service.requestStream(.chat(messages: messages, model: model, stream: true))
     }
 
-    func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+    func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<OpenAIChatResult, Error>) -> Void) {
         service.request(.vision(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
-                let reply = decoded.choices.first?.message.content ?? ""
-                completion(.success(reply))
+                let msg = decoded.choices.first?.message
+                let reply = msg?.content ?? ""
+                let urls = msg?.urls ?? []
+                completion(.success(OpenAIChatResult(text: reply, urls: urls)))
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -64,3 +68,4 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         }
     }
 }
+

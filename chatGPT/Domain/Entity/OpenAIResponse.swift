@@ -12,8 +12,10 @@ struct OpenAIResponse: Decodable {
         struct Message: Decodable {
             let role: String
             let content: String
+            let urls: [String]?
         }
         let message: Message
     }
     let choices: [Choice]
 }
+

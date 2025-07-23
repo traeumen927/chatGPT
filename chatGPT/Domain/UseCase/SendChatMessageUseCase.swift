@@ -14,7 +14,8 @@ final class SendChatMessageUseCase {
         self.repository = repository
     }
 
-    func execute(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+    func execute(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<OpenAIChatResult, Error>) -> Void) {
         repository.sendChat(messages: messages, model: model, stream: stream, completion: completion)
     }
 }
+

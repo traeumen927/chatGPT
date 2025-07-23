@@ -22,8 +22,8 @@ final class SummarizeMessagesUseCase {
         let reqMessages = [Message(role: .system, content: prompt)]
         repository.sendChat(messages: reqMessages, model: model, stream: false) { [weak self] result in
             switch result {
-            case .success(let summary):
-                completion(.success(summary))
+            case .success(let res):
+                completion(.success(res.text))
             case .failure(let error):
                 if retry < (self?.maxRetry ?? 0) {
                     self?.execute(messages: messages, model: model, retry: retry + 1, completion: completion)
@@ -34,3 +34,4 @@ final class SummarizeMessagesUseCase {
         }
     }
 }
+

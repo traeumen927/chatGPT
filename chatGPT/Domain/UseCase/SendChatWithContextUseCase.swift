@@ -33,7 +33,7 @@ final class SendChatWithContextUseCase {
                  preference: String?,
                  images: [Data] = [],
                  files: [Data] = [],
-                 completion: @escaping (Result<String, Error>) -> Void) {
+                 completion: @escaping (Result<OpenAIChatResult, Error>) -> Void) {
         var messages = [Message]()
         if let preference {
             messages.append(Message(role: .system, content: preference))
@@ -47,11 +47,11 @@ final class SendChatWithContextUseCase {
             openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
-                case .success(let reply):
+                case .success(let res):
                     self.contextRepository.append(role: .user, content: prompt)
-                    self.contextRepository.append(role: .assistant, content: reply)
+                    self.contextRepository.append(role: .assistant, content: res.text)
                     self.contextRepository.trim(to: self.maxHistory)
-                    completion(.success(reply))
+                    completion(.success(res.text))
                     self.summarizeIfNeeded(model: model)
                 case .failure(let error):
                     completion(.failure(error))
@@ -77,11 +77,11 @@ final class SendChatWithContextUseCase {
         openAIRepository.sendVision(messages: visionMessages, model: model, stream: stream) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success(let reply):
+            case .success(let res):
                 self.contextRepository.append(role: .user, content: prompt)
-                self.contextRepository.append(role: .assistant, content: reply)
+                self.contextRepository.append(role: .assistant, content: res.text)
                 self.contextRepository.trim(to: self.maxHistory)
-                completion(.success(reply))
+                completion(.success(res.text))
                 self.summarizeIfNeeded(model: model)
             case .failure(let error):
                 completion(.failure(error))
@@ -150,3 +150,5 @@ final class SendChatWithContextUseCase {
         }
     }
 }
+
+
