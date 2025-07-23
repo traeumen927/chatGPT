@@ -153,8 +153,9 @@ final class MainViewController: UIViewController {
       observeAuthStateUseCase: ObserveAuthStateUseCase,
       parseMarkdownUseCase: ParseMarkdownUseCase,
       fetchPreferenceUseCase: FetchUserPreferenceUseCase,
-       updatePreferenceUseCase: UpdateUserPreferenceUseCase,
-       uploadFilesUseCase: UploadFilesUseCase) {
+      updatePreferenceUseCase: UpdateUserPreferenceUseCase,
+       uploadFilesUseCase: UploadFilesUseCase,
+       generateImageUseCase: GenerateImageUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -164,7 +165,8 @@ final class MainViewController: UIViewController {
                                            contextRepository: contextRepository,
                                            fetchPreferenceUseCase: fetchPreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase,
-                                           uploadFilesUseCase: uploadFilesUseCase)
+                                           uploadFilesUseCase: uploadFilesUseCase,
+                                           generateImageUseCase: generateImageUseCase)
         self.fetchConversationMessagesUseCase = fetchConversationMessagesUseCase
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase

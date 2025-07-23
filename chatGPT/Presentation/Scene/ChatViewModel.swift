@@ -47,6 +47,7 @@ final class ChatViewModel {
     private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
+    private let generateImageUseCase: GenerateImageUseCase
     private let disposeBag = DisposeBag()
     
     private var draftMessages: [ChatMessage]? = nil
@@ -65,7 +66,8 @@ final class ChatViewModel {
          contextRepository: ChatContextRepository,
          fetchPreferenceUseCase: FetchUserPreferenceUseCase,
          updatePreferenceUseCase: UpdateUserPreferenceUseCase,
-         uploadFilesUseCase: UploadFilesUseCase) {
+         uploadFilesUseCase: UploadFilesUseCase,
+         generateImageUseCase: GenerateImageUseCase) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
@@ -75,6 +77,7 @@ final class ChatViewModel {
         self.fetchPreferenceUseCase = fetchPreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
+        self.generateImageUseCase = generateImageUseCase
     }
     
     func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
@@ -313,5 +316,20 @@ final class ChatViewModel {
                 self.contextRepository.replace(messages: msgs, summary: nil)
             })
             .disposed(by: disposeBag)
+    }
+
+    func generateImage(prompt: String, size: String) {
+        let id = UUID()
+        appendMessage(ChatMessage(id: id, type: .user, text: prompt))
+        generateImageUseCase.execute(prompt: prompt, size: size) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let urls):
+                self.appendMessage(ChatMessage(type: .assistant, text: "", urls: urls))
+            case .failure(let error):
+                let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
+                self.appendMessage(ChatMessage(type: .error, text: message))
+            }
+        }
     }
 }
