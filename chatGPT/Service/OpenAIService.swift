@@ -132,4 +132,35 @@ final class OpenAIService: OpenAIServiceProtocol {
             return Disposables.create { request.cancel() }
         }
     }
+
+    func upload<T: Decodable>(_ endpoint: OpenAIEndpoint, completion: @escaping (Result<T, Error>) -> Void) {
+        guard let apiKey = apiKeyRepository.fetchKey() else {
+            completion(.failure(OpenAIError.missingAPIKey))
+            return
+        }
+
+        guard let url = URL(string: baseURL + endpoint.path) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+
+        var headers = endpoint.headers
+        headers.add(name: "Authorization", value: "Bearer \(apiKey)")
+
+        guard let multipart = endpoint.multipart else {
+            completion(.failure(OpenAIError.invalidRequestBody))
+            return
+        }
+
+        session.upload(multipartFormData: multipart, to: url, method: endpoint.method, headers: headers)
+            .validate()
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let decoded):
+                    completion(.success(decoded))
+                case .failure(let error):
+                    completion(.failure(error as Error))
+                }
+            }
+    }
 }

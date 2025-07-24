@@ -89,7 +89,7 @@ final class ChatViewModel {
             .subscribe(onSuccess: { [weak self] isImage in
                 guard let self else { return }
                 if isImage {
-                    self.generateImage(prompt: prompt, size: "1024x1024", model: model)
+                    self.generateImage(prompt: prompt, size: "1024x1024", model: model, attachments: attachments)
                 } else {
                     self.processSend(prompt: prompt, attachments: attachments, model: model, stream: stream)
                 }
@@ -337,12 +337,17 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
 
-    func generateImage(prompt: String, size: String, model: OpenAIModel, imageModel: String = "dall-e-3") {
+    func generateImage(prompt: String, size: String, model: OpenAIModel, attachments: [Attachment] = [], imageModel: String = "dall-e-3") {
         let isFirst = messages.value.isEmpty
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
 
-        generateImageUseCase.execute(prompt: prompt, size: size, model: imageModel) { [weak self] result in
+        let imageData = attachments.compactMap { item -> Data? in
+            if case let .image(img) = item { return img.pngData() }
+            return nil
+        }.first
+
+        generateImageUseCase.execute(prompt: prompt, size: size, model: imageModel, imageData: imageData) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):

@@ -16,6 +16,8 @@ protocol OpenAIRepository {
     func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String>
 
     func generateImage(prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void)
+    func generateImageVariation(image: Data, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void)
+    func generateImageEdit(image: Data, prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void)
 
     func detectImageIntent(prompt: String) -> Single<Bool>
 }

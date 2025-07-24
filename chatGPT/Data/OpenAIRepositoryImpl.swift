@@ -60,6 +60,30 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         }
     }
 
+    func generateImageVariation(image: Data, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        service.upload(.imageVariation(image: image, size: size, model: model)) { (result: Result<OpenAIImageResponse, Error>) in
+            switch result {
+            case .success(let response):
+                let urls = response.data.map { $0.url }
+                completion(.success(urls))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func generateImageEdit(image: Data, prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        service.upload(.imageEdit(image: image, prompt: prompt, size: size, model: model)) { (result: Result<OpenAIImageResponse, Error>) in
+            switch result {
+            case .success(let response):
+                let urls = response.data.map { $0.url }
+                completion(.success(urls))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     func detectImageIntent(prompt: String) -> Single<Bool> {
         Single.create { single in
             let system = Message(role: .system,

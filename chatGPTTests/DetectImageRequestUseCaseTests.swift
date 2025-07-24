@@ -17,6 +17,8 @@ final class StubOpenAIRepository: OpenAIRepository {
     func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {}
     func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String> { .empty() }
     func generateImage(prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {}
+    func generateImageVariation(image: Data, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {}
+    func generateImageEdit(image: Data, prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {}
 }
 
 final class DetectImageRequestUseCaseTests: XCTestCase {
