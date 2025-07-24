@@ -89,6 +89,8 @@
 		F1D52BC72E2679F900239002 /* ModelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D52BC62E2679F900239002 /* ModelConfig.swift */; };
 		F1D52BC92E267A0300239002 /* ModelConfigRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D52BC82E267A0300239002 /* ModelConfigRepository.swift */; };
 		F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D52BCA2E267A0C00239002 /* FetchModelConfigsUseCase.swift */; };
+		F1D772CA2E321F6C006F749A /* OpenAIServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772C92E321F6C006F749A /* OpenAIServiceProtocol.swift */; };
+		F1D772CC2E321F7E006F749A /* DetectImageRequestUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772CB2E321F7E006F749A /* DetectImageRequestUseCase.swift */; };
 		F1DE5A762E094BD6001B0CA8 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */; };
 		F1DE5A782E094C37001B0CA8 /* FirebaseAuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */; };
 		F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF12DF9AD4400D8445A /* Toast */; };
@@ -231,6 +233,8 @@
 		F1D52BC62E2679F900239002 /* ModelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfig.swift; sourceTree = "<group>"; };
 		F1D52BC82E267A0300239002 /* ModelConfigRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigRepository.swift; sourceTree = "<group>"; };
 		F1D52BCA2E267A0C00239002 /* FetchModelConfigsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchModelConfigsUseCase.swift; sourceTree = "<group>"; };
+		F1D772C92E321F6C006F749A /* OpenAIServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIServiceProtocol.swift; sourceTree = "<group>"; };
+		F1D772CB2E321F7E006F749A /* DetectImageRequestUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectImageRequestUseCase.swift; sourceTree = "<group>"; };
 		F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthRepository.swift; sourceTree = "<group>"; };
 		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
@@ -458,6 +462,7 @@
 		F1DF3B0D2DF9B02C00D8445A /* UseCase */ = {
 			isa = PBXGroup;
 			children = (
+				F1D772CB2E321F7E006F749A /* DetectImageRequestUseCase.swift */,
 				F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */,
 				F1D52BCA2E267A0C00239002 /* FetchModelConfigsUseCase.swift */,
 				F159352D2E1C12B500739408 /* FetchUserPreferenceUseCase.swift */,
@@ -531,6 +536,7 @@
 			isa = PBXGroup;
 			children = (
 				F1051DF52E004E72008D5D80 /* OpenAIService.swift */,
+				F1D772C92E321F6C006F749A /* OpenAIServiceProtocol.swift */,
 				F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */,
 			);
 			path = Service;
@@ -796,6 +802,7 @@
 				aa711a251b034678b1e8a5c7 /* KingfisherImageRepository.swift in Sources */,
 				F20000042F00000400000004 /* FirebaseFileRepository.swift in Sources */,
 				F20000052F00000500000005 /* FileRepository.swift in Sources */,
+				F1D772CA2E321F6C006F749A /* OpenAIServiceProtocol.swift in Sources */,
 				F20000062F00000600000006 /* UploadFilesUseCase.swift in Sources */,
 				65fb6a733717417aaec1ec5b /* LoadUserProfileImageUseCase.swift in Sources */,
 				d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */,
@@ -803,6 +810,7 @@
 				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
 				F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */,
 				F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */,
+				F1D772CC2E321F7E006F749A /* DetectImageRequestUseCase.swift in Sources */,
 				F1DF3B112DF9B06500D8445A /* SaveAPIKeyUseCase.swift in Sources */,
 				F1DE5A762E094BD6001B0CA8 /* AuthRepository.swift in Sources */,
 				F159352C2E1C129700739408 /* UserPreferenceRepository.swift in Sources */,
