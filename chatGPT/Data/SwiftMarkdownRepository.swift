@@ -171,7 +171,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                 guard let url = URL(string: urlString) else { return parseInline(text) }
                 urls.append(url)
             }
-            let attachment = RemoteImageGroupAttachment(urls: urls)
+            let attachment = RemoteImageGroupAttachment(urls: urls, style: .grid)
             return NSAttributedString(attachment: attachment)
         }
 
@@ -242,7 +242,7 @@ final class SwiftMarkdownRepository: MarkdownRepository {
                     j += 1
                 }
                 if urls.count > 1 {
-                    let attachment = RemoteImageGroupAttachment(urls: urls)
+                    let attachment = RemoteImageGroupAttachment(urls: urls, style: .grid)
                     result.append(NSAttributedString(attachment: attachment))
                 } else if let url = urls.first {
                     let attachment = RemoteImageAttachment(url: url, altText: parts.first?.1 ?? "")

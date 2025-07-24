@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import RxSwift
 
-final class OpenAIService {
+final class OpenAIService: OpenAIServiceProtocol {
     private let session: Session
     private let apiKeyRepository: APIKeyRepository
     private let baseURL = "https://api.openai.com/v1"

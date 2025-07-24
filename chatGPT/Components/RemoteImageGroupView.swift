@@ -4,14 +4,28 @@ import RxSwift
 import RxCocoa
 
 final class RemoteImageGroupView: UIView {
+    enum Style {
+        case horizontal
+        case grid
+    }
+
     private let collectionView: UICollectionView
     private let urls: [URL]
+    let style: Style
     private let disposeBag = DisposeBag()
 
-    init(urls: [URL]) {
+    init(urls: [URL], style: Style = .horizontal) {
         self.urls = urls
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
+        self.style = style
+        let layout: UICollectionViewFlowLayout
+        switch style {
+        case .horizontal:
+            layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .horizontal
+        case .grid:
+            layout = TrailingFlowLayout()
+            layout.scrollDirection = .vertical
+        }
         layout.minimumLineSpacing = 8
         layout.minimumInteritemSpacing = 8
         self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -28,7 +42,8 @@ final class RemoteImageGroupView: UIView {
         backgroundColor = ThemeColor.background1
         addSubview(collectionView)
         collectionView.backgroundColor = .clear
-        collectionView.showsHorizontalScrollIndicator = true
+        collectionView.showsHorizontalScrollIndicator = style == .horizontal
+        collectionView.isScrollEnabled = style == .horizontal
         collectionView.register(RemoteImageCollectionCell.self, forCellWithReuseIdentifier: "RemoteImageCollectionCell")
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -52,7 +67,15 @@ final class RemoteImageGroupView: UIView {
 
 extension RemoteImageGroupView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width * 0.65
-        return CGSize(width: width, height: width)
+        switch style {
+        case .horizontal:
+            let width = collectionView.bounds.width * 0.65
+            return CGSize(width: width, height: width)
+        case .grid:
+            let layout = collectionViewLayout as? UICollectionViewFlowLayout
+            let spacing = layout?.minimumInteritemSpacing ?? 8
+            let width = (collectionView.bounds.width - spacing * 2) / 3
+            return CGSize(width: width, height: width)
+        }
     }
 }
