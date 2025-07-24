@@ -25,7 +25,7 @@ enum OpenAIEndpoint {
         temperature: Double = 0.7
     )
 
-    case image(prompt: String, size: String)
+    case image(prompt: String, size: String, model: String)
     
     /// 사용가능모델
     case models
@@ -75,8 +75,8 @@ enum OpenAIEndpoint {
                 temperature: temp,
                 stream: stream
             )
-        case .image(let prompt, let size):
-            return OpenAIImageRequest(prompt: prompt, n: 1, size: size)
+        case .image(let prompt, let size, let model):
+            return OpenAIImageRequest(prompt: prompt, n: 1, size: size, model: model)
         case .models:
             return nil
         }

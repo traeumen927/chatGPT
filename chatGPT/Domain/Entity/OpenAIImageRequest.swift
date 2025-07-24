@@ -4,6 +4,7 @@ struct OpenAIImageRequest: Encodable {
     let prompt: String
     let n: Int
     let size: String
+    let model: String
 }
 
 struct OpenAIImageURL: Decodable {

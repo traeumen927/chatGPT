@@ -16,7 +16,7 @@ final class StubOpenAIRepository: OpenAIRepository {
     func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> { .empty() }
     func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {}
     func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String> { .empty() }
-    func generateImage(prompt: String, size: String, completion: @escaping (Result<[String], Error>) -> Void) {}
+    func generateImage(prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {}
 }
 
 final class DetectImageRequestUseCaseTests: XCTestCase {
