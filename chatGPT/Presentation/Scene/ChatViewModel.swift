@@ -347,7 +347,8 @@ final class ChatViewModel {
             return nil
         }.first
 
-        generateImageUseCase.execute(prompt: prompt, size: size, model: imageModel, imageData: imageData) { [weak self] result in
+        let modelToUse = imageData == nil ? imageModel : "dall-e-2"
+        generateImageUseCase.execute(prompt: prompt, size: size, model: modelToUse, imageData: imageData) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):
