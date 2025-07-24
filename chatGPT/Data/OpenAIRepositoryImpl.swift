@@ -48,8 +48,8 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         service.requestStream(.vision(messages: messages, model: model, stream: true))
     }
 
-    func generateImage(prompt: String, size: String, completion: @escaping (Result<[String], Error>) -> Void) {
-        service.request(.image(prompt: prompt, size: size)) { (result: Result<OpenAIImageResponse, Error>) in
+    func generateImage(prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        service.request(.image(prompt: prompt, size: size, model: model)) { (result: Result<OpenAIImageResponse, Error>) in
             switch result {
             case .success(let response):
                 let urls = response.data.map { $0.url }

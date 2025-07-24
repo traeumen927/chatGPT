@@ -337,12 +337,12 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
 
-    func generateImage(prompt: String, size: String, model: OpenAIModel) {
+    func generateImage(prompt: String, size: String, model: OpenAIModel, imageModel: String = "dall-e-3") {
         let isFirst = messages.value.isEmpty
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
 
-        generateImageUseCase.execute(prompt: prompt, size: size) { [weak self] result in
+        generateImageUseCase.execute(prompt: prompt, size: size, model: imageModel) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):

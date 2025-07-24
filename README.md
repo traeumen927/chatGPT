@@ -263,11 +263,13 @@ UIKit 기반 구성 요소 및 커스텀 UI 모두 traitCollection에 따라 적
 
 ## 🖼️ 이미지 생성 기능
 
-OpenAI의 DALL·E API를 이용해 원하는 이미지를 만들 수 있습니다. `ChatViewModel`의 `generateImage(prompt:size:model:)` 메서드를 호출하면 이미지 URL 목록을 반환하며, 앱에서는 해당 URL을 불러와 바로 표시합니다.
+OpenAI의 DALL·E API를 이용해 원하는 이미지를 만들 수 있습니다. `ChatViewModel`의 `generateImage(prompt:size:model:)` 메서드에 생성 모델 문자열을 전달해 원하는 버전을 지정할 수 있습니다.
 
 ```
-viewModel.generateImage(prompt: "A cute cat", size: "512x512", model: .gpt3_5Turbo)
+viewModel.generateImage(prompt: "A cute cat", size: "512x512", model: "dall-e-3")
 ```
+
+`model` 파라미터에 "dall-e-3" 또는 "dall-e-2" 등을 지정하여 원하는 이미지 생성 모델을 선택할 수 있습니다.
 
 실행 결과 이미지는 메시지와 동일한 형태로 채팅 화면에 표시됩니다.
 
