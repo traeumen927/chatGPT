@@ -4,15 +4,33 @@ import RxSwift
 import RxCocoa
 
 final class RemoteImageGroupView: UIView {
-    private let scrollView = UIScrollView()
-    private let stackView = UIStackView()
+    enum Style {
+        case horizontal
+        case grid
+    }
+
+    private let collectionView: UICollectionView
     private let urls: [URL]
+    let style: Style
     private let disposeBag = DisposeBag()
 
-    init(urls: [URL]) {
+    init(urls: [URL], style: Style = .horizontal) {
         self.urls = urls
+        self.style = style
+        let layout: UICollectionViewFlowLayout
+        switch style {
+        case .horizontal:
+            layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .horizontal
+        case .grid:
+            layout = TrailingFlowLayout()
+            layout.scrollDirection = .vertical
+        }
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
+        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         super.init(frame: .zero)
-        layout()
+        self.layout()
         bind()
     }
 
@@ -22,36 +40,42 @@ final class RemoteImageGroupView: UIView {
 
     private func layout() {
         backgroundColor = ThemeColor.background1
-        addSubview(scrollView)
-        scrollView.addSubview(stackView)
-        scrollView.showsHorizontalScrollIndicator = true
-        stackView.axis = .horizontal
-        stackView.spacing = 8
-
-        scrollView.snp.makeConstraints { make in
+        addSubview(collectionView)
+        collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = style == .horizontal
+        collectionView.isScrollEnabled = style == .horizontal
+        collectionView.register(RemoteImageCollectionCell.self, forCellWithReuseIdentifier: "RemoteImageCollectionCell")
+        collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-        }
-
-        stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-
-        let itemWidthRatio: CGFloat = 0.65
-        urls.forEach { url in
-            let imageView = RemoteImageView(url: url)
-            stackView.addArrangedSubview(imageView)
-            imageView.snp.makeConstraints { make in
-                make.width.equalTo(self.snp.width).multipliedBy(itemWidthRatio)
-                make.height.equalTo(imageView.snp.width)
-            }
         }
     }
 
     private func bind() {
-        // nothing dynamic for now
+        Observable.just(urls)
+            .bind(to: collectionView.rx.items(cellIdentifier: "RemoteImageCollectionCell", cellType: RemoteImageCollectionCell.self)) { _, url, cell in
+                cell.configure(url: url)
+            }
+            .disposed(by: disposeBag)
+
+        collectionView.rx.setDelegate(self).disposed(by: disposeBag)
     }
 
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: UIView.noIntrinsicMetric)
+    }
+}
+
+extension RemoteImageGroupView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        switch style {
+        case .horizontal:
+            let width = collectionView.bounds.width * 0.65
+            return CGSize(width: width, height: width)
+        case .grid:
+            let layout = collectionViewLayout as? UICollectionViewFlowLayout
+            let spacing = layout?.minimumInteritemSpacing ?? 8
+            let width = (collectionView.bounds.width - spacing * 2) / 3
+            return CGSize(width: width, height: width)
+        }
     }
 }

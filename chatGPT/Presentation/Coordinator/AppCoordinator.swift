@@ -95,6 +95,11 @@ final class AppCoordinator {
             repository: conversationRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
+        let fileRepository = FirebaseFileRepository()
+        let uploadFilesUseCase = UploadFilesUseCase(repository: fileRepository,
+                                                   getCurrentUserUseCase: getCurrentUserUseCase)
+        let generateImageUseCase = GenerateImageUseCase(repository: repository)
+        let detectImageRequestUseCase = DetectImageRequestUseCase(repository: repository)
         observeConversationsUseCase.execute()
             .subscribe()
             .disposed(by: disposeBag)
@@ -125,7 +130,11 @@ final class AppCoordinator {
             parseMarkdownUseCase: parseMarkdownUseCase
         ,
             fetchPreferenceUseCase: fetchPreferenceUseCase,
-            updatePreferenceUseCase: updatePreferenceUseCase
+            updatePreferenceUseCase: updatePreferenceUseCase,
+            uploadFilesUseCase: uploadFilesUseCase
+        ,
+            generateImageUseCase: generateImageUseCase,
+            detectImageRequestUseCase: detectImageRequestUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)

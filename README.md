@@ -34,6 +34,7 @@
 - [🔁 스트리밍 응답 지원 (Stream On/Off)](#-스트리밍-응답-지원-stream-onoff)
 - [🌗 시스템 테마 대응 (다크모드 & 라이트모드)](#-시스템-테마-대응-다크모드--라이트모드)
 - [📄 마크다운 형식 지원](#-마크다운-형식-지원)
+- [🖼️ 이미지 생성 기능](#-이미지-생성-기능)
 
 ---
 
@@ -258,6 +259,22 @@ UIKit 기반 구성 요소 및 커스텀 UI 모두 traitCollection에 따라 적
 
 > 사용자가 읽기 편하게 정돈된 형태로 답변을 전달하는 데 중점을 두었으며, 추가 서식이 필요할 경우에도 구조 변경 없이 손쉽게 확장할 수 있습니다.
 
+---
+
+## 🖼️ 이미지 생성 기능
+
+OpenAI의 DALL·E API를 이용해 원하는 이미지를 만들 수 있습니다. `ChatViewModel`의 `generateImage(prompt:size:model:)` 메서드에 생성 모델 문자열을 전달해 원하는 버전을 지정할 수 있습니다.
+
+```
+viewModel.generateImage(prompt: "A cute cat", size: "512x512", model: "dall-e-3")
+```
+
+`model` 파라미터에 "dall-e-3" 또는 "dall-e-2" 등을 지정하여 원하는 이미지 생성 모델을 선택할 수 있습니다.
+
+실행 결과 이미지는 메시지와 동일한 형태로 채팅 화면에 표시됩니다.
+
+메시지 전송 시 이미지 생성 의도를 먼저 판별합니다. 이 과정은 OpenAI 분류 API를 활용하며 `DetectImageRequestUseCase`가 `Single<Bool>` 형태로 결과를 반환합니다. 분류 결과가 참일 때만 `generateImage`가 호출되어 불필요한 이미지 생성 요청을 막습니다.
+
 
 
 ---
@@ -268,3 +285,6 @@ Firestore에 저장되는 `preferences`와 `conversations` 컬렉션은 인증�
 
 Firebase 콘솔의 **Firestore Database > 규칙** 탭에서 [`firebase/firestore_rules.md`](firebase/firestore_rules.md) 파일의 내용을 적용하세요.
 또한 `/models` 컬렉션에 대한 규칙도 동일하게 설정해야 합니다.
+
+Firebase 콘솔의 **Storage > 규칙** 탭에서는 [`firebase/storage_rules.md`](firebase/storage_rules.md) 파일을 적용해
+각 사용자의 `attachments/<uid>` 폴더만 접근 가능하도록 제한하세요.

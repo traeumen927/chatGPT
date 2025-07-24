@@ -13,7 +13,9 @@ final class SaveConversationUseCase {
 
     func execute(title: String,
                  question: String,
+                 questionURLs: [String] = [],
                  answer: String,
+                 answerURLs: [String] = [],
                  timestamp: Date = Date()) -> Single<String> {
         guard let user = getCurrentUserUseCase.execute() else {
             return .error(ConversationError.noUser)
@@ -21,7 +23,9 @@ final class SaveConversationUseCase {
         return repository.createConversation(uid: user.uid,
                                              title: title,
                                              question: question,
+                                             questionURLs: questionURLs,
                                              answer: answer,
+                                             answerURLs: answerURLs,
                                              timestamp: timestamp)
     }
 }
