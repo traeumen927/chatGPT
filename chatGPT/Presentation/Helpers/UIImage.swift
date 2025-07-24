@@ -30,7 +30,6 @@ extension UIImage {
 
         return roundedImage ?? self
     }
-}
 
     /// DALL·E 편집용 규격에 맞는 PNG 데이터 반환
     func pngForImageEdit(targetSize: CGSize) -> Data? {
