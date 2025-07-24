@@ -72,8 +72,8 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         }
     }
 
-    func generateImageEdit(image: Data, prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {
-        service.upload(.imageEdit(image: image, prompt: prompt, size: size, model: model)) { (result: Result<OpenAIImageResponse, Error>) in
+    func generateImageEdit(image: Data, mask: Data?, prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        service.upload(.imageEdit(image: image, mask: mask, prompt: prompt, size: size, model: model)) { (result: Result<OpenAIImageResponse, Error>) in
             switch result {
             case .success(let response):
                 let urls = response.data.map { $0.url }

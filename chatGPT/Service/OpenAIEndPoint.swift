@@ -27,7 +27,7 @@ enum OpenAIEndpoint {
 
     case image(prompt: String, size: String, model: String)
     case imageVariation(image: Data, size: String, model: String)
-    case imageEdit(image: Data, prompt: String, size: String, model: String)
+    case imageEdit(image: Data, mask: Data?, prompt: String, size: String, model: String)
     
     /// 사용가능모델
     case models
@@ -102,9 +102,12 @@ enum OpenAIEndpoint {
                 form.append(Data(size.utf8), withName: "size")
                 form.append(Data(model.utf8), withName: "model")
             }
-        case .imageEdit(let image, let prompt, let size, let model):
+        case .imageEdit(let image, let mask, let prompt, let size, let model):
             return { form in
                 form.append(image, withName: "image", fileName: "image.png", mimeType: "image/png")
+                if let mask {
+                    form.append(mask, withName: "mask", fileName: "mask.png", mimeType: "image/png")
+                }
                 form.append(Data(prompt.utf8), withName: "prompt")
                 form.append(Data("1".utf8), withName: "n")
                 form.append(Data(size.utf8), withName: "size")

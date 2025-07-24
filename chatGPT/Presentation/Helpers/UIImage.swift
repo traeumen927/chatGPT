@@ -48,4 +48,14 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return img?.pngData()
     }
+
+    /// 전체 영역 편집을 위한 투명 마스크 PNG 데이터 반환
+    static func fullEditMask(size: CGSize) -> Data? {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        UIColor.clear.setFill()
+        UIRectFill(CGRect(origin: .zero, size: size))
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img?.pngData()
+    }
 }
