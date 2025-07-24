@@ -350,9 +350,40 @@ final class ChatViewModel {
                 return try? Data(contentsOf: url)
             }
         }
+
         uploadFilesUseCase.execute(datas: uploadData)
-            .subscribe()
+            .catchAndReturn([])
+            .subscribe(onSuccess: { [weak self] urls in
+                self?.generateImageInternal(prompt: prompt,
+                                            size: size,
+                                            model: model,
+                                            attachments: attachments,
+                                            uploaded: urls.map { $0.absoluteString },
+                                            messageID: id,
+                                            isFirst: isFirst,
+                                            imageModel: imageModel)
+            })
             .disposed(by: disposeBag)
+    }
+
+    private func generateImageInternal(prompt: String,
+                                       size: String,
+                                       model: OpenAIModel,
+                                       attachments: [Attachment],
+                                       uploaded: [String],
+                                       messageID: UUID,
+                                       isFirst: Bool,
+                                       imageModel: String) {
+        updateMessage(id: messageID, text: prompt, urls: uploaded)
+
+        if let convID = conversationID {
+            appendMessageUseCase.execute(conversationID: convID,
+                                         role: .user,
+                                         text: prompt,
+                                         urls: uploaded)
+                .subscribe()
+                .disposed(by: disposeBag)
+        }
 
         let dimension = Int(size.split(separator: "x").first ?? "1024") ?? 1024
         let imageData = attachments.compactMap { item -> Data? in
@@ -372,14 +403,8 @@ final class ChatViewModel {
                 self.appendMessage(ChatMessage(type: .assistant, text: markdown))
                 if let convID = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: convID,
-                                                      role: .user,
-                                                      text: prompt)
-                        .flatMap { [weak self] _ -> Single<Void> in
-                            guard let self else { return Single.just(()) }
-                            return self.appendMessageUseCase.execute(conversationID: convID,
-                                                                     role: .assistant,
-                                                                     text: markdown)
-                        }
+                                                      role: .assistant,
+                                                      text: markdown)
                         .subscribe()
                         .disposed(by: self.disposeBag)
                 } else if isFirst {
@@ -393,6 +418,7 @@ final class ChatViewModel {
                             let clean = title.removingQuotes()
                             self.saveConversationUseCase.execute(title: clean,
                                                                   question: prompt,
+                                                                  questionURLs: uploaded,
                                                                   answer: markdown,
                                                                   answerURLs: [])
                                 .subscribe(onSuccess: { [weak self] id in
