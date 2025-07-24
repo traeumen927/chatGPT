@@ -10,7 +10,7 @@ import UIKit
 extension UIImage {
     /// 이미지 크기 조정
     func resize(to targetSize: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0)
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 1)
         self.draw(in: CGRect(origin: .zero, size: targetSize))
         let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -35,7 +35,7 @@ extension UIImage {
     func pngForImageEdit(targetSize: CGSize) -> Data? {
         let aspect = min(targetSize.width / size.width, targetSize.height / size.height)
         let newSize = CGSize(width: size.width * aspect, height: size.height * aspect)
-        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0)
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 1)
         UIColor.clear.setFill()
         UIRectFill(CGRect(origin: .zero, size: targetSize))
         draw(in: CGRect(
