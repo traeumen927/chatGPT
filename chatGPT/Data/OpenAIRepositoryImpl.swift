@@ -9,9 +9,9 @@ import Foundation
 import RxSwift
 
 final class OpenAIRepositoryImpl: OpenAIRepository {
-    private let service: OpenAIService
-    
-    init(service: OpenAIService) {
+    private let service: OpenAIServiceProtocol
+
+    init(service: OpenAIServiceProtocol) {
         self.service = service
     }
     
@@ -63,7 +63,7 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     func detectImageIntent(prompt: String) -> Single<Bool> {
         Single.create { single in
             let system = Message(role: .system,
-                                 content: "Respond with 'true' if the user wants an image. Otherwise respond 'false'.")
+                                 content: "Respond 'true' only when the user specifically requests an image. If the user merely asks about capabilities or says no image is needed, respond 'false'.")
             let user = Message(role: .user, content: prompt)
             self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
                 switch result {
