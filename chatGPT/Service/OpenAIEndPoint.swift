@@ -26,6 +26,8 @@ enum OpenAIEndpoint {
     )
 
     case image(prompt: String, size: String, model: String)
+    case imageVariation(image: Data, size: String, model: String)
+    case imageEdit(image: Data, prompt: String, size: String, model: String)
     
     /// 사용가능모델
     case models
@@ -38,6 +40,10 @@ enum OpenAIEndpoint {
             return "/chat/completions"
         case .image:
             return "/images/generations"
+        case .imageVariation:
+            return "/images/variations"
+        case .imageEdit:
+            return "/images/edits"
 
         case .models:
             return "/models"
@@ -46,7 +52,7 @@ enum OpenAIEndpoint {
     
     var method: HTTPMethod {
         switch self {
-        case .chat, .vision, .image:
+        case .chat, .vision, .image, .imageVariation, .imageEdit:
             return .post
         case .models:
             return .get
@@ -54,9 +60,12 @@ enum OpenAIEndpoint {
     }
     
     var headers: HTTPHeaders {
-        return [
-            "Content-Type": "application/json"
-        ]
+        switch self {
+        case .imageVariation, .imageEdit:
+            return [:]
+        default:
+            return ["Content-Type": "application/json"]
+        }
     }
     
     var encodableBody: Encodable? {
@@ -77,7 +86,31 @@ enum OpenAIEndpoint {
             )
         case .image(let prompt, let size, let model):
             return OpenAIImageRequest(prompt: prompt, n: 1, size: size, model: model)
+        case .imageVariation, .imageEdit:
+            return nil
         case .models:
+            return nil
+        }
+    }
+
+    var multipart: ((MultipartFormData) -> Void)? {
+        switch self {
+        case .imageVariation(let image, let size, let model):
+            return { form in
+                form.append(image, withName: "image", fileName: "image.png", mimeType: "image/png")
+                form.append(Data("1".utf8), withName: "n")
+                form.append(Data(size.utf8), withName: "size")
+                form.append(Data(model.utf8), withName: "model")
+            }
+        case .imageEdit(let image, let prompt, let size, let model):
+            return { form in
+                form.append(image, withName: "image", fileName: "image.png", mimeType: "image/png")
+                form.append(Data(prompt.utf8), withName: "prompt")
+                form.append(Data("1".utf8), withName: "n")
+                form.append(Data(size.utf8), withName: "size")
+                form.append(Data(model.utf8), withName: "model")
+            }
+        default:
             return nil
         }
     }
