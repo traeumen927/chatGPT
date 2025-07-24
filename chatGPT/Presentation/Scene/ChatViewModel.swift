@@ -342,12 +342,29 @@ final class ChatViewModel {
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
 
+        let uploadData = attachments.compactMap { item -> Data? in
+            switch item {
+            case .image(let img):
+                return img.jpegData(compressionQuality: 0.8)
+            case .file(let url):
+                return try? Data(contentsOf: url)
+            }
+        }
+        uploadFilesUseCase.execute(datas: uploadData)
+            .subscribe()
+            .disposed(by: disposeBag)
+
+        let dimension = Int(size.split(separator: "x").first ?? "1024") ?? 1024
         let imageData = attachments.compactMap { item -> Data? in
-            if case let .image(img) = item { return img.pngData() }
+            if case let .image(img) = item {
+                return img.pngForImageEdit(targetSize: CGSize(width: dimension, height: dimension))
+            }
             return nil
         }.first
 
-        generateImageUseCase.execute(prompt: prompt, size: size, model: imageModel, imageData: imageData) { [weak self] result in
+        let usedModel = imageData == nil ? imageModel : "dall-e-2"
+
+        generateImageUseCase.execute(prompt: prompt, size: size, model: usedModel, imageData: imageData) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):

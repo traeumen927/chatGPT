@@ -270,6 +270,7 @@ viewModel.generateImage(prompt: "A cute cat", size: "512x512", model: "dall-e-3"
 ```
 
 이미지 파일을 `attachments` 파라미터로 전달하면 기존 이미지를 원하는 형태로 수정할 수도 있습니다.
+첨부된 사진은 원본 그대로 저장되며, 편집 시에는 선택한 크기에 맞춰 투명 배경의 PNG로 변환한 뒤 DALL·E 2 편집 API에 전달합니다.
 
 `model` 파라미터에 "dall-e-3" 또는 "dall-e-2" 등을 지정하여 원하는 이미지 생성 모델을 선택할 수 있습니다.
 

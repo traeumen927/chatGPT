@@ -31,3 +31,22 @@ extension UIImage {
         return roundedImage ?? self
     }
 }
+
+    /// DALL·E 편집용 규격에 맞는 PNG 데이터 반환
+    func pngForImageEdit(targetSize: CGSize) -> Data? {
+        let aspect = min(targetSize.width / size.width, targetSize.height / size.height)
+        let newSize = CGSize(width: size.width * aspect, height: size.height * aspect)
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0)
+        UIColor.clear.setFill()
+        UIRectFill(CGRect(origin: .zero, size: targetSize))
+        draw(in: CGRect(
+            x: (targetSize.width - newSize.width) / 2,
+            y: (targetSize.height - newSize.height) / 2,
+            width: newSize.width,
+            height: newSize.height
+        ))
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img?.pngData()
+    }
+}
