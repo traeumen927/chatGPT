@@ -89,7 +89,7 @@ final class ChatViewModel {
             .subscribe(onSuccess: { [weak self] isImage in
                 guard let self else { return }
                 if isImage {
-                    self.generateImage(prompt: prompt, size: "1024x1024")
+                    self.generateImage(prompt: prompt, size: "1024x1024", model: model)
                 } else {
                     self.processSend(prompt: prompt, attachments: attachments, model: model, stream: stream)
                 }
@@ -337,14 +337,50 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
 
-    func generateImage(prompt: String, size: String) {
+    func generateImage(prompt: String, size: String, model: OpenAIModel) {
+        let isFirst = messages.value.isEmpty
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
+
         generateImageUseCase.execute(prompt: prompt, size: size) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):
                 self.appendMessage(ChatMessage(type: .assistant, text: "", urls: urls))
+                if let convID = self.conversationID {
+                    self.appendMessageUseCase.execute(conversationID: convID,
+                                                      role: .user,
+                                                      text: prompt)
+                        .flatMap { [weak self] _ -> Single<Void> in
+                            guard let self else { return Single.just(()) }
+                            return self.appendMessageUseCase.execute(conversationID: convID,
+                                                                     role: .assistant,
+                                                                     text: "",
+                                                                     urls: urls)
+                        }
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
+                } else if isFirst {
+                    let history = [
+                        Message(role: .user, content: prompt),
+                        Message(role: .assistant, content: "image")
+                    ]
+                    self.summarizeUseCase.execute(messages: history, model: model) { [weak self] summaryResult in
+                        guard let self else { return }
+                        if case .success(let title) = summaryResult {
+                            let clean = title.removingQuotes()
+                            self.saveConversationUseCase.execute(title: clean,
+                                                                  question: prompt,
+                                                                  answer: "",
+                                                                  answerURLs: urls)
+                                .subscribe(onSuccess: { [weak self] id in
+                                    self?.conversationIDRelay.accept(id)
+                                    self?.draftMessages = nil
+                                })
+                                .disposed(by: self.disposeBag)
+                        }
+                    }
+                }
             case .failure(let error):
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                 self.appendMessage(ChatMessage(type: .error, text: message))
