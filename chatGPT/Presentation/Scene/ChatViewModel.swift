@@ -392,10 +392,11 @@ final class ChatViewModel {
             }
             return nil
         }.first
+        let maskData = imageData == nil ? nil : UIImage.fullEditMask(size: CGSize(width: dimension, height: dimension))
 
         let usedModel = imageData == nil ? imageModel : "dall-e-2"
 
-        generateImageUseCase.execute(prompt: prompt, size: size, model: usedModel, imageData: imageData) { [weak self] result in
+        generateImageUseCase.execute(prompt: prompt, size: size, model: usedModel, imageData: imageData, maskData: maskData) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):
