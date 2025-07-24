@@ -346,7 +346,8 @@ final class ChatViewModel {
             guard let self else { return }
             switch result {
             case .success(let urls):
-                self.appendMessage(ChatMessage(type: .assistant, text: "", urls: urls))
+                let markdown = urls.map { "![\(prompt)](\($0))" }.joined(separator: "\n")
+                self.appendMessage(ChatMessage(type: .assistant, text: markdown))
                 if let convID = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: convID,
                                                       role: .user,
@@ -355,8 +356,7 @@ final class ChatViewModel {
                             guard let self else { return Single.just(()) }
                             return self.appendMessageUseCase.execute(conversationID: convID,
                                                                      role: .assistant,
-                                                                     text: "",
-                                                                     urls: urls)
+                                                                     text: markdown)
                         }
                         .subscribe()
                         .disposed(by: self.disposeBag)
@@ -371,8 +371,8 @@ final class ChatViewModel {
                             let clean = title.removingQuotes()
                             self.saveConversationUseCase.execute(title: clean,
                                                                   question: prompt,
-                                                                  answer: "",
-                                                                  answerURLs: urls)
+                                                                  answer: markdown,
+                                                                  answerURLs: [])
                                 .subscribe(onSuccess: { [weak self] id in
                                     self?.conversationIDRelay.accept(id)
                                     self?.draftMessages = nil
