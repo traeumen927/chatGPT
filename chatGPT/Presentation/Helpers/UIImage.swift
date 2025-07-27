@@ -10,7 +10,7 @@ import UIKit
 extension UIImage {
     /// 이미지 크기 조정
     func resize(to targetSize: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(targetSize, false, 0)
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 1)
         self.draw(in: CGRect(origin: .zero, size: targetSize))
         let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -30,4 +30,5 @@ extension UIImage {
 
         return roundedImage ?? self
     }
+
 }

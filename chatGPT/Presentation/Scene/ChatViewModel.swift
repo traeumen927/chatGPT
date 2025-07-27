@@ -89,7 +89,7 @@ final class ChatViewModel {
             .subscribe(onSuccess: { [weak self] isImage in
                 guard let self else { return }
                 if isImage {
-                    self.generateImage(prompt: prompt, size: "1024x1024", model: model)
+                    self.generateImage(prompt: prompt, size: "1024x1024", model: model, attachments: attachments)
                 } else {
                     self.processSend(prompt: prompt, attachments: attachments, model: model, stream: stream)
                 }
@@ -337,12 +337,51 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
 
-    func generateImage(prompt: String, size: String, model: OpenAIModel, imageModel: String = "dall-e-3") {
+    func generateImage(prompt: String, size: String, model: OpenAIModel, attachments: [Attachment] = []) {
         let isFirst = messages.value.isEmpty
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
 
-        generateImageUseCase.execute(prompt: prompt, size: size, model: imageModel) { [weak self] result in
+        let uploadData = attachments.compactMap { item -> Data? in
+            switch item {
+            case .image(let img):
+                return img.jpegData(compressionQuality: 0.8)
+            case .file(let url):
+                return try? Data(contentsOf: url)
+            }
+        }
+
+        uploadFilesUseCase.execute(datas: uploadData)
+            .catchAndReturn([])
+            .subscribe(onSuccess: { [weak self] urls in
+                self?.generateImageInternal(prompt: prompt,
+                                            size: size,
+                                            model: model,
+                                            uploaded: urls.map { $0.absoluteString },
+                                            messageID: id,
+                                            isFirst: isFirst)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func generateImageInternal(prompt: String,
+                                       size: String,
+                                       model: OpenAIModel,
+                                       uploaded: [String],
+                                       messageID: UUID,
+                                       isFirst: Bool) {
+        updateMessage(id: messageID, text: prompt, urls: uploaded)
+
+        if let convID = conversationID {
+            appendMessageUseCase.execute(conversationID: convID,
+                                         role: .user,
+                                         text: prompt,
+                                         urls: uploaded)
+                .subscribe()
+                .disposed(by: disposeBag)
+        }
+
+        generateImageUseCase.execute(prompt: prompt, size: size) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):
@@ -350,14 +389,8 @@ final class ChatViewModel {
                 self.appendMessage(ChatMessage(type: .assistant, text: markdown))
                 if let convID = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: convID,
-                                                      role: .user,
-                                                      text: prompt)
-                        .flatMap { [weak self] _ -> Single<Void> in
-                            guard let self else { return Single.just(()) }
-                            return self.appendMessageUseCase.execute(conversationID: convID,
-                                                                     role: .assistant,
-                                                                     text: markdown)
-                        }
+                                                      role: .assistant,
+                                                      text: markdown)
                         .subscribe()
                         .disposed(by: self.disposeBag)
                 } else if isFirst {
@@ -371,6 +404,7 @@ final class ChatViewModel {
                             let clean = title.removingQuotes()
                             self.saveConversationUseCase.execute(title: clean,
                                                                   question: prompt,
+                                                                  questionURLs: uploaded,
                                                                   answer: markdown,
                                                                   answerURLs: [])
                                 .subscribe(onSuccess: { [weak self] id in

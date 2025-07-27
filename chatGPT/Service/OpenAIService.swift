@@ -62,7 +62,7 @@ final class OpenAIService: OpenAIServiceProtocol {
                 }
             }
     }
-
+    
     func requestStream(_ endpoint: OpenAIEndpoint) -> Observable<String> {
         Observable.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
@@ -71,15 +71,15 @@ final class OpenAIService: OpenAIServiceProtocol {
                 observer.onError(OpenAIError.missingAPIKey)
                 return Disposables.create()
             }
-
+            
             guard let url = URL(string: baseURL + endpoint.path) else {
                 observer.onError(OpenAIError.invalidURL)
                 return Disposables.create()
             }
-
+            
             var headers = endpoint.headers
             headers.add(name: "Authorization", value: "Bearer \(apiKey)")
-
+            
             let request: DataStreamRequest
             if let body = endpoint.encodableBody {
                 request = session.streamRequest(
@@ -96,7 +96,7 @@ final class OpenAIService: OpenAIServiceProtocol {
                     headers: headers
                 )
             }
-
+            
             request.validate().responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
@@ -128,8 +128,43 @@ final class OpenAIService: OpenAIServiceProtocol {
                     }
                 }
             }
-
+            
             return Disposables.create { request.cancel() }
         }
+    }
+    
+    func upload<T: Decodable>(_ endpoint: OpenAIEndpoint, completion: @escaping (Result<T, Error>) -> Void) {
+        guard let apiKey = apiKeyRepository.fetchKey() else {
+            completion(.failure(OpenAIError.missingAPIKey))
+            return
+        }
+        
+        guard let url = URL(string: baseURL + endpoint.path) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        
+        var headers = endpoint.headers
+        headers.add(name: "Authorization", value: "Bearer \(apiKey)")
+        
+        guard let multipart = endpoint.multipart else {
+            completion(.failure(OpenAIError.invalidRequestBody))
+            return
+        }
+        
+        session.upload(multipartFormData: multipart, to: url, method: endpoint.method, headers: headers)
+            .validate()
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let decoded):
+                    completion(.success(decoded))
+                case .failure(let error):
+                    if let data = response.data,
+                       let message = String(data: data, encoding: .utf8) {
+                        print("❌ OpenAI upload error: \(message)")
+                    }
+                    completion(.failure(error as Error))
+                }
+            }
     }
 }

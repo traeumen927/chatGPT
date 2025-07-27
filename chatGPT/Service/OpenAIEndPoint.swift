@@ -38,7 +38,7 @@ enum OpenAIEndpoint {
             return "/chat/completions"
         case .image:
             return "/images/generations"
-
+        
         case .models:
             return "/models"
         }
@@ -54,9 +54,7 @@ enum OpenAIEndpoint {
     }
     
     var headers: HTTPHeaders {
-        return [
-            "Content-Type": "application/json"
-        ]
+        ["Content-Type": "application/json"]
     }
     
     var encodableBody: Encodable? {
@@ -78,6 +76,13 @@ enum OpenAIEndpoint {
         case .image(let prompt, let size, let model):
             return OpenAIImageRequest(prompt: prompt, n: 1, size: size, model: model)
         case .models:
+            return nil
+        }
+    }
+
+    var multipart: ((MultipartFormData) -> Void)? {
+        switch self {
+        default:
             return nil
         }
     }
