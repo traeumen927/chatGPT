@@ -63,7 +63,7 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     func detectImageIntent(prompt: String) -> Single<Bool> {
         Single.create { single in
             let system = Message(role: .system,
-                                 content: "Respond 'true' only when the user specifically requests an image. If the user merely asks about capabilities or says no image is needed, respond 'false'.")
+                                 content: "Respond with 'true' only if the user explicitly creates an image or requests image editing based on an attached image. Respond with 'false' if the user is simply asking about a feature or responds that they don't need an image.")
             let user = Message(role: .user, content: prompt)
             self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
                 switch result {
