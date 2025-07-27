@@ -337,7 +337,7 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
 
-    func generateImage(prompt: String, size: String, model: OpenAIModel, attachments: [Attachment] = [], imageModel: String = "dall-e-3") {
+    func generateImage(prompt: String, size: String, model: OpenAIModel, attachments: [Attachment] = []) {
         let isFirst = messages.value.isEmpty
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
@@ -357,11 +357,9 @@ final class ChatViewModel {
                 self?.generateImageInternal(prompt: prompt,
                                             size: size,
                                             model: model,
-                                            attachments: attachments,
                                             uploaded: urls.map { $0.absoluteString },
                                             messageID: id,
-                                            isFirst: isFirst,
-                                            imageModel: imageModel)
+                                            isFirst: isFirst)
             })
             .disposed(by: disposeBag)
     }
@@ -369,11 +367,9 @@ final class ChatViewModel {
     private func generateImageInternal(prompt: String,
                                        size: String,
                                        model: OpenAIModel,
-                                       attachments: [Attachment],
                                        uploaded: [String],
                                        messageID: UUID,
-                                       isFirst: Bool,
-                                       imageModel: String) {
+                                       isFirst: Bool) {
         updateMessage(id: messageID, text: prompt, urls: uploaded)
 
         if let convID = conversationID {
@@ -385,18 +381,7 @@ final class ChatViewModel {
                 .disposed(by: disposeBag)
         }
 
-        let dimension = Int(size.split(separator: "x").first ?? "1024") ?? 1024
-        let imageData = attachments.compactMap { item -> Data? in
-            if case let .image(img) = item {
-                return img.pngForImageEdit(targetSize: CGSize(width: dimension, height: dimension))
-            }
-            return nil
-        }.first
-        let maskData = imageData == nil ? nil : UIImage.fullEditMask(size: CGSize(width: dimension, height: dimension))
-
-        let usedModel = imageData == nil ? imageModel : "dall-e-2"
-
-        generateImageUseCase.execute(prompt: prompt, size: size, model: usedModel, imageData: imageData, maskData: maskData) { [weak self] result in
+        generateImageUseCase.execute(prompt: prompt, size: size) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let urls):
