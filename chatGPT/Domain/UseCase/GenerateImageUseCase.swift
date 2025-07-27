@@ -7,11 +7,7 @@ final class GenerateImageUseCase {
         self.repository = repository
     }
 
-    func execute(prompt: String, size: String, model: String, imageData: Data? = nil, maskData: Data? = nil, completion: @escaping (Result<[String], Error>) -> Void) {
-        if let data = imageData {
-            repository.generateImageEdit(image: data, mask: maskData, prompt: prompt, size: size, model: model, completion: completion)
-        } else {
-            repository.generateImage(prompt: prompt, size: size, model: model, completion: completion)
-        }
+    func execute(prompt: String, size: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        repository.generateImage(prompt: prompt, size: size, model: "dall-e-3", completion: completion)
     }
 }
