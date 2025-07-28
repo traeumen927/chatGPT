@@ -34,6 +34,7 @@ final class ChatViewModel {
     // MARK: - Output
     let messages = BehaviorRelay<[ChatMessage]>(value: [])
     let conversationChanged = PublishRelay<Void>()
+    let isGeneratingImage = PublishRelay<Bool>()
     private let streamingMessageRelay = PublishRelay<ChatMessage>()
     var streamingMessage: Observable<ChatMessage> { streamingMessageRelay.asObservable() }
     
@@ -338,6 +339,7 @@ final class ChatViewModel {
     }
 
     func generateImage(prompt: String, size: String, model: OpenAIModel, attachments: [Attachment] = []) {
+        isGeneratingImage.accept(true)
         let isFirst = messages.value.isEmpty
         let id = UUID()
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
@@ -419,6 +421,7 @@ final class ChatViewModel {
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                 self.appendMessage(ChatMessage(type: .error, text: message))
             }
+            self.isGeneratingImage.accept(false)
         }
     }
 }

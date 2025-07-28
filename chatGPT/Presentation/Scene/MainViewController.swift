@@ -115,8 +115,14 @@ final class MainViewController: UIViewController {
         let view = ChatComposerView()
         view.placeholder = "무엇이든 물어보세요."
         view.composerColor = ThemeColor.background3
-        
+
         return view
+    }()
+
+    private let imageActivityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.hidesWhenStopped = true
+        return indicator
     }()
     
     // MARK: 테이블뷰
@@ -209,6 +215,8 @@ final class MainViewController: UIViewController {
         
         [self.tableView, self.composerView].forEach(self.view.addSubview(_:))
 
+        self.composerView.addSubview(imageActivityIndicator)
+
         self.tableView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
@@ -220,7 +228,11 @@ final class MainViewController: UIViewController {
             make.leading.trailing.equalToSuperview()
             self.composerViewBottomConstraint = make.bottom.equalToSuperview().constraint
         }
-        
+
+        imageActivityIndicator.snp.makeConstraints { make in
+            make.center.equalTo(composerView)
+        }
+
     }
     
     private func bind(){
@@ -299,7 +311,20 @@ final class MainViewController: UIViewController {
                 self?.chatViewModel.startNewConversation()
             })
             .disposed(by: disposeBag)
-        
+
+        chatViewModel.isGeneratingImage
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLoading in
+                guard let self else { return }
+                if isLoading {
+                    self.imageActivityIndicator.startAnimating()
+                } else {
+                    self.imageActivityIndicator.stopAnimating()
+                }
+                self.composerView.isUserInteractionEnabled = !isLoading
+            })
+            .disposed(by: disposeBag)
+
     }
     
     private func preloadModels() {
