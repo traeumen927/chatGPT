@@ -16,6 +16,7 @@ final class ImageViewerViewController: UIViewController {
     private let disposeBag = DisposeBag()
 
     private let scrollView = UIScrollView()
+    private let checkerboardView = CheckerboardView()
     private let imageView = UIImageView()
     private let headerView = UIView()
     private let closeButton = UIButton(type: .system)
@@ -53,6 +54,7 @@ final class ImageViewerViewController: UIViewController {
         bottomView.addSubview(buttonStack)
         buttonStack.addArrangedSubview(saveButton)
         buttonStack.addArrangedSubview(shareButton)
+        scrollView.addSubview(checkerboardView)
         scrollView.addSubview(imageView)
 
         imageView.contentMode = .scaleAspectFit
@@ -105,6 +107,12 @@ final class ImageViewerViewController: UIViewController {
         }
         buttonStack.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+
+        checkerboardView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalToSuperview()
         }
 
         imageView.snp.makeConstraints { make in
