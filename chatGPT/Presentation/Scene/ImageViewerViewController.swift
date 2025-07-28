@@ -44,7 +44,7 @@ final class ImageViewerViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let rect = AVMakeRect(aspectRatio: image.size, insideRect: imageView.bounds)
-        checkerboardView.frame = rect
+        checkerboardView.frame = imageView.convert(rect, to: scrollView)
     }
 
     private func layout() {
@@ -61,8 +61,8 @@ final class ImageViewerViewController: UIViewController {
         bottomView.addSubview(buttonStack)
         buttonStack.addArrangedSubview(saveButton)
         buttonStack.addArrangedSubview(shareButton)
+        scrollView.addSubview(checkerboardView)
         scrollView.addSubview(imageView)
-        imageView.addSubview(checkerboardView)
 
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
