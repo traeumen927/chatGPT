@@ -29,6 +29,7 @@
 		F1051DF82E004EBB008D5D80 /* OpenAIEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */; };
 		F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF92E004EC8008D5D80 /* OpenAIError.swift */; };
 		F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */; };
+		F10E27FE2E37A6AA00F3821A /* DocumentViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */; };
 		F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */; };
 		F117E0712E01587F00D1C95F /* String+Truncate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0702E01587F00D1C95F /* String+Truncate.swift */; };
 		F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */; };
@@ -76,8 +77,9 @@
 		F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AD2E25175E009B8527 /* RemoteImageView.swift */; };
 		F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */; };
 		F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B12E251760009B8527 /* RemoteImageGroupView.swift */; };
-		F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */; };
-		F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
+               F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */; };
+               877774BE35CC4B809A1FE326 /* CheckerboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */; };
+               F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
 		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
@@ -171,6 +173,7 @@
 		F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIEndPoint.swift; sourceTree = "<group>"; };
 		F1051DF92E004EC8008D5D80 /* OpenAIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIError.swift; sourceTree = "<group>"; };
 		F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIChatRequest.swift; sourceTree = "<group>"; };
+		F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewerViewController.swift; sourceTree = "<group>"; };
 		F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModelListResponse.swift; sourceTree = "<group>"; };
 		F117E0702E01587F00D1C95F /* String+Truncate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Truncate.swift"; sourceTree = "<group>"; };
 		F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchAvailableModelsUseCase.swift; sourceTree = "<group>"; };
@@ -222,8 +225,9 @@
 		F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageAttachment.swift; sourceTree = "<group>"; };
 		F18040AD2E25175E009B8527 /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
 		F18040B12E251760009B8527 /* RemoteImageGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupView.swift; sourceTree = "<group>"; };
-		F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
-		F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
+               F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
+               A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerboardView.swift; sourceTree = "<group>"; };
+               F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
@@ -520,6 +524,7 @@
 				e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
 				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
 				F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */,
+				F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */,
 				F117E07C2E018AF400D1C95F /* Cells */,
 			);
 			path = Scene;
@@ -552,10 +557,11 @@
 				F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */,
 				F18040AD2E25175E009B8527 /* RemoteImageView.swift */,
 				F18040B12E251760009B8527 /* RemoteImageGroupView.swift */,
-				F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */,
-				FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */,
-				F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */,
-				F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */,
+                               F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */,
+                               FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */,
+                               A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */,
+                               F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */,
+                               F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */,
 				F17898932E1414AF000AEA35 /* TableBlockView.swift */,
 				F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */,
 				F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */,
@@ -733,6 +739,7 @@
 			files = (
 				F13EB59B2E12BFF400171AFC /* ParseMarkdownUseCase.swift in Sources */,
 				F15BC4FA2E0A959200F25923 /* FirestoreConversationRepository.swift in Sources */,
+				F10E27FE2E37A6AA00F3821A /* DocumentViewerViewController.swift in Sources */,
 				F1EF04ED2E044CDE005D2CF9 /* GoogleLoginButton.swift in Sources */,
 				F1452D892E09796F00795A9E /* UIImage.swift in Sources */,
 				F15935282E1C127F00739408 /* UserPreference.swift in Sources */,
@@ -793,9 +800,10 @@
 				F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */,
 				F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */,
 				F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */,
-				F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */,
-				FAAAAAA12EAAAAAA00000001 /* RemoteImageCollectionCell.swift in Sources */,
-				F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
+                               F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */,
+                               FAAAAAA12EAAAAAA00000001 /* RemoteImageCollectionCell.swift in Sources */,
+                               877774BE35CC4B809A1FE326 /* CheckerboardView.swift in Sources */,
+                               F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
 				0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
 				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
 				F15935262E1C127500739408 /* FirestoreUserPreferenceRepository.swift in Sources */,

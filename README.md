@@ -26,15 +26,17 @@
 
 ## 📚 목차
 
-- [🔐 OpenAI API 키 입력 과정 안내](#-openai-api-키-입력-과정-안내)
-- [💬 질문하고, 답변을 받아보세요](#-질문하고-답변을-받아보세요)
-- [🛠️ 모델 선택 및 유지 기능](#️-모델-선택-및-유지-기능)
-- [🧠 대화의 흐름을 기억하는 문맥 유지 기능](#-대화의-흐름을-기억하는-문맥-유지-기능)
-- [📂 대화 히스토리 불러오기 및 전환 기능](#-대화-히스토리-불러오기-및-전환-기능)
-- [🔁 스트리밍 응답 지원 (Stream On/Off)](#-스트리밍-응답-지원-stream-onoff)
-- [🌗 시스템 테마 대응 (다크모드 & 라이트모드)](#-시스템-테마-대응-다크모드--라이트모드)
-- [📄 마크다운 형식 지원](#-마크다운-형식-지원)
+- [🔐 OpenAI API 키 입력 과정 안내](#-openai-api-키-입력-과정-안내)  
+- [💬 질문하고, 답변을 받아보세요](#-질문하고-답변을-받아보세요)  
+- [📎 파일 및 이미지 첨부 기능](#-파일-및-이미지-첨부-기능)
 - [🖼️ 이미지 생성 기능](#-이미지-생성-기능)
+- [🛠️ 모델 선택 및 유지 기능](#️-모델-선택-및-유지-기능)  
+- [🧠 대화의 흐름을 기억하는 문맥 유지 기능](#-대화의-흐름을-기억하는-문맥-유지-기능)  
+- [📂 대화 히스토리 불러오기 및 전환 기능](#-대화-히스토리-불러오기-및-전환-기능)  
+- [🔁 스트리밍 응답 지원 (Stream On/Off)](#-스트리밍-응답-지원-stream-onoff)  
+- [🌗 시스템 테마 대응 (다크모드 & 라이트모드)](#-시스템-테마-대응-다크모드--라이트모드)  
+- [📄 마크다운 형식 지원](#-마크다운-형식-지원)  
+- [🔒 Firestore 보안 규칙](#-firestore-보안-규칙)
 
 ---
 
@@ -78,6 +80,73 @@ API 키는 [OpenAI API Key 페이지](https://platform.openai.com/account/api-ke
   <img src="https://github.com/user-attachments/assets/d2efe748-d5eb-42a1-b416-19f5fa8edba8" width="24%">
   <img src="https://github.com/user-attachments/assets/4d376015-08bd-4061-84f4-428e31f91a52" width="24%">
 </p>
+
+---
+
+## 📎 파일 및 이미지 첨부 기능
+
+이 앱은 사용자가 질문과 함께 **파일이나 이미지, 실시간 사진 촬영** 등을 첨부할 수 있도록 구성되어 있습니다.  
+첨부된 데이터는 GPT API 요청 시 함께 전송되며, 분석 및 답변에 활용됩니다.
+
+📸 **이미지는 다음 흐름을 보여줍니다:**
+
+1. 하단의 ➕ 버튼을 눌러 사진, 앨범, 파일을 선택할 수 있는 메뉴를 여는 화면  
+2. 갤러리에서 첨부할 이미지를 선택하는 화면  
+3. 이미지가 첨부된 상태에서 질문을 작성하는 화면  
+4. 첨부된 이미지를 인식한 후, GPT가 답변을 제공하는 화면
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/67a50b3b-c611-40d0-8d23-5be759efd215" width="24%">
+  <img src="https://github.com/user-attachments/assets/c911a5be-ffa9-4c83-a469-093bef0e34d5" width="24%">
+  <img src="https://github.com/user-attachments/assets/6d0d793c-2bff-4a04-9db7-0f2aba99cfe6" width="24%">
+  <img src="https://github.com/user-attachments/assets/e26f4bfb-8a4e-4b8c-bddc-2d12cbc90328" width="24%">
+</p>
+
+> 이미지나 파일은 OpenAI의 Vision API로 전송되며, 첨부는 UI 상에서 직관적으로 구성되어 있습니다.
+
+---
+
+## 🖼 이미지 생성 기능
+
+OpenAI의 DALL·E API를 통해 텍스트 프롬프트 기반 이미지 생성이 가능합니다.  
+사용자가 메시지를 입력할 때, 시스템은 해당 요청이 **이미지를 생성하려는 의도**인지 판단합니다.  
+이러한 의도가 감지되면, 응답 대신 이미지가 자동 생성됩니다.
+
+내부적으로는 다음과 같은 판단 로직이 사용됩니다:
+
+```swift
+func detectImageIntent(prompt: String) -> Single<Bool> {
+    Single.create { single in
+        let system = Message(role: .system,
+            content: "Respond with 'true' only if the user asks you to create the image they want themselves. Respond with 'false' if the user is simply asking about a feature or responds that they don't need an image.")
+        let user = Message(role: .user, content: prompt)
+        self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { result in
+            switch result {
+            case .success(let decoded):
+                let reply = decoded.choices.first?.message.content.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+                single(.success(reply.contains("true")))
+            case .failure(let error):
+                single(.failure(error))
+            }
+        }
+        return Disposables.create()
+    }
+}
+```
+
+📸 **이미지는 다음을 보여줍니다:**
+
+1. 사용자가 이미지 생성을 의도한 질문을 입력하는 화면  
+2. 해당 프롬프트에 따라 생성된 이미지가 출력된 대화 화면  
+3. 이미지를 탭하면 전체화면으로 확인할 수 있는 기능도 제공됩니다
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a91a76f5-ce86-4b0a-8f61-ca0c8361a3ef" width="30%">
+  <img src="https://github.com/user-attachments/assets/36aa06da-a2e6-4d8e-8d53-8a21d15fde60" width="30%">
+  <img src="https://github.com/user-attachments/assets/b7254759-d1d1-4b69-8bd9-217e8e93dfbe" width="30%">
+</p>
+
+> 이미지 생성 결과는 일반 메시지와 동일한 위치에 출력되며, 하나의 대화 흐름으로 자연스럽게 통합됩니다.
 
 ---
 
@@ -247,7 +316,7 @@ UIKit 기반 구성 요소 및 커스텀 UI 모두 traitCollection에 따라 적
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/222b430d-19b7-4198-96cb-92eef035643d" width="30%">
-  <img src="https://github.com/user-attachments/assets/0f4b9b4c-800a-436e-a2f9-5fa91b6c465b" width="30%">
+  <img src="https://github.com/user-attachments/assets/87f6a237-32a1-4e6b-8f70-03961a7458ee" width="30%">
   <img src="https://github.com/user-attachments/assets/bf8b0b6a-bff3-4768-921a-35f45075546f" width="30%">
 </p>
 <p align="center">
@@ -258,22 +327,6 @@ UIKit 기반 구성 요소 및 커스텀 UI 모두 traitCollection에 따라 적
 
 
 > 사용자가 읽기 편하게 정돈된 형태로 답변을 전달하는 데 중점을 두었으며, 추가 서식이 필요할 경우에도 구조 변경 없이 손쉽게 확장할 수 있습니다.
-
----
-
-## 🖼️ 이미지 생성 기능
-
-OpenAI의 DALL·E 3 API를 이용해 원하는 이미지를 만들 수 있습니다. `ChatViewModel`의 `generateImage(prompt:size:model:attachments:)` 메서드는 이미지 생성을 DALL·E 3 모델로 고정하여 처리합니다.
-
-```
-viewModel.generateImage(prompt: "A cute cat", size: "512x512", model: someModel)
-```
-
-실행 결과 이미지는 메시지와 동일한 형태로 채팅 화면에 표시됩니다.
-
-메시지 전송 시 이미지 생성 의도를 먼저 판별합니다. 이 과정은 OpenAI 분류 API를 활용하며 `DetectImageRequestUseCase`가 `Single<Bool>` 형태로 결과를 반환합니다. 분류 결과가 참일 때만 `generateImage`가 호출되어 불필요한 이미지 생성 요청을 막습니다.
-
-
 
 ---
 
