@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Toast
 
 final class ImageViewerViewController: UIViewController {
     private let image: UIImage
@@ -68,14 +69,18 @@ final class ImageViewerViewController: UIViewController {
         saveConfig.image = UIImage(systemName: "square.and.arrow.down")
         saveConfig.imagePlacement = .top
         saveConfig.imagePadding = 4
-        saveConfig.title = "저장"
+        var saveTitle = AttributedString("저장")
+        saveTitle.font = .systemFont(ofSize: 10)
+        saveConfig.attributedTitle = saveTitle
         saveButton.configuration = saveConfig
 
         var shareConfig = UIButton.Configuration.plain()
         shareConfig.image = UIImage(systemName: "square.and.arrow.up")
         shareConfig.imagePlacement = .top
         shareConfig.imagePadding = 4
-        shareConfig.title = "공유"
+        var shareTitle = AttributedString("공유")
+        shareTitle.font = .systemFont(ofSize: 10)
+        shareConfig.attributedTitle = shareTitle
         shareButton.configuration = shareConfig
 
         [saveButton, shareButton].forEach { $0.tintColor = .white }
@@ -118,7 +123,7 @@ final class ImageViewerViewController: UIViewController {
             .disposed(by: disposeBag)
 
         saveButton.rx.tap
-            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind { [weak self] in
                 self?.saveImage()
             }
@@ -133,7 +138,13 @@ final class ImageViewerViewController: UIViewController {
     }
 
     private func saveImage() {
-        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+
+    @objc
+    private func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        guard error == nil else { return }
+        view.makeToast("저장이 완료되었습니다", duration: 1.5, position: .bottom)
     }
 
     private func shareImage() {
