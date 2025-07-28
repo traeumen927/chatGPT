@@ -19,6 +19,7 @@ final class ImageViewerViewController: UIViewController {
     private let headerView = UIView()
     private let closeButton = UIButton(type: .system)
     private let bottomView = UIView()
+    private let buttonStack = UIStackView()
     private let saveButton = UIButton(type: .system)
     private let shareButton = UIButton(type: .system)
 
@@ -48,8 +49,9 @@ final class ImageViewerViewController: UIViewController {
         view.addSubview(headerView)
         view.addSubview(bottomView)
         headerView.addSubview(closeButton)
-        bottomView.addSubview(saveButton)
-        bottomView.addSubview(shareButton)
+        bottomView.addSubview(buttonStack)
+        buttonStack.addArrangedSubview(saveButton)
+        buttonStack.addArrangedSubview(shareButton)
         scrollView.addSubview(imageView)
 
         imageView.contentMode = .scaleAspectFit
@@ -57,10 +59,25 @@ final class ImageViewerViewController: UIViewController {
 
         headerView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         bottomView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        buttonStack.axis = .horizontal
+        buttonStack.distribution = .fillEqually
         closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         closeButton.tintColor = .white
-        saveButton.setTitle("저장", for: .normal)
-        shareButton.setTitle("공유", for: .normal)
+
+        var saveConfig = UIButton.Configuration.plain()
+        saveConfig.image = UIImage(systemName: "square.and.arrow.down")
+        saveConfig.imagePlacement = .top
+        saveConfig.imagePadding = 4
+        saveConfig.title = "저장"
+        saveButton.configuration = saveConfig
+
+        var shareConfig = UIButton.Configuration.plain()
+        shareConfig.image = UIImage(systemName: "square.and.arrow.up")
+        shareConfig.imagePlacement = .top
+        shareConfig.imagePadding = 4
+        shareConfig.title = "공유"
+        shareButton.configuration = shareConfig
+
         [saveButton, shareButton].forEach { $0.tintColor = .white }
 
         scrollView.snp.makeConstraints { make in
@@ -79,15 +96,10 @@ final class ImageViewerViewController: UIViewController {
 
         bottomView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(60)
+            make.height.equalTo(64)
         }
-        saveButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(40)
-            make.centerY.equalToSuperview()
-        }
-        shareButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(40)
-            make.centerY.equalToSuperview()
+        buttonStack.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
 
         imageView.snp.makeConstraints { make in
