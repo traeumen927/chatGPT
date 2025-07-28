@@ -10,6 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import Toast
+import AVFoundation
 
 final class ImageViewerViewController: UIViewController {
     private let image: UIImage
@@ -40,6 +41,12 @@ final class ImageViewerViewController: UIViewController {
         bind()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let rect = AVMakeRect(aspectRatio: image.size, insideRect: imageView.bounds)
+        checkerboardView.frame = rect
+    }
+
     private func layout() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.95)
 
@@ -54,8 +61,8 @@ final class ImageViewerViewController: UIViewController {
         bottomView.addSubview(buttonStack)
         buttonStack.addArrangedSubview(saveButton)
         buttonStack.addArrangedSubview(shareButton)
-        scrollView.addSubview(checkerboardView)
         scrollView.addSubview(imageView)
+        imageView.addSubview(checkerboardView)
 
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
@@ -107,12 +114,6 @@ final class ImageViewerViewController: UIViewController {
         }
         buttonStack.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-        }
-
-        checkerboardView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalToSuperview()
         }
 
         imageView.snp.makeConstraints { make in
