@@ -344,7 +344,12 @@ final class ChatMessageCell: UITableViewCell {
                     button.setImage(image, for: .normal)
                     button.setTitle(" " + url.lastPathComponent, for: .normal)
                     button.contentHorizontalAlignment = .left
-                    button.rx.tap.bind { UIApplication.shared.open(url) }.disposed(by: disposeBag)
+                    button.rx.tap.bind {
+                        let viewer = DocumentViewerViewController(url: url)
+                        viewer.modalPresentationStyle = .overFullScreen
+                        viewer.modalTransitionStyle = .crossDissolve
+                        UIApplication.topViewController?.present(viewer, animated: true)
+                    }.disposed(by: disposeBag)
                     attachmentsStackView.addArrangedSubview(button)
                     button.snp.makeConstraints { $0.width.equalToSuperview() }
                 }
@@ -382,7 +387,12 @@ final class ChatMessageCell: UITableViewCell {
                     button.setImage(image, for: .normal)
                     button.setTitle(" " + url.lastPathComponent, for: .normal)
                     button.contentHorizontalAlignment = .left
-                    button.rx.tap.bind { UIApplication.shared.open(url) }.disposed(by: disposeBag)
+                    button.rx.tap.bind {
+                        let viewer = DocumentViewerViewController(url: url)
+                        viewer.modalPresentationStyle = .overFullScreen
+                        viewer.modalTransitionStyle = .crossDissolve
+                        UIApplication.topViewController?.present(viewer, animated: true)
+                    }.disposed(by: disposeBag)
                     attachmentsStackView.addArrangedSubview(button)
                     button.snp.makeConstraints { $0.width.equalToSuperview() }
                 }

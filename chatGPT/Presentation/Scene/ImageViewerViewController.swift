@@ -18,6 +18,9 @@ final class ImageViewerViewController: UIViewController {
     private let imageView = UIImageView()
     private let headerView = UIView()
     private let closeButton = UIButton(type: .system)
+    private let bottomView = UIView()
+    private let saveButton = UIButton(type: .system)
+    private let shareButton = UIButton(type: .system)
 
     init(image: UIImage) {
         self.image = image
@@ -43,15 +46,22 @@ final class ImageViewerViewController: UIViewController {
 
         view.addSubview(scrollView)
         view.addSubview(headerView)
+        view.addSubview(bottomView)
         headerView.addSubview(closeButton)
+        bottomView.addSubview(saveButton)
+        bottomView.addSubview(shareButton)
         scrollView.addSubview(imageView)
 
         imageView.contentMode = .scaleAspectFit
         imageView.image = image
 
         headerView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        bottomView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         closeButton.tintColor = .white
+        saveButton.setTitle("저장", for: .normal)
+        shareButton.setTitle("공유", for: .normal)
+        [saveButton, shareButton].forEach { $0.tintColor = .white }
 
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -64,6 +74,19 @@ final class ImageViewerViewController: UIViewController {
 
         closeButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+        }
+
+        bottomView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(60)
+        }
+        saveButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(40)
+            make.centerY.equalToSuperview()
+        }
+        shareButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(40)
             make.centerY.equalToSuperview()
         }
 
@@ -81,6 +104,29 @@ final class ImageViewerViewController: UIViewController {
                 self?.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
+
+        saveButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .bind { [weak self] in
+                self?.saveImage()
+            }
+            .disposed(by: disposeBag)
+
+        shareButton.rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .bind { [weak self] in
+                self?.shareImage()
+            }
+            .disposed(by: disposeBag)
+    }
+
+    private func saveImage() {
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+    }
+
+    private func shareImage() {
+        let activity = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        present(activity, animated: true)
     }
 }
 
