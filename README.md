@@ -143,7 +143,7 @@ func detectImageIntent(prompt: String) -> Single<Bool> {
 <p align="center">
   <img src="https://github.com/user-attachments/assets/a91a76f5-ce86-4b0a-8f61-ca0c8361a3ef" width="30%">
   <img src="https://github.com/user-attachments/assets/36aa06da-a2e6-4d8e-8d53-8a21d15fde60" width="30%">
-  <img src="https://github.com/user-attachments/assets/b7254759-d1d1-4b69-8bd9-217e8e93dfbe" width="30%">
+  <img src="https://github.com/user-attachments/assets/e8bac050-b17d-497a-a54e-96a1b3ffc830" width="30%">
 </p>
 
 > 이미지 생성 결과는 일반 메시지와 동일한 위치에 출력되며, 하나의 대화 흐름으로 자연스럽게 통합됩니다.
