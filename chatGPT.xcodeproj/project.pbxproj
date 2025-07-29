@@ -101,6 +101,9 @@
 		F1D772CA2E321F6C006F749A /* OpenAIServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772C92E321F6C006F749A /* OpenAIServiceProtocol.swift */; };
 		F1D772CC2E321F7E006F749A /* DetectImageRequestUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772CB2E321F7E006F749A /* DetectImageRequestUseCase.swift */; };
 		F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */; };
+		F1D782962E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782952E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift */; };
+		F1D782982E391E17001C9653 /* PreferenceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782972E391E17001C9653 /* PreferenceStatus.swift */; };
+		F1D7829A2E391E24001C9653 /* PreferenceStatusRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782992E391E24001C9653 /* PreferenceStatusRepository.swift */; };
 		F1DE5A762E094BD6001B0CA8 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */; };
 		F1DE5A782E094C37001B0CA8 /* FirebaseAuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */; };
 		F1DF3AF22DF9AD4400D8445A /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = F1DF3AF12DF9AD4400D8445A /* Toast */; };
@@ -258,6 +261,9 @@
 		F1D772C92E321F6C006F749A /* OpenAIServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIServiceProtocol.swift; sourceTree = "<group>"; };
 		F1D772CB2E321F7E006F749A /* DetectImageRequestUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectImageRequestUseCase.swift; sourceTree = "<group>"; };
 		F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectImageRequestUseCaseTests.swift; sourceTree = "<group>"; };
+		F1D782952E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorePreferenceStatusRepository.swift; sourceTree = "<group>"; };
+		F1D782972E391E17001C9653 /* PreferenceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceStatus.swift; sourceTree = "<group>"; };
+		F1D782992E391E24001C9653 /* PreferenceStatusRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceStatusRepository.swift; sourceTree = "<group>"; };
 		F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthRepository.swift; sourceTree = "<group>"; };
 		F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAPIKeyRepository.swift; sourceTree = "<group>"; };
@@ -337,6 +343,7 @@
 		F1051DF12E004DFE008D5D80 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
+				F1D782972E391E17001C9653 /* PreferenceStatus.swift */,
 				F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */,
 				F1D52BC62E2679F900239002 /* ModelConfig.swift */,
 				F15935272E1C127F00739408 /* UserPreference.swift */,
@@ -449,6 +456,7 @@
 		F1DF3B012DF9AF5700D8445A /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				F1D782952E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift */,
 				F1BFC8342E38FF8400FF3DA6 /* OpenAITranslationRepository.swift */,
 				F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */,
 				F1D52BC42E2679F000239002 /* FirestoreModelConfigRepository.swift */,
@@ -480,6 +488,7 @@
 		F1DF3B082DF9AFE900D8445A /* Repository */ = {
 			isa = PBXGroup;
 			children = (
+				F1D782992E391E24001C9653 /* PreferenceStatusRepository.swift */,
 				F1BFC8362E38FF9400FF3DA6 /* TranslationRepository.swift */,
 				F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */,
 				F1D52BC82E267A0300239002 /* ModelConfigRepository.swift */,
@@ -795,6 +804,7 @@
 				F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */,
 				F13DAC9A2E310EC4005A1A67 /* GenerateImageUseCase.swift in Sources */,
 				F1D52BC32E266CCF00239002 /* ImageViewerViewController.swift in Sources */,
+				F1D7829A2E391E24001C9653 /* PreferenceStatusRepository.swift in Sources */,
 				FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */,
 				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
 				F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */,
@@ -819,6 +829,7 @@
 				06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */,
 				F1BFC82D2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift in Sources */,
 				ED3EEADB42E0AF92425F1398 /* SwiftMarkdownRepository.swift in Sources */,
+				F1D782982E391E17001C9653 /* PreferenceStatus.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1D52BC72E2679F900239002 /* ModelConfig.swift in Sources */,
 				F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */,
@@ -862,6 +873,7 @@
 				F159352C2E1C129700739408 /* UserPreferenceRepository.swift in Sources */,
 				F13EB5992E12BFED00171AFC /* MarkdownRepository.swift in Sources */,
 				F1452D872E09741F00795A9E /* GetCurrentUserUseCase.swift in Sources */,
+				F1D782962E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift in Sources */,
 				F15BC5022E0AC1AB00F25923 /* FetchConversationsUseCase.swift in Sources */,
 				F1051DF82E004EBB008D5D80 /* OpenAIEndPoint.swift in Sources */,
 				F159352A2E1C128D00739408 /* PreferenceError.swift in Sources */,
