@@ -3,7 +3,11 @@ import FirebaseFirestore
 import RxSwift
 
 final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
-    private let db = Firestore.firestore()
+    private let db: Firestore
+
+    init(db: Firestore = Firestore.firestore()) {
+        self.db = db
+    }
 
     func fetch(uid: String) -> Single<UserPreference?> {
         Single.create { single in

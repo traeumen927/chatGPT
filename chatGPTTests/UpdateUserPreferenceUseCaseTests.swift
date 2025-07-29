@@ -123,4 +123,47 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         XCTAssertEqual(item?.key, "apples")
         XCTAssertEqual(item?.relation, .like)
     }
+
+    func test_parse_multiple_relations_in_sentence() {
+        let prompt = "I like apples but dislike bananas"
+        let exp = expectation(description: "multi")
+        useCase.execute(prompt: prompt)
+            .subscribe(onSuccess: { _ in exp.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(repo.updatedItems.count, 2)
+        XCTAssertEqual(repo.updatedItems[0].relation, .like)
+        XCTAssertEqual(repo.updatedItems[0].key, "apples")
+        XCTAssertEqual(repo.updatedItems[1].relation, .dislike)
+        XCTAssertEqual(repo.updatedItems[1].key, "bananas")
+    }
+
+    func test_parse_korean_sentence() {
+        translator.mapping["사과 좋아하고 맥주 피하고 싶어"] = "like apple avoid beer"
+        let prompt = "사과 좋아하고 맥주 피하고 싶어"
+        let exp = expectation(description: "korean")
+        useCase.execute(prompt: prompt)
+            .subscribe(onSuccess: { _ in exp.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(repo.updatedItems.count, 2)
+        XCTAssertEqual(repo.updatedItems[0].relation, .like)
+        XCTAssertEqual(repo.updatedItems[0].key, "apple")
+        XCTAssertEqual(repo.updatedItems[1].relation, .avoid)
+        XCTAssertEqual(repo.updatedItems[1].key, "beer")
+    }
+
+    func test_parse_with_punctuation_and_case() {
+        let prompt = "LIKE Pizza, AVOID Broccoli!"
+        let exp = expectation(description: "punctuation")
+        useCase.execute(prompt: prompt)
+            .subscribe(onSuccess: { _ in exp.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(repo.updatedItems.count, 2)
+        XCTAssertEqual(repo.updatedItems[0].key, "pizza")
+        XCTAssertEqual(repo.updatedItems[0].relation, .like)
+        XCTAssertEqual(repo.updatedItems[1].key, "broccoli")
+        XCTAssertEqual(repo.updatedItems[1].relation, .avoid)
+    }
 }
