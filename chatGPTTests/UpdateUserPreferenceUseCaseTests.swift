@@ -24,6 +24,19 @@ final class StubEventRepository: PreferenceEventRepository {
     func fetch(uid: String) -> Single<[PreferenceEvent]> { .just([]) }
 }
 
+final class StubStatusRepository: PreferenceStatusRepository {
+    private(set) var statuses: [PreferenceStatus] = []
+    func fetch(uid: String) -> Single<[PreferenceStatus]> { .just(statuses) }
+    func update(uid: String, status: PreferenceStatus) -> Single<Void> {
+        if let index = statuses.firstIndex(where: { $0.key == status.key }) {
+            statuses[index] = status
+        } else {
+            statuses.append(status)
+        }
+        return .just(())
+    }
+}
+
 final class StubAuthRepository: AuthRepository {
     var user: AuthUser? = AuthUser(uid: "u1", displayName: nil, photoURL: nil)
     func observeAuthState() -> Observable<AuthUser?> { .empty() }
@@ -42,6 +55,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
     private var useCase: UpdateUserPreferenceUseCase!
     private var repo: StubPreferenceRepository!
     private var eventRepo: StubEventRepository!
+    private var statusRepo: StubStatusRepository!
     private var translator: StubTranslationRepository!
     private var disposeBag: DisposeBag!
 
@@ -49,11 +63,13 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         super.setUp()
         repo = StubPreferenceRepository()
         eventRepo = StubEventRepository()
+        statusRepo = StubStatusRepository()
         translator = StubTranslationRepository()
         let authRepo = StubAuthRepository()
         let getUser = GetCurrentUserUseCase(repository: authRepo)
         useCase = UpdateUserPreferenceUseCase(repository: repo,
                                              eventRepository: eventRepo,
+                                             statusRepository: statusRepo,
                                              getCurrentUserUseCase: getUser,
                                              translationRepository: translator)
         disposeBag = DisposeBag()
