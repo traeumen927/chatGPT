@@ -71,4 +71,21 @@ final class FirestorePreferenceStatusRepository: PreferenceStatusRepository {
             return Disposables.create()
         }
     }
+
+    func delete(uid: String, key: String) -> Single<Void> {
+        Single.create { single in
+            self.db.collection("preferences")
+                .document(uid)
+                .collection("status")
+                .document(key)
+                .delete { error in
+                    if let error = error {
+                        single(.failure(error))
+                    } else {
+                        single(.success(()))
+                    }
+                }
+            return Disposables.create()
+        }
+    }
 }

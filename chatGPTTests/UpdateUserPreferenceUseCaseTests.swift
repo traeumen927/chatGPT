@@ -22,6 +22,7 @@ final class StubEventRepository: PreferenceEventRepository {
         return .just(())
     }
     func fetch(uid: String) -> Single<[PreferenceEvent]> { .just([]) }
+    func delete(uid: String, eventID: String) -> Single<Void> { .just(()) }
 }
 
 final class StubStatusRepository: PreferenceStatusRepository {
@@ -35,6 +36,7 @@ final class StubStatusRepository: PreferenceStatusRepository {
         }
         return .just(())
     }
+    func delete(uid: String, key: String) -> Single<Void> { .just(()) }
 }
 
 final class StubAuthRepository: AuthRepository {

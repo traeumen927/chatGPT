@@ -27,6 +27,11 @@ final class MenuViewController: UIViewController {
     private let updateTitleUseCase: UpdateConversationTitleUseCase
     private let deleteConversationUseCase: DeleteConversationUseCase
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
+    private let fetchEventsUseCase: FetchPreferenceEventsUseCase
+    private let fetchStatusUseCase: FetchPreferenceStatusUseCase
+    private let updateStatusUseCase: UpdatePreferenceStatusUseCase
+    private let deleteEventUseCase: DeletePreferenceEventUseCase
+    private let deleteStatusUseCase: DeletePreferenceStatusUseCase
     private var currentConversationID: String?
     private let draftExists: Bool
     private let disposeBag = DisposeBag()
@@ -64,6 +69,11 @@ final class MenuViewController: UIViewController {
          updateTitleUseCase: UpdateConversationTitleUseCase,
          deleteConversationUseCase: DeleteConversationUseCase,
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
+         fetchEventsUseCase: FetchPreferenceEventsUseCase,
+         fetchStatusUseCase: FetchPreferenceStatusUseCase,
+         updateStatusUseCase: UpdatePreferenceStatusUseCase,
+         deleteEventUseCase: DeletePreferenceEventUseCase,
+         deleteStatusUseCase: DeletePreferenceStatusUseCase,
          selectedModel: OpenAIModel,
          streamEnabled: Bool,
          currentConversationID: String?,
@@ -76,6 +86,11 @@ final class MenuViewController: UIViewController {
         self.updateTitleUseCase = updateTitleUseCase
         self.deleteConversationUseCase = deleteConversationUseCase
         self.fetchMessagesUseCase = fetchMessagesUseCase
+        self.fetchEventsUseCase = fetchEventsUseCase
+        self.fetchStatusUseCase = fetchStatusUseCase
+        self.updateStatusUseCase = updateStatusUseCase
+        self.deleteEventUseCase = deleteEventUseCase
+        self.deleteStatusUseCase = deleteStatusUseCase
         self.selectedModel = selectedModel
         self.streamEnabled = streamEnabled
         self.currentConversationID = currentConversationID
@@ -120,7 +135,14 @@ final class MenuViewController: UIViewController {
                             cell.showMenu()
                         }
                     } else if indexPath.row == 1 {
-                        return
+                        let prefVC = PreferenceHistoryViewController(
+                            fetchEventsUseCase: self.fetchEventsUseCase,
+                            fetchStatusUseCase: self.fetchStatusUseCase,
+                            updateStatusUseCase: self.updateStatusUseCase,
+                            deleteEventUseCase: self.deleteEventUseCase,
+                            deleteStatusUseCase: self.deleteStatusUseCase
+                        )
+                        self.present(prefVC, animated: true)
                     }
                 case .history:
                     let convo = self.conversations[indexPath.row]

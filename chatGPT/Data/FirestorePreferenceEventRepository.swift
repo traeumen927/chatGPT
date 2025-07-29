@@ -42,7 +42,10 @@ final class FirestorePreferenceEventRepository: PreferenceEventRepository {
                             let relation = PreferenceRelation(rawValue: raw),
                             let timestamp = data["timestamp"] as? TimeInterval
                         else { return nil }
-                        return PreferenceEvent(key: key, relation: relation, timestamp: timestamp)
+                        return PreferenceEvent(id: doc.documentID,
+                                               key: key,
+                                               relation: relation,
+                                               timestamp: timestamp)
                     }
                     single(.success(events))
                 } else if let error = error {
@@ -51,6 +54,23 @@ final class FirestorePreferenceEventRepository: PreferenceEventRepository {
                     single(.success([]))
                 }
             }
+            return Disposables.create()
+        }
+    }
+
+    func delete(uid: String, eventID: String) -> Single<Void> {
+        Single.create { single in
+            self.db.collection("preferences")
+                .document(uid)
+                .collection("events")
+                .document(eventID)
+                .delete { error in
+                    if let error = error {
+                        single(.failure(error))
+                    } else {
+                        single(.success(()))
+                    }
+                }
             return Disposables.create()
         }
     }
