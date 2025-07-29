@@ -241,9 +241,10 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
     
-    private func preferenceText(from preference: [PreferenceEvent]) -> String? {
+    func preferenceText(from preference: [PreferenceEvent]) -> String? {
         guard !preference.isEmpty else { return nil }
-        let texts = preference.map { "\($0.relation.rawValue): \($0.key)" }
+        let sorted = preference.sorted { $0.timestamp > $1.timestamp }
+        let texts = sorted.prefix(3).map { "\($0.relation.rawValue): \($0.key)" }
         let result = texts.joined(separator: ", ")
         return result.isEmpty ? nil : result
     }
