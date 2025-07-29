@@ -34,33 +34,24 @@ final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
     func update(uid: String, items: [PreferenceItem]) -> Single<Void> {
         guard !items.isEmpty else { return .just(()) }
         return Single.create { single in
-            let group = DispatchGroup()
-            var firstError: Error?
+            let batch = self.db.batch()
 
             items.forEach { item in
-                group.enter()
                 let doc = self.db.collection("preferences")
                     .document(uid)
                     .collection("items")
                     .document("\(item.key)_\(item.relation.rawValue)")
-                doc.getDocument { snapshot, error in
-                    if let error = error { firstError = error; group.leave(); return }
-                    let count = (snapshot?.data()? ["count"] as? Int ?? 0) + 1
-                    let data: [String: Any] = [
-                        "key": item.key,
-                        "relation": item.relation.rawValue,
-                        "count": count,
-                        "updatedAt": item.updatedAt
-                    ]
-                    doc.setData(data) { err in
-                        if let err = err { firstError = err }
-                        group.leave()
-                    }
-                }
+                let data: [String: Any] = [
+                    "key": item.key,
+                    "relation": item.relation.rawValue,
+                    "updatedAt": item.updatedAt,
+                    "count": FieldValue.increment(Int64(1))
+                ]
+                batch.setData(data, forDocument: doc, merge: true)
             }
 
-            group.notify(queue: .main) {
-                if let error = firstError {
+            batch.commit { error in
+                if let error = error {
                     single(.failure(error))
                 } else {
                     single(.success(()))
