@@ -46,6 +46,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         let item = repo.updatedItems.first
         XCTAssertEqual(item?.key, "사과")
         XCTAssertEqual(item?.relation, .like)
+        XCTAssertEqual(item?.count, 1)
     }
 
     func test_avoid_sentence_with_particle() {
@@ -58,6 +59,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         let item = repo.updatedItems.first
         XCTAssertEqual(item?.key, "술")
         XCTAssertEqual(item?.relation, .avoid)
+        XCTAssertEqual(item?.count, 1)
     }
 
     func test_want_sentence() {
@@ -70,5 +72,18 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         let item = repo.updatedItems.first
         XCTAssertEqual(item?.key, "콜라")
         XCTAssertEqual(item?.relation, .want)
+        XCTAssertEqual(item?.count, 1)
+    }
+
+    func test_multiple_preferences_count() {
+        let prompt = "아이콘 좋아하고 아이콘 좋아해"
+        let exp = expectation(description: "multiple")
+        useCase.execute(prompt: prompt)
+            .subscribe(onSuccess: { _ in exp.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(repo.updatedItems.count, 2)
+        XCTAssertEqual(repo.updatedItems.first?.count, 1)
+        XCTAssertEqual(repo.updatedItems.last?.count, 1)
     }
 }
