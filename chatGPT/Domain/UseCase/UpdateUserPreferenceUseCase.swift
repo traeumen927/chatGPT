@@ -4,6 +4,7 @@ import RxSwift
 final class UpdateUserPreferenceUseCase {
     private let repository: UserPreferenceRepository
     private let getCurrentUserUseCase: GetCurrentUserUseCase
+    private let tokenizer = KoreanTokenizer()
 
     init(repository: UserPreferenceRepository, getCurrentUserUseCase: GetCurrentUserUseCase) {
         self.repository = repository
@@ -19,8 +20,7 @@ final class UpdateUserPreferenceUseCase {
     }
 
     private func parse(prompt: String) -> [PreferenceItem] {
-        let tokens = prompt.split { $0.isWhitespace || $0.isPunctuation }
-            .map { String($0) }
+        let tokens = tokenizer.nouns(from: prompt)
         var items: [PreferenceItem] = []
         for (index, token) in tokens.enumerated() {
             let time = Date().timeIntervalSince1970
