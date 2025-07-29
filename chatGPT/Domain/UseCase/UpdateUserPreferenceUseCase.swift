@@ -5,53 +5,62 @@ final class UpdateUserPreferenceUseCase {
     private let repository: UserPreferenceRepository
     private let eventRepository: PreferenceEventRepository
     private let getCurrentUserUseCase: GetCurrentUserUseCase
-    private let tokenizer = KoreanTokenizer()
+    private let translationRepository: TranslationRepository
 
     init(repository: UserPreferenceRepository,
          eventRepository: PreferenceEventRepository,
-         getCurrentUserUseCase: GetCurrentUserUseCase) {
+         getCurrentUserUseCase: GetCurrentUserUseCase,
+         translationRepository: TranslationRepository) {
         self.repository = repository
         self.eventRepository = eventRepository
         self.getCurrentUserUseCase = getCurrentUserUseCase
+        self.translationRepository = translationRepository
     }
 
     func execute(prompt: String) -> Single<Void> {
         guard let user = getCurrentUserUseCase.execute() else {
             return .error(PreferenceError.noUser)
         }
-        let items = self.parse(prompt: prompt)
-        let events = items.map { PreferenceEvent(key: $0.key,
-                                                 relation: $0.relation,
-                                                 timestamp: $0.updatedAt) }
-        return repository.update(uid: user.uid, items: items)
-            .flatMap { [weak self] _ -> Single<Void> in
+        return translationRepository.translateToEnglish(prompt)
+            .map { [weak self] in self?.parse(prompt: $0) ?? [] }
+            .flatMap { [weak self] items -> Single<Void> in
                 guard let self else { return .just(()) }
-                return self.eventRepository.add(uid: user.uid, events: events)
+                let events = items.map { PreferenceEvent(key: $0.key,
+                                                         relation: $0.relation,
+                                                         timestamp: $0.updatedAt) }
+                return self.repository.update(uid: user.uid, items: items)
+                    .flatMap { [weak self] _ -> Single<Void> in
+                        guard let self else { return .just(()) }
+                        return self.eventRepository.add(uid: user.uid, events: events)
+                    }
             }
     }
 
     private func parse(prompt: String) -> [PreferenceItem] {
-        let tokens = tokenizer.nouns(from: prompt)
+        let tokens = prompt.lowercased().split { !$0.isLetter }
         var items: [PreferenceItem] = []
-        for (index, token) in tokens.enumerated() {
+        var index = 0
+        while index < tokens.count {
+            let token = tokens[index]
             let time = Date().timeIntervalSince1970
-            if token.contains("좋아") && index > 0 {
-                let key = tokens[index - 1]
-                let item = PreferenceItem(key: key, relation: .like, updatedAt: time, count: 1)
-                items.append(item)
-            } else if token.contains("싫어") && index > 0 {
-                let key = tokens[index - 1]
-                let item = PreferenceItem(key: key, relation: .dislike, updatedAt: time, count: 1)
-                items.append(item)
-            } else if (token.contains("원해") || token.contains("해줘")) && index > 0 {
-                let key = tokens[index - 1]
-                let item = PreferenceItem(key: key, relation: .want, updatedAt: time, count: 1)
-                items.append(item)
-            } else if (token.contains("원하지") || token.contains("하지마")) && index > 0 {
-                let key = tokens[index - 1]
-                let item = PreferenceItem(key: key, relation: .avoid, updatedAt: time, count: 1)
-                items.append(item)
+            if token == "like", index + 1 < tokens.count {
+                let key = String(tokens[index + 1])
+                items.append(PreferenceItem(key: key, relation: .like, updatedAt: time, count: 1))
+                index += 1
+            } else if token == "dislike", index + 1 < tokens.count {
+                let key = String(tokens[index + 1])
+                items.append(PreferenceItem(key: key, relation: .dislike, updatedAt: time, count: 1))
+                index += 1
+            } else if token == "want", index + 1 < tokens.count {
+                let key = String(tokens[index + 1])
+                items.append(PreferenceItem(key: key, relation: .want, updatedAt: time, count: 1))
+                index += 1
+            } else if token == "avoid", index + 1 < tokens.count {
+                let key = String(tokens[index + 1])
+                items.append(PreferenceItem(key: key, relation: .avoid, updatedAt: time, count: 1))
+                index += 1
             }
+            index += 1
         }
         return items
     }

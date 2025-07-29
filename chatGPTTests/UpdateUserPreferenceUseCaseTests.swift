@@ -31,64 +31,76 @@ final class StubAuthRepository: AuthRepository {
     func signOut() throws {}
 }
 
+final class StubTranslationRepository: TranslationRepository {
+    var mapping: [String: String] = [:]
+    func translateToEnglish(_ text: String) -> Single<String> {
+        .just(mapping[text] ?? text)
+    }
+}
+
 final class UpdateUserPreferenceUseCaseTests: XCTestCase {
     private var useCase: UpdateUserPreferenceUseCase!
     private var repo: StubPreferenceRepository!
     private var eventRepo: StubEventRepository!
+    private var translator: StubTranslationRepository!
     private var disposeBag: DisposeBag!
 
     override func setUp() {
         super.setUp()
         repo = StubPreferenceRepository()
         eventRepo = StubEventRepository()
+        translator = StubTranslationRepository()
         let authRepo = StubAuthRepository()
         let getUser = GetCurrentUserUseCase(repository: authRepo)
-        useCase = UpdateUserPreferenceUseCase(repository: repo, eventRepository: eventRepo, getCurrentUserUseCase: getUser)
+        useCase = UpdateUserPreferenceUseCase(repository: repo,
+                                             eventRepository: eventRepo,
+                                             getCurrentUserUseCase: getUser,
+                                             translationRepository: translator)
         disposeBag = DisposeBag()
     }
 
     func test_like_sentence() {
-        let prompt = "나는 사과를 좋아해"
+        let prompt = "I like apples"
         let exp = expectation(description: "like")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "사과")
+        XCTAssertEqual(item?.key, "apples")
         XCTAssertEqual(item?.relation, .like)
         XCTAssertEqual(item?.count, 1)
-        XCTAssertEqual(eventRepo.events.first?.key, "사과")
+        XCTAssertEqual(eventRepo.events.first?.key, "apples")
     }
 
-    func test_avoid_sentence_with_particle() {
-        let prompt = "술은 하지마"
+    func test_avoid_sentence() {
+        let prompt = "avoid beer"
         let exp = expectation(description: "avoid")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "술")
+        XCTAssertEqual(item?.key, "beer")
         XCTAssertEqual(item?.relation, .avoid)
         XCTAssertEqual(item?.count, 1)
     }
 
     func test_want_sentence() {
-        let prompt = "콜라 원해"
+        let prompt = "I want coke"
         let exp = expectation(description: "want")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "콜라")
+        XCTAssertEqual(item?.key, "coke")
         XCTAssertEqual(item?.relation, .want)
         XCTAssertEqual(item?.count, 1)
     }
 
     func test_multiple_preferences_count() {
-        let prompt = "아이콘 좋아하고 아이콘 좋아해"
+        let prompt = "I like icons and I like icons"
         let exp = expectation(description: "multiple")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
@@ -97,5 +109,18 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         XCTAssertEqual(repo.updatedItems.count, 2)
         XCTAssertEqual(repo.updatedItems.first?.count, 1)
         XCTAssertEqual(repo.updatedItems.last?.count, 1)
+    }
+
+    func test_translation() {
+        translator.mapping["リンゴが好きです"] = "I like apples"
+        let prompt = "リンゴが好きです"
+        let exp = expectation(description: "translate")
+        useCase.execute(prompt: prompt)
+            .subscribe(onSuccess: { _ in exp.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+        let item = repo.updatedItems.first
+        XCTAssertEqual(item?.key, "apples")
+        XCTAssertEqual(item?.relation, .like)
     }
 }
