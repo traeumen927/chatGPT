@@ -6,13 +6,16 @@ final class UpdateUserPreferenceUseCase {
     private let eventRepository: PreferenceEventRepository
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     private let translationRepository: TranslationRepository
+    private let statusRepository: PreferenceStatusRepository
 
     init(repository: UserPreferenceRepository,
          eventRepository: PreferenceEventRepository,
+         statusRepository: PreferenceStatusRepository,
          getCurrentUserUseCase: GetCurrentUserUseCase,
          translationRepository: TranslationRepository) {
         self.repository = repository
         self.eventRepository = eventRepository
+        self.statusRepository = statusRepository
         self.getCurrentUserUseCase = getCurrentUserUseCase
         self.translationRepository = translationRepository
     }
@@ -28,10 +31,34 @@ final class UpdateUserPreferenceUseCase {
                 let events = items.map { PreferenceEvent(key: $0.key,
                                                          relation: $0.relation,
                                                          timestamp: $0.updatedAt) }
-                return self.repository.update(uid: user.uid, items: items)
-                    .flatMap { [weak self] _ -> Single<Void> in
+                return self.statusRepository.fetch(uid: user.uid)
+                    .flatMap { [weak self] current -> Single<Void> in
                         guard let self else { return .just(()) }
-                        return self.eventRepository.add(uid: user.uid, events: events)
+                        var dict = Dictionary(uniqueKeysWithValues: current.map { ($0.key, $0) })
+                        let statusUpdates = items.map { item -> PreferenceStatus in
+                            let prev = dict[item.key]
+                            var status = PreferenceStatus(key: item.key,
+                                                          currentRelation: item.relation,
+                                                          updatedAt: item.updatedAt,
+                                                          previousRelation: nil,
+                                                          changedAt: nil)
+                            if let prev = prev, prev.currentRelation != item.relation {
+                                status.previousRelation = prev.currentRelation
+                                status.changedAt = item.updatedAt
+                            }
+                            dict[item.key] = status
+                            return status
+                        }
+                        let updateSingles = statusUpdates.map {
+                            self.statusRepository.update(uid: user.uid, status: $0)
+                        }
+                        let combined = Single.zip(updateSingles) { _ in }
+                        return self.repository.update(uid: user.uid, items: items)
+                            .flatMap { [weak self] _ -> Single<Void> in
+                                guard let self else { return .just(()) }
+                                return self.eventRepository.add(uid: user.uid, events: events)
+                            }
+                            .flatMap { combined }
                     }
             }
     }
