@@ -62,6 +62,7 @@ final class AppCoordinator {
         
         let preferenceRepository = FirestoreUserPreferenceRepository()
         let eventRepository = FirestorePreferenceEventRepository()
+        let translationRepository = OpenAITranslationRepository(repository: repository)
         let calculatePreferenceUseCase = CalculatePreferenceUseCase(
             eventRepository: eventRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
@@ -69,7 +70,8 @@ final class AppCoordinator {
         let updatePreferenceUseCase = UpdateUserPreferenceUseCase(
             repository: preferenceRepository,
             eventRepository: eventRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
+            getCurrentUserUseCase: getCurrentUserUseCase,
+            translationRepository: translationRepository
         )
         let conversationRepository = FirestoreConversationRepository()
         

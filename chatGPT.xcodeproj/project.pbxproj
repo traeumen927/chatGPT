@@ -83,7 +83,6 @@
 		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
-		F1BFC8282E38F7FF00FF3DA6 /* KoreanTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */; };
 		F1BFC82B2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */; };
 		F1BFC82D2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */; };
 		F1BFC82F2E38FC1C00FF3DA6 /* PreferenceEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */; };
@@ -237,7 +236,6 @@
 		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
-		F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreanTokenizer.swift; sourceTree = "<group>"; };
 		F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserPreferenceUseCaseTests.swift; sourceTree = "<group>"; };
 		F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorePreferenceEventRepository.swift; sourceTree = "<group>"; };
 		F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceEvent.swift; sourceTree = "<group>"; };
@@ -438,7 +436,6 @@
 		F1BFC8292E38F80300FF3DA6 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -837,7 +834,6 @@
 				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
 				F1BFC8332E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift in Sources */,
 				F15935262E1C127500739408 /* FirestoreUserPreferenceRepository.swift in Sources */,
-				F1BFC8282E38F7FF00FF3DA6 /* KoreanTokenizer.swift in Sources */,
 				F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */,
 				ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */,
 				98fe1440434d4c66ad46c0ca /* ImageRepository.swift in Sources */,
