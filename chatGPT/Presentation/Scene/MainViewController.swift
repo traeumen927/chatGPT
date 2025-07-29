@@ -26,7 +26,7 @@ final class MainViewController: UIViewController {
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
     private let parseMarkdownUseCase: ParseMarkdownUseCase
-    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
+    private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
 
@@ -152,7 +152,7 @@ final class MainViewController: UIViewController {
       loadUserImageUseCase: LoadUserProfileImageUseCase,
       observeAuthStateUseCase: ObserveAuthStateUseCase,
       parseMarkdownUseCase: ParseMarkdownUseCase,
-      fetchPreferenceUseCase: FetchUserPreferenceUseCase,
+      calculatePreferenceUseCase: CalculatePreferenceUseCase,
       updatePreferenceUseCase: UpdateUserPreferenceUseCase,
       uploadFilesUseCase: UploadFilesUseCase,
        generateImageUseCase: GenerateImageUseCase,
@@ -164,7 +164,7 @@ final class MainViewController: UIViewController {
                                            appendMessageUseCase: appendMessageUseCase,
                                            fetchMessagesUseCase: fetchConversationMessagesUseCase,
                                            contextRepository: contextRepository,
-                                           fetchPreferenceUseCase: fetchPreferenceUseCase,
+                                           calculatePreferenceUseCase: calculatePreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase,
                                            uploadFilesUseCase: uploadFilesUseCase,
                                            generateImageUseCase: generateImageUseCase,
@@ -177,7 +177,7 @@ final class MainViewController: UIViewController {
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
         self.parseMarkdownUseCase = parseMarkdownUseCase
-        self.fetchPreferenceUseCase = fetchPreferenceUseCase
+        self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
         super.init(nibName: nil, bundle: nil)
     }

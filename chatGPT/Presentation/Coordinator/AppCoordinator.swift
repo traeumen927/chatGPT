@@ -61,12 +61,14 @@ final class AppCoordinator {
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
         
         let preferenceRepository = FirestoreUserPreferenceRepository()
-        let fetchPreferenceUseCase = FetchUserPreferenceUseCase(
-            repository: preferenceRepository,
+        let eventRepository = FirestorePreferenceEventRepository()
+        let calculatePreferenceUseCase = CalculatePreferenceUseCase(
+            eventRepository: eventRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let updatePreferenceUseCase = UpdateUserPreferenceUseCase(
             repository: preferenceRepository,
+            eventRepository: eventRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let conversationRepository = FirestoreConversationRepository()
@@ -127,12 +129,10 @@ final class AppCoordinator {
             deleteConversationUseCase: deleteConversationUseCase,
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase,
-            parseMarkdownUseCase: parseMarkdownUseCase
-        ,
-            fetchPreferenceUseCase: fetchPreferenceUseCase,
+            parseMarkdownUseCase: parseMarkdownUseCase,
+            calculatePreferenceUseCase: calculatePreferenceUseCase,
             updatePreferenceUseCase: updatePreferenceUseCase,
-            uploadFilesUseCase: uploadFilesUseCase
-        ,
+            uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
             detectImageRequestUseCase: detectImageRequestUseCase
         )

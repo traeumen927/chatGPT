@@ -44,7 +44,7 @@ final class ChatViewModel {
     private let appendMessageUseCase: AppendMessageUseCase
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
     private let contextRepository: ChatContextRepository
-    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
+    private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
@@ -65,7 +65,7 @@ final class ChatViewModel {
          appendMessageUseCase: AppendMessageUseCase,
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
          contextRepository: ChatContextRepository,
-         fetchPreferenceUseCase: FetchUserPreferenceUseCase,
+         calculatePreferenceUseCase: CalculatePreferenceUseCase,
          updatePreferenceUseCase: UpdateUserPreferenceUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
@@ -76,7 +76,7 @@ final class ChatViewModel {
         self.appendMessageUseCase = appendMessageUseCase
         self.fetchMessagesUseCase = fetchMessagesUseCase
         self.contextRepository = contextRepository
-        self.fetchPreferenceUseCase = fetchPreferenceUseCase
+        self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
@@ -120,8 +120,8 @@ final class ChatViewModel {
         
         uploadFilesUseCase.execute(datas: allData)
             .catchAndReturn([])
-            .flatMap { [weak self] urls -> Single<UserPreference?> in
-                guard let self else { return .just(nil) }
+            .flatMap { [weak self] urls -> Single<[PreferenceEvent]> in
+                guard let self else { return .just([]) }
                 self.updateMessage(id: messageID, text: prompt, urls: urls.map { $0.absoluteString })
                 if let id = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: id,
@@ -131,15 +131,15 @@ final class ChatViewModel {
                     .subscribe()
                     .disposed(by: self.disposeBag)
                 }
-                return self.fetchPreferenceUseCase.execute().catchAndReturn(nil).map { pref in
+                return self.calculatePreferenceUseCase.execute(top: 3).map { events in
                     self.sendInternal(prompt: prompt,
                                       attachments: attachments,
                                       urls: urls.map { $0.absoluteString },
                                       model: model,
                                       stream: stream,
-                                      preference: pref,
+                                      preference: events,
                                       isFirst: isFirst)
-                    return pref
+                    return events
                 }
             }
             .subscribe()
@@ -151,7 +151,7 @@ final class ChatViewModel {
                               urls: [String],
                               model: OpenAIModel,
                               stream: Bool,
-                              preference: UserPreference?,
+                              preference: [PreferenceEvent],
                               isFirst: Bool) {
         guard stream else {
             let prefMessage = self.preferenceText(from: preference)
@@ -241,10 +241,9 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
     
-    private func preferenceText(from preference: UserPreference?) -> String? {
-        guard let preference else { return nil }
-        let sorted = preference.items.sorted { $0.updatedAt > $1.updatedAt }
-        let texts = sorted.map { "\($0.relation.rawValue): \($0.key)" }
+    private func preferenceText(from preference: [PreferenceEvent]) -> String? {
+        guard !preference.isEmpty else { return nil }
+        let texts = preference.map { "\($0.relation.rawValue): \($0.key)" }
         let result = texts.joined(separator: ", ")
         return result.isEmpty ? nil : result
     }
