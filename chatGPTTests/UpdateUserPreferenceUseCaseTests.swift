@@ -15,6 +15,15 @@ final class StubPreferenceRepository: UserPreferenceRepository {
     }
 }
 
+final class StubEventRepository: PreferenceEventRepository {
+    private(set) var events: [PreferenceEvent] = []
+    func add(uid: String, events: [PreferenceEvent]) -> Single<Void> {
+        self.events = events
+        return .just(())
+    }
+    func fetch(uid: String) -> Single<[PreferenceEvent]> { .just([]) }
+}
+
 final class StubAuthRepository: AuthRepository {
     var user: AuthUser? = AuthUser(uid: "u1", displayName: nil, photoURL: nil)
     func observeAuthState() -> Observable<AuthUser?> { .empty() }
@@ -25,14 +34,16 @@ final class StubAuthRepository: AuthRepository {
 final class UpdateUserPreferenceUseCaseTests: XCTestCase {
     private var useCase: UpdateUserPreferenceUseCase!
     private var repo: StubPreferenceRepository!
+    private var eventRepo: StubEventRepository!
     private var disposeBag: DisposeBag!
 
     override func setUp() {
         super.setUp()
         repo = StubPreferenceRepository()
+        eventRepo = StubEventRepository()
         let authRepo = StubAuthRepository()
         let getUser = GetCurrentUserUseCase(repository: authRepo)
-        useCase = UpdateUserPreferenceUseCase(repository: repo, getCurrentUserUseCase: getUser)
+        useCase = UpdateUserPreferenceUseCase(repository: repo, eventRepository: eventRepo, getCurrentUserUseCase: getUser)
         disposeBag = DisposeBag()
     }
 
@@ -47,6 +58,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         XCTAssertEqual(item?.key, "사과")
         XCTAssertEqual(item?.relation, .like)
         XCTAssertEqual(item?.count, 1)
+        XCTAssertEqual(eventRepo.events.first?.key, "사과")
     }
 
     func test_avoid_sentence_with_particle() {

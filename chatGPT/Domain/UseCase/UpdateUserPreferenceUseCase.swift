@@ -3,11 +3,15 @@ import RxSwift
 
 final class UpdateUserPreferenceUseCase {
     private let repository: UserPreferenceRepository
+    private let eventRepository: PreferenceEventRepository
     private let getCurrentUserUseCase: GetCurrentUserUseCase
     private let tokenizer = KoreanTokenizer()
 
-    init(repository: UserPreferenceRepository, getCurrentUserUseCase: GetCurrentUserUseCase) {
+    init(repository: UserPreferenceRepository,
+         eventRepository: PreferenceEventRepository,
+         getCurrentUserUseCase: GetCurrentUserUseCase) {
         self.repository = repository
+        self.eventRepository = eventRepository
         self.getCurrentUserUseCase = getCurrentUserUseCase
     }
 
@@ -16,7 +20,14 @@ final class UpdateUserPreferenceUseCase {
             return .error(PreferenceError.noUser)
         }
         let items = self.parse(prompt: prompt)
+        let events = items.map { PreferenceEvent(key: $0.key,
+                                                 relation: $0.relation,
+                                                 timestamp: $0.updatedAt) }
         return repository.update(uid: user.uid, items: items)
+            .flatMap { [weak self] _ -> Single<Void> in
+                guard let self else { return .just(()) }
+                return self.eventRepository.add(uid: user.uid, events: events)
+            }
     }
 
     private func parse(prompt: String) -> [PreferenceItem] {
