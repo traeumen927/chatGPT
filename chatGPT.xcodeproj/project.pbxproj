@@ -15,6 +15,7 @@
 		65fb6a733717417aaec1ec5b /* LoadUserProfileImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */; };
 		679ABD2960C6FE51CF51C1D7 /* DeleteConversationUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64EB7DD9103C65295FB89E7C /* DeleteConversationUseCase.swift */; };
 		7a337f8c2fb34958a419528f /* ChatContextRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */; };
+		877774BE35CC4B809A1FE326 /* CheckerboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */; };
 		8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717BADADF1E39907F7A046E9 /* CodeBlockView.swift */; };
 		98fe1440434d4c66ad46c0ca /* ImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = c2820ff33be8404985358650 /* ImageRepository.swift */; };
 		ABCDEF012345678900ABCDEF /* OpenAIVisionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCDEF012345678900ABCDE0 /* OpenAIVisionModels.swift */; };
@@ -77,12 +78,13 @@
 		F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AD2E25175E009B8527 /* RemoteImageView.swift */; };
 		F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */; };
 		F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B12E251760009B8527 /* RemoteImageGroupView.swift */; };
-               F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */; };
-               877774BE35CC4B809A1FE326 /* CheckerboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */; };
-               F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
+		F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */; };
+		F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
 		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
+		F1BFC8282E38F7FF00FF3DA6 /* KoreanTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */; };
+		F1BFC82B2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */; };
 		F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */; };
 		F1C897122E044087000A0C3D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F1C897112E044087000A0C3D /* GoogleSignIn */; };
 		F1D52BC12E266CAE00239002 /* UIApplication+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */; };
@@ -163,6 +165,7 @@
 		896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutUseCase.swift; sourceTree = "<group>"; };
 		9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserveAuthStateUseCase.swift; sourceTree = "<group>"; };
 		A1D564E2F8AC41B39D235947 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerboardView.swift; sourceTree = "<group>"; };
 		ABCDEF012345678900ABCDE0 /* OpenAIVisionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIVisionModels.swift; sourceTree = "<group>"; };
 		D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConversationTitleUseCase.swift; sourceTree = "<group>"; };
 		E1B9A0B12E00000100000000 /* RoleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleType.swift; sourceTree = "<group>"; };
@@ -225,12 +228,13 @@
 		F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageAttachment.swift; sourceTree = "<group>"; };
 		F18040AD2E25175E009B8527 /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
 		F18040B12E251760009B8527 /* RemoteImageGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupView.swift; sourceTree = "<group>"; };
-               F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
-               A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerboardView.swift; sourceTree = "<group>"; };
-               F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
+		F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
+		F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
+		F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreanTokenizer.swift; sourceTree = "<group>"; };
+		F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserPreferenceUseCaseTests.swift; sourceTree = "<group>"; };
 		F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSelectCell.swift; sourceTree = "<group>"; };
 		F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopViewController.swift"; sourceTree = "<group>"; };
 		F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewerViewController.swift; sourceTree = "<group>"; };
@@ -398,6 +402,7 @@
 		F166CA1A2DF9A3A300AAB5B0 /* chatGPTTests */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */,
 				F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */,
 				F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */,
 			);
@@ -421,6 +426,14 @@
 			path = Protocol;
 			sourceTree = "<group>";
 		};
+		F1BFC8292E38F80300FF3DA6 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		F1DF3B012DF9AF5700D8445A /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -442,6 +455,7 @@
 		F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC8292E38F80300FF3DA6 /* Utils */,
 				F1051DF12E004DFE008D5D80 /* Entity */,
 				E1B9A0B02E00000100000000 /* Enum */,
 				F1DF3B082DF9AFE900D8445A /* Repository */,
@@ -557,11 +571,11 @@
 				F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */,
 				F18040AD2E25175E009B8527 /* RemoteImageView.swift */,
 				F18040B12E251760009B8527 /* RemoteImageGroupView.swift */,
-                               F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */,
-                               FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */,
-                               A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */,
-                               F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */,
-                               F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */,
+				F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */,
+				FAAAAAA22EAAAAAA00000001 /* RemoteImageCollectionCell.swift */,
+				A6B1CD65F3D94A729025C3FE /* CheckerboardView.swift */,
+				F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */,
+				F17898922E1414AF000AEA35 /* TableBlockAttachment.swift */,
 				F17898932E1414AF000AEA35 /* TableBlockView.swift */,
 				F1DF3B242DF9B5CD00D8445A /* BorderedTextField.swift */,
 				F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */,
@@ -800,13 +814,14 @@
 				F18040AE2E25175E009B8527 /* RemoteImageView.swift in Sources */,
 				F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */,
 				F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */,
-                               F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */,
-                               FAAAAAA12EAAAAAA00000001 /* RemoteImageCollectionCell.swift in Sources */,
-                               877774BE35CC4B809A1FE326 /* CheckerboardView.swift in Sources */,
-                               F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
+				F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */,
+				FAAAAAA12EAAAAAA00000001 /* RemoteImageCollectionCell.swift in Sources */,
+				877774BE35CC4B809A1FE326 /* CheckerboardView.swift in Sources */,
+				F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
 				0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
 				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
 				F15935262E1C127500739408 /* FirestoreUserPreferenceRepository.swift in Sources */,
+				F1BFC8282E38F7FF00FF3DA6 /* KoreanTokenizer.swift in Sources */,
 				F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */,
 				ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */,
 				98fe1440434d4c66ad46c0ca /* ImageRepository.swift in Sources */,
@@ -849,6 +864,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */,
+				F1BFC82B2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift in Sources */,
 				F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
