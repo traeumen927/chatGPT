@@ -125,6 +125,9 @@
 		F1E571472E043CD100438A53 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F1E571462E043CD100438A53 /* FirebaseStorage */; };
 		F1EF04ED2E044CDE005D2CF9 /* GoogleLoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF04EC2E044CDE005D2CF9 /* GoogleLoginButton.swift */; };
 		F1EF04EF2E044EC5005D2CF9 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EF04EE2E044EC5005D2CF9 /* UIColor+Hex.swift */; };
+		F1F4CC402E39198000690C4D /* ChatViewModelPreferenceTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F4CC3D2E39198000690C4D /* ChatViewModelPreferenceTextTests.swift */; };
+		F1F4CC412E39198000690C4D /* FirestoreUserPreferenceRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F4CC3F2E39198000690C4D /* FirestoreUserPreferenceRepositoryTests.swift */; };
+		F1F4CC422E39198000690C4D /* FirebaseFirestoreStubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F4CC3E2E39198000690C4D /* FirebaseFirestoreStubs.swift */; };
 		F20000042F00000400000004 /* FirebaseFileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000012F00000200000002 /* FirebaseFileRepository.swift */; };
 		F20000052F00000500000005 /* FileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000002F00000100000001 /* FileRepository.swift */; };
 		F20000062F00000600000006 /* UploadFilesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000032F00000300000003 /* UploadFilesUseCase.swift */; };
@@ -269,6 +272,9 @@
 		F1DF3B262DF9B61400D8445A /* BorderedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedTextView.swift; sourceTree = "<group>"; };
 		F1EF04EC2E044CDE005D2CF9 /* GoogleLoginButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleLoginButton.swift; sourceTree = "<group>"; };
 		F1EF04EE2E044EC5005D2CF9 /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
+		F1F4CC3D2E39198000690C4D /* ChatViewModelPreferenceTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModelPreferenceTextTests.swift; sourceTree = "<group>"; };
+		F1F4CC3E2E39198000690C4D /* FirebaseFirestoreStubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseFirestoreStubs.swift; sourceTree = "<group>"; };
+		F1F4CC3F2E39198000690C4D /* FirestoreUserPreferenceRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreUserPreferenceRepositoryTests.swift; sourceTree = "<group>"; };
 		F20000002F00000100000001 /* FileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRepository.swift; sourceTree = "<group>"; };
 		F20000012F00000200000002 /* FirebaseFileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseFileRepository.swift; sourceTree = "<group>"; };
 		F20000032F00000300000003 /* UploadFilesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadFilesUseCase.swift; sourceTree = "<group>"; };
@@ -413,6 +419,9 @@
 		F166CA1A2DF9A3A300AAB5B0 /* chatGPTTests */ = {
 			isa = PBXGroup;
 			children = (
+				F1F4CC3D2E39198000690C4D /* ChatViewModelPreferenceTextTests.swift */,
+				F1F4CC3E2E39198000690C4D /* FirebaseFirestoreStubs.swift */,
+				F1F4CC3F2E39198000690C4D /* FirestoreUserPreferenceRepositoryTests.swift */,
 				F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */,
 				F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */,
 				F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */,
@@ -878,6 +887,9 @@
 				F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */,
 				F1BFC82B2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift in Sources */,
 				F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */,
+				F1F4CC402E39198000690C4D /* ChatViewModelPreferenceTextTests.swift in Sources */,
+				F1F4CC412E39198000690C4D /* FirestoreUserPreferenceRepositoryTests.swift in Sources */,
+				F1F4CC422E39198000690C4D /* FirebaseFirestoreStubs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
