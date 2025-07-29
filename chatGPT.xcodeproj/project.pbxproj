@@ -85,6 +85,10 @@
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
 		F1BFC8282E38F7FF00FF3DA6 /* KoreanTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */; };
 		F1BFC82B2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */; };
+		F1BFC82D2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */; };
+		F1BFC82F2E38FC1C00FF3DA6 /* PreferenceEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */; };
+		F1BFC8312E38FC2D00FF3DA6 /* PreferenceEventRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */; };
+		F1BFC8332E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8322E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift */; };
 		F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */; };
 		F1C897122E044087000A0C3D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F1C897112E044087000A0C3D /* GoogleSignIn */; };
 		F1D52BC12E266CAE00239002 /* UIApplication+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */; };
@@ -235,6 +239,10 @@
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
 		F1BFC8272E38F7FF00FF3DA6 /* KoreanTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoreanTokenizer.swift; sourceTree = "<group>"; };
 		F1BFC82A2E38F82D00FF3DA6 /* UpdateUserPreferenceUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserPreferenceUseCaseTests.swift; sourceTree = "<group>"; };
+		F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorePreferenceEventRepository.swift; sourceTree = "<group>"; };
+		F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceEvent.swift; sourceTree = "<group>"; };
+		F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceEventRepository.swift; sourceTree = "<group>"; };
+		F1BFC8322E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatePreferenceUseCase.swift; sourceTree = "<group>"; };
 		F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSelectCell.swift; sourceTree = "<group>"; };
 		F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopViewController.swift"; sourceTree = "<group>"; };
 		F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewerViewController.swift; sourceTree = "<group>"; };
@@ -321,6 +329,7 @@
 		F1051DF12E004DFE008D5D80 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */,
 				F1D52BC62E2679F900239002 /* ModelConfig.swift */,
 				F15935272E1C127F00739408 /* UserPreference.swift */,
 				F16D6E2C2E0D2F6200E0718A /* OpenAIStreamResponse.swift */,
@@ -437,6 +446,7 @@
 		F1DF3B012DF9AF5700D8445A /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */,
 				F1D52BC42E2679F000239002 /* FirestoreModelConfigRepository.swift */,
 				F15935252E1C127500739408 /* FirestoreUserPreferenceRepository.swift */,
 				E3EFA23517533A354FB58C66 /* SwiftMarkdownRepository.swift */,
@@ -467,6 +477,7 @@
 		F1DF3B082DF9AFE900D8445A /* Repository */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */,
 				F1D52BC82E267A0300239002 /* ModelConfigRepository.swift */,
 				F159352B2E1C129700739408 /* UserPreferenceRepository.swift */,
 				F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */,
@@ -483,6 +494,7 @@
 		F1DF3B0D2DF9B02C00D8445A /* UseCase */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC8322E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift */,
 				F1D772CB2E321F7E006F749A /* DetectImageRequestUseCase.swift */,
 				F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */,
 				F1D52BCA2E267A0C00239002 /* FetchModelConfigsUseCase.swift */,
@@ -766,6 +778,7 @@
 				F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */,
 				ABCDEF012345678900ABCDEF /* OpenAIVisionModels.swift in Sources */,
 				F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */,
+				F1BFC8312E38FC2D00FF3DA6 /* PreferenceEventRepository.swift in Sources */,
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F16D6E2F2E0D3DCA00E0718A /* UIColor+Dynamic.swift in Sources */,
 				F1EF04EF2E044EC5005D2CF9 /* UIColor+Hex.swift in Sources */,
@@ -797,7 +810,9 @@
 				B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */,
 				F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */,
 				F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */,
+				F1BFC82F2E38FC1C00FF3DA6 /* PreferenceEvent.swift in Sources */,
 				06E9380ABC93A109EEA9D9DD /* UITextView+Attachment.swift in Sources */,
+				F1BFC82D2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift in Sources */,
 				ED3EEADB42E0AF92425F1398 /* SwiftMarkdownRepository.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1D52BC72E2679F900239002 /* ModelConfig.swift in Sources */,
@@ -820,6 +835,7 @@
 				F1D52BCB2E267A0C00239002 /* FetchModelConfigsUseCase.swift in Sources */,
 				0c7e02c4d6224d4b86698d20 /* ChatContextRepositoryImpl.swift in Sources */,
 				c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */,
+				F1BFC8332E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift in Sources */,
 				F15935262E1C127500739408 /* FirestoreUserPreferenceRepository.swift in Sources */,
 				F1BFC8282E38F7FF00FF3DA6 /* KoreanTokenizer.swift in Sources */,
 				F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */,
