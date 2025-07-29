@@ -30,4 +30,5 @@ class WriteBatch {
 
 class FieldValue {
     static func increment(_ value: Int64) -> Int64 { value }
+    static func serverTimestamp() -> String { "SERVER_TIMESTAMP" }
 }

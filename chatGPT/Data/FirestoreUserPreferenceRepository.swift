@@ -19,10 +19,17 @@ final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
                             let key = data["key"] as? String,
                             let raw = data["relation"] as? String,
                             let relation = PreferenceRelation(rawValue: raw),
-                            let updatedAt = data["updatedAt"] as? TimeInterval,
                             let count = data["count"] as? Int
                         else { return nil }
-                        return PreferenceItem(key: key, relation: relation, updatedAt: updatedAt, count: count)
+                        let updated: TimeInterval
+                        if let ts = data["updatedAt"] as? Timestamp {
+                            updated = ts.dateValue().timeIntervalSince1970
+                        } else if let interval = data["updatedAt"] as? TimeInterval {
+                            updated = interval
+                        } else {
+                            updated = Date().timeIntervalSince1970
+                        }
+                        return PreferenceItem(key: key, relation: relation, updatedAt: updated, count: count)
                     }
                     single(.success(UserPreference(items: items)))
                 } else if let error = error {
@@ -48,7 +55,7 @@ final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
                 let data: [String: Any] = [
                     "key": item.key,
                     "relation": item.relation.rawValue,
-                    "updatedAt": item.updatedAt,
+                    "updatedAt": FieldValue.serverTimestamp(),
                     "count": FieldValue.increment(Int64(1))
                 ]
                 batch.setData(data, forDocument: doc, merge: true)

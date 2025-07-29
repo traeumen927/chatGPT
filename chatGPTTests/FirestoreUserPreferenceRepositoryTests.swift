@@ -25,6 +25,6 @@ final class FirestoreUserPreferenceRepositoryTests: XCTestCase {
         XCTAssertEqual(call?.document.path, "preferences/u1/items/apple_like")
         XCTAssertEqual(call?.data["key"] as? String, "apple")
         XCTAssertEqual(call?.data["relation"] as? String, "like")
-        XCTAssertEqual(call?.data["updatedAt"] as? TimeInterval, now)
+        XCTAssertEqual(call?.data["updatedAt"] as? String, "SERVER_TIMESTAMP")
     }
 }
