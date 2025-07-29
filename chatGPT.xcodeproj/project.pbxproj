@@ -140,9 +140,15 @@
 		a0d99ba381b44d72b54327f6 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = e9d37b25c97b401d97ce1732 /* MenuViewController.swift */; };
 		aa711a251b034678b1e8a5c7 /* KingfisherImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */; };
 		c076797f219e4afdb2928170 /* SummarizeMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */; };
-		ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
-		d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */; };
-		edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */; };
+                ccfa5907f1434e87b23a8d58 /* SendChatWithContextUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */; };
+                d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */; };
+                edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */; };
+                2C81557F25F64DF8A4771CF5 /* FetchPreferenceEventsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94D0B906B8B645D2BD138DD4 /* FetchPreferenceEventsUseCase.swift */; };
+                348D57FA354A44F6B99CF055 /* FetchPreferenceStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8A68DEFEA04987AB0B477C /* FetchPreferenceStatusUseCase.swift */; };
+                1901B412C30245A888727020 /* UpdatePreferenceStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8A7A046A9642F6B9514D69 /* UpdatePreferenceStatusUseCase.swift */; };
+                B15B84C1F6164CD98F4EB210 /* DeletePreferenceEventUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3B6E04199F46D0A56DC79A /* DeletePreferenceEventUseCase.swift */; };
+                F36794FCCDC145948E5611EB /* DeletePreferenceStatusUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550E777D116C4DD6AA8FDB92 /* DeletePreferenceStatusUseCase.swift */; };
+                612B81605F45468EA3B3EDEE /* PreferenceHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C4A0471F754726A0976FCD /* PreferenceHistoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -290,7 +296,13 @@
 		e9d37b25c97b401d97ce1732 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummarizeMessagesUseCase.swift; sourceTree = "<group>"; };
 		eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadUserProfileImageUseCase.swift; sourceTree = "<group>"; };
-		f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
+                f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatWithContextUseCase.swift; sourceTree = "<group>"; };
+                94D0B906B8B645D2BD138DD4 /* FetchPreferenceEventsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPreferenceEventsUseCase.swift; sourceTree = "<group>"; };
+                3F8A68DEFEA04987AB0B477C /* FetchPreferenceStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPreferenceStatusUseCase.swift; sourceTree = "<group>"; };
+                0C8A7A046A9642F6B9514D69 /* UpdatePreferenceStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePreferenceStatusUseCase.swift; sourceTree = "<group>"; };
+                8D3B6E04199F46D0A56DC79A /* DeletePreferenceEventUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePreferenceEventUseCase.swift; sourceTree = "<group>"; };
+                550E777D116C4DD6AA8FDB92 /* DeletePreferenceStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePreferenceStatusUseCase.swift; sourceTree = "<group>"; };
+                66C4A0471F754726A0976FCD /* PreferenceHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceHistoryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -530,12 +542,17 @@
 				79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
 				F20000032F00000300000003 /* UploadFilesUseCase.swift */,
 				3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */,
-				D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */,
-				64EB7DD9103C65295FB89E7C /* DeleteConversationUseCase.swift */,
-			);
-			path = UseCase;
-			sourceTree = "<group>";
-		};
+                                D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */,
+                                64EB7DD9103C65295FB89E7C /* DeleteConversationUseCase.swift */,
+                                94D0B906B8B645D2BD138DD4 /* FetchPreferenceEventsUseCase.swift */,
+                                3F8A68DEFEA04987AB0B477C /* FetchPreferenceStatusUseCase.swift */,
+                                0C8A7A046A9642F6B9514D69 /* UpdatePreferenceStatusUseCase.swift */,
+                                8D3B6E04199F46D0A56DC79A /* DeletePreferenceEventUseCase.swift */,
+                                550E777D116C4DD6AA8FDB92 /* DeletePreferenceStatusUseCase.swift */,
+                        );
+                        path = UseCase;
+                        sourceTree = "<group>";
+                };
 		F1DF3B122DF9B07800D8445A /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -563,8 +580,9 @@
 				e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
 				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
 				F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */,
-				F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */,
-				F117E07C2E018AF400D1C95F /* Cells */,
+                                F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */,
+                                66C4A0471F754726A0976FCD /* PreferenceHistoryViewController.swift */,
+                                F117E07C2E018AF400D1C95F /* Cells */,
 			);
 			path = Scene;
 			sourceTree = "<group>";
@@ -887,9 +905,15 @@
 				F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */,
 				F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */,
 				F1BFC8372E38FF9400FF3DA6 /* TranslationRepository.swift in Sources */,
-				FDF214A9E94D3F7E2DA0DEED /* UpdateConversationTitleUseCase.swift in Sources */,
-				679ABD2960C6FE51CF51C1D7 /* DeleteConversationUseCase.swift in Sources */,
-			);
+                                FDF214A9E94D3F7E2DA0DEED /* UpdateConversationTitleUseCase.swift in Sources */,
+                                679ABD2960C6FE51CF51C1D7 /* DeleteConversationUseCase.swift in Sources */,
+                                2C81557F25F64DF8A4771CF5 /* FetchPreferenceEventsUseCase.swift in Sources */,
+                                348D57FA354A44F6B99CF055 /* FetchPreferenceStatusUseCase.swift in Sources */,
+                                1901B412C30245A888727020 /* UpdatePreferenceStatusUseCase.swift in Sources */,
+                                B15B84C1F6164CD98F4EB210 /* DeletePreferenceEventUseCase.swift in Sources */,
+                                F36794FCCDC145948E5611EB /* DeletePreferenceStatusUseCase.swift in Sources */,
+                                612B81605F45468EA3B3EDEE /* PreferenceHistoryViewController.swift in Sources */,
+                        );
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F16563DA2DF9A310001CDF3B /* Sources */ = {

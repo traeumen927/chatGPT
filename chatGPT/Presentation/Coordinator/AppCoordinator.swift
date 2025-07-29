@@ -75,6 +75,26 @@ final class AppCoordinator {
             getCurrentUserUseCase: getCurrentUserUseCase,
             translationRepository: translationRepository
         )
+        let fetchPreferenceEventsUseCase = FetchPreferenceEventsUseCase(
+            repository: eventRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let fetchPreferenceStatusUseCase = FetchPreferenceStatusUseCase(
+            repository: statusRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let updatePreferenceStatusUseCase = UpdatePreferenceStatusUseCase(
+            repository: statusRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let deletePreferenceEventUseCase = DeletePreferenceEventUseCase(
+            repository: eventRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let deletePreferenceStatusUseCase = DeletePreferenceStatusUseCase(
+            repository: statusRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
         let conversationRepository = FirestoreConversationRepository()
         
         let saveConversationUseCase = SaveConversationUseCase(
@@ -138,7 +158,12 @@ final class AppCoordinator {
             updatePreferenceUseCase: updatePreferenceUseCase,
             uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
-            detectImageRequestUseCase: detectImageRequestUseCase
+            detectImageRequestUseCase: detectImageRequestUseCase,
+            fetchPreferenceEventsUseCase: fetchPreferenceEventsUseCase,
+            fetchPreferenceStatusUseCase: fetchPreferenceStatusUseCase,
+            updatePreferenceStatusUseCase: updatePreferenceStatusUseCase,
+            deletePreferenceEventUseCase: deletePreferenceEventUseCase,
+            deletePreferenceStatusUseCase: deletePreferenceStatusUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)

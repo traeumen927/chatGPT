@@ -29,6 +29,11 @@ final class MainViewController: UIViewController {
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
+    private let fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase
+    private let fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase
+    private let updatePreferenceStatusUseCase: UpdatePreferenceStatusUseCase
+    private let deletePreferenceEventUseCase: DeletePreferenceEventUseCase
+    private let deletePreferenceStatusUseCase: DeletePreferenceStatusUseCase
 
     private let disposeBag = DisposeBag()
 
@@ -73,6 +78,11 @@ final class MainViewController: UIViewController {
             updateTitleUseCase: updateTitleUseCase,
             deleteConversationUseCase: deleteConversationUseCase,
             fetchMessagesUseCase: fetchConversationMessagesUseCase,
+            fetchEventsUseCase: fetchPreferenceEventsUseCase,
+            fetchStatusUseCase: fetchPreferenceStatusUseCase,
+            updateStatusUseCase: updatePreferenceStatusUseCase,
+            deleteEventUseCase: deletePreferenceEventUseCase,
+            deleteStatusUseCase: deletePreferenceStatusUseCase,
             selectedModel: selectedModel,
             streamEnabled: streamEnabled,
             currentConversationID: chatViewModel.conversationID,
@@ -156,7 +166,12 @@ final class MainViewController: UIViewController {
       updatePreferenceUseCase: UpdateUserPreferenceUseCase,
       uploadFilesUseCase: UploadFilesUseCase,
        generateImageUseCase: GenerateImageUseCase,
-       detectImageRequestUseCase: DetectImageRequestUseCase) {
+      detectImageRequestUseCase: DetectImageRequestUseCase,
+      fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase,
+      fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase,
+      updatePreferenceStatusUseCase: UpdatePreferenceStatusUseCase,
+      deletePreferenceEventUseCase: DeletePreferenceEventUseCase,
+      deletePreferenceStatusUseCase: DeletePreferenceStatusUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -179,6 +194,11 @@ final class MainViewController: UIViewController {
         self.parseMarkdownUseCase = parseMarkdownUseCase
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
+        self.fetchPreferenceEventsUseCase = fetchPreferenceEventsUseCase
+        self.fetchPreferenceStatusUseCase = fetchPreferenceStatusUseCase
+        self.updatePreferenceStatusUseCase = updatePreferenceStatusUseCase
+        self.deletePreferenceEventUseCase = deletePreferenceEventUseCase
+        self.deletePreferenceStatusUseCase = deletePreferenceStatusUseCase
         super.init(nibName: nil, bundle: nil)
     }
     
