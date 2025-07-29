@@ -88,6 +88,8 @@
 		F1BFC82F2E38FC1C00FF3DA6 /* PreferenceEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */; };
 		F1BFC8312E38FC2D00FF3DA6 /* PreferenceEventRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */; };
 		F1BFC8332E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8322E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift */; };
+		F1BFC8352E38FF8400FF3DA6 /* OpenAITranslationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8342E38FF8400FF3DA6 /* OpenAITranslationRepository.swift */; };
+		F1BFC8372E38FF9400FF3DA6 /* TranslationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BFC8362E38FF9400FF3DA6 /* TranslationRepository.swift */; };
 		F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */; };
 		F1C897122E044087000A0C3D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F1C897112E044087000A0C3D /* GoogleSignIn */; };
 		F1D52BC12E266CAE00239002 /* UIApplication+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */; };
@@ -241,6 +243,8 @@
 		F1BFC82E2E38FC1C00FF3DA6 /* PreferenceEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceEvent.swift; sourceTree = "<group>"; };
 		F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceEventRepository.swift; sourceTree = "<group>"; };
 		F1BFC8322E38FC3900FF3DA6 /* CalculatePreferenceUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatePreferenceUseCase.swift; sourceTree = "<group>"; };
+		F1BFC8342E38FF8400FF3DA6 /* OpenAITranslationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAITranslationRepository.swift; sourceTree = "<group>"; };
+		F1BFC8362E38FF9400FF3DA6 /* TranslationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationRepository.swift; sourceTree = "<group>"; };
 		F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSelectCell.swift; sourceTree = "<group>"; };
 		F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+TopViewController.swift"; sourceTree = "<group>"; };
 		F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewerViewController.swift; sourceTree = "<group>"; };
@@ -433,16 +437,10 @@
 			path = Protocol;
 			sourceTree = "<group>";
 		};
-		F1BFC8292E38F80300FF3DA6 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
 		F1DF3B012DF9AF5700D8445A /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC8342E38FF8400FF3DA6 /* OpenAITranslationRepository.swift */,
 				F1BFC82C2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift */,
 				F1D52BC42E2679F000239002 /* FirestoreModelConfigRepository.swift */,
 				F15935252E1C127500739408 /* FirestoreUserPreferenceRepository.swift */,
@@ -462,7 +460,6 @@
 		F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			isa = PBXGroup;
 			children = (
-				F1BFC8292E38F80300FF3DA6 /* Utils */,
 				F1051DF12E004DFE008D5D80 /* Entity */,
 				E1B9A0B02E00000100000000 /* Enum */,
 				F1DF3B082DF9AFE900D8445A /* Repository */,
@@ -474,6 +471,7 @@
 		F1DF3B082DF9AFE900D8445A /* Repository */ = {
 			isa = PBXGroup;
 			children = (
+				F1BFC8362E38FF9400FF3DA6 /* TranslationRepository.swift */,
 				F1BFC8302E38FC2D00FF3DA6 /* PreferenceEventRepository.swift */,
 				F1D52BC82E267A0300239002 /* ModelConfigRepository.swift */,
 				F159352B2E1C129700739408 /* UserPreferenceRepository.swift */,
@@ -804,6 +802,7 @@
 				8A5B3792D339FC9598AD2D81 /* CodeBlockView.swift in Sources */,
 				F1D52BC12E266CAE00239002 /* UIApplication+TopViewController.swift in Sources */,
 				F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */,
+				F1BFC8352E38FF8400FF3DA6 /* OpenAITranslationRepository.swift in Sources */,
 				B053CFA5A8F732BF66D3DCA4 /* CodeBlockAttachment.swift in Sources */,
 				F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */,
 				F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */,
@@ -866,6 +865,7 @@
 				a0d99ba381b44d72b54327f6 /* MenuViewController.swift in Sources */,
 				F1DF3B182DF9B0E100D8445A /* APIKeyInputViewController.swift in Sources */,
 				F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */,
+				F1BFC8372E38FF9400FF3DA6 /* TranslationRepository.swift in Sources */,
 				FDF214A9E94D3F7E2DA0DEED /* UpdateConversationTitleUseCase.swift in Sources */,
 				679ABD2960C6FE51CF51C1D7 /* DeleteConversationUseCase.swift in Sources */,
 			);
