@@ -28,6 +28,8 @@ final class MainViewController: UIViewController {
     private let parseMarkdownUseCase: ParseMarkdownUseCase
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
+    private let fetchProfileUseCase: FetchUserProfileUseCase
+    private let updateProfileUseCase: UpdateUserProfileUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
     private let fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase
     private let fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase
@@ -164,6 +166,8 @@ final class MainViewController: UIViewController {
       parseMarkdownUseCase: ParseMarkdownUseCase,
       calculatePreferenceUseCase: CalculatePreferenceUseCase,
       updatePreferenceUseCase: UpdateUserPreferenceUseCase,
+      fetchProfileUseCase: FetchUserProfileUseCase,
+      updateProfileUseCase: UpdateUserProfileUseCase,
       uploadFilesUseCase: UploadFilesUseCase,
        generateImageUseCase: GenerateImageUseCase,
       detectImageRequestUseCase: DetectImageRequestUseCase,
@@ -194,6 +198,8 @@ final class MainViewController: UIViewController {
         self.parseMarkdownUseCase = parseMarkdownUseCase
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
+        self.fetchProfileUseCase = fetchProfileUseCase
+        self.updateProfileUseCase = updateProfileUseCase
         self.fetchPreferenceEventsUseCase = fetchPreferenceEventsUseCase
         self.fetchPreferenceStatusUseCase = fetchPreferenceStatusUseCase
         self.updatePreferenceStatusUseCase = updatePreferenceStatusUseCase

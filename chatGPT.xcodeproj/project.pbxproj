@@ -58,7 +58,12 @@
 		F159352A2E1C128D00739408 /* PreferenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15935292E1C128D00739408 /* PreferenceError.swift */; };
 		F159352C2E1C129700739408 /* UserPreferenceRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F159352B2E1C129700739408 /* UserPreferenceRepository.swift */; };
 		F159352F2E1C12B500739408 /* UpdateUserPreferenceUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F159352E2E1C12B500739408 /* UpdateUserPreferenceUseCase.swift */; };
-		F15935302E1C12B500739408 /* FetchUserPreferenceUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F159352D2E1C12B500739408 /* FetchUserPreferenceUseCase.swift */; };
+                F15935302E1C12B500739408 /* FetchUserPreferenceUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F159352D2E1C12B500739408 /* FetchUserPreferenceUseCase.swift */; };
+                6ec95adc9f08d9d82b7d1434 /* FirestoreUserProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = b7c642d507e55685629dcd29 /* FirestoreUserProfileRepository.swift */; };
+                dce5de4f3362a58526dad76a /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = dce5de4f3362a58526dad76b /* UserProfile.swift */; };
+                6f19f0255b6cb1ec8b35dae5 /* UserProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6f19f0255b6cb1ec8b35dae6 /* UserProfileRepository.swift */; };
+                30beb33a115706b3629c8e71 /* FetchUserProfileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30beb33a115706b3629c8e72 /* FetchUserProfileUseCase.swift */; };
+                34d7c14c73e95b22aca8a791 /* UpdateUserProfileUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34d7c14c73e95b22aca8a792 /* UpdateUserProfileUseCase.swift */; };
 		F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F52E0A955B00F25923 /* SaveConversationUseCase.swift */; };
 		F15BC4F82E0A957300F25923 /* ConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F72E0A957300F25923 /* ConversationRepository.swift */; };
 		F15BC4FA2E0A959200F25923 /* FirestoreConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BC4F92E0A959200F25923 /* FirestoreConversationRepository.swift */; };
@@ -303,6 +308,11 @@
                 8D3B6E04199F46D0A56DC79A /* DeletePreferenceEventUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePreferenceEventUseCase.swift; sourceTree = "<group>"; };
                 550E777D116C4DD6AA8FDB92 /* DeletePreferenceStatusUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePreferenceStatusUseCase.swift; sourceTree = "<group>"; };
                 66C4A0471F754726A0976FCD /* PreferenceHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceHistoryViewController.swift; sourceTree = "<group>"; };
+                b7c642d507e55685629dcd29 /* FirestoreUserProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreUserProfileRepository.swift; sourceTree = "<group>"; };
+                dce5de4f3362a58526dad76b /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+                6f19f0255b6cb1ec8b35dae6 /* UserProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRepository.swift; sourceTree = "<group>"; };
+                30beb33a115706b3629c8e72 /* FetchUserProfileUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserProfileUseCase.swift; sourceTree = "<group>"; };
+                34d7c14c73e95b22aca8a792 /* UpdateUserProfileUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserProfileUseCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -364,15 +374,16 @@
 				F15BC4FF2E0AC1A200F25923 /* ConversationSummary.swift */,
 				F1452D842E09741500795A9E /* AuthUser.swift */,
 				F1051DF22E004E17008D5D80 /* OpenAIResponse.swift */,
-				F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
-				F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */,
-				ABCDEF012345678900ABCDE0 /* OpenAIVisionModels.swift */,
-				F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
-				F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
-			);
-			path = Entity;
-			sourceTree = "<group>";
-		};
+                                F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */,
+                                F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */,
+                                ABCDEF012345678900ABCDE0 /* OpenAIVisionModels.swift */,
+                                F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
+                                F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
+                                dce5de4f3362a58526dad76b /* UserProfile.swift */,
+                        );
+                        path = Entity;
+                        sourceTree = "<group>";
+                };
 		F117E06F2E01586400D1C95F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -480,12 +491,13 @@
 				F117E0742E0184A900D1C95F /* OpenAIRepository.swift */,
 				F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */,
 				d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */,
-				7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */,
-				F20000012F00000200000002 /* FirebaseFileRepository.swift */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
+                                7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */,
+                                F20000012F00000200000002 /* FirebaseFileRepository.swift */,
+                                b7c642d507e55685629dcd29 /* FirestoreUserProfileRepository.swift */,
+                        );
+                        path = Data;
+                        sourceTree = "<group>";
+                };
 		F1DF3B042DF9AF9900D8445A /* Domain */ = {
 			isa = PBXGroup;
 			children = (
@@ -510,12 +522,13 @@
 				F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */,
 				F1DF3B092DF9B01100D8445A /* ApiKeyRepository.swift */,
 				3523b66a0b6a4beab384ad00 /* ChatContextRepository.swift */,
-				c2820ff33be8404985358650 /* ImageRepository.swift */,
-				F20000002F00000100000001 /* FileRepository.swift */,
-			);
-			path = Repository;
-			sourceTree = "<group>";
-		};
+                                c2820ff33be8404985358650 /* ImageRepository.swift */,
+                                F20000002F00000100000001 /* FileRepository.swift */,
+                                6f19f0255b6cb1ec8b35dae6 /* UserProfileRepository.swift */,
+                        );
+                        path = Repository;
+                        sourceTree = "<group>";
+                };
 		F1DF3B0D2DF9B02C00D8445A /* UseCase */ = {
 			isa = PBXGroup;
 			children = (
@@ -536,12 +549,14 @@
 				F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */,
 				ee987c883dab481cb2765061 /* SummarizeMessagesUseCase.swift */,
 				f495b15056fc494682c60df5 /* SendChatWithContextUseCase.swift */,
-				896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */,
-				eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */,
-				9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
-				79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
-				F20000032F00000300000003 /* UploadFilesUseCase.swift */,
-				3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */,
+                                896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */,
+                                eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */,
+                                9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
+                                79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
+                                F20000032F00000300000003 /* UploadFilesUseCase.swift */,
+                                30beb33a115706b3629c8e72 /* FetchUserProfileUseCase.swift */,
+                                34d7c14c73e95b22aca8a792 /* UpdateUserProfileUseCase.swift */,
+                                3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */,
                                 D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */,
                                 64EB7DD9103C65295FB89E7C /* DeleteConversationUseCase.swift */,
                                 94D0B906B8B645D2BD138DD4 /* FetchPreferenceEventsUseCase.swift */,
@@ -879,9 +894,14 @@
 				F20000052F00000500000005 /* FileRepository.swift in Sources */,
 				F1D772CA2E321F6C006F749A /* OpenAIServiceProtocol.swift in Sources */,
 				F20000062F00000600000006 /* UploadFilesUseCase.swift in Sources */,
-				65fb6a733717417aaec1ec5b /* LoadUserProfileImageUseCase.swift in Sources */,
-				d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */,
-				edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */,
+                                65fb6a733717417aaec1ec5b /* LoadUserProfileImageUseCase.swift in Sources */,
+                                6ec95adc9f08d9d82b7d1434 /* FirestoreUserProfileRepository.swift in Sources */,
+                                dce5de4f3362a58526dad76a /* UserProfile.swift in Sources */,
+                                6f19f0255b6cb1ec8b35dae5 /* UserProfileRepository.swift in Sources */,
+                                30beb33a115706b3629c8e71 /* FetchUserProfileUseCase.swift in Sources */,
+                                34d7c14c73e95b22aca8a791 /* UpdateUserProfileUseCase.swift in Sources */,
+                                d4ae3188874b4ea4a0abdef2 /* ObserveAuthStateUseCase.swift in Sources */,
+                                edab8d1cb29b4a0d8fc109d2 /* ObserveConversationsUseCase.swift in Sources */,
 				F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */,
 				F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */,
 				F1DF3B1D2DF9B42700D8445A /* ThemeColor.swift in Sources */,

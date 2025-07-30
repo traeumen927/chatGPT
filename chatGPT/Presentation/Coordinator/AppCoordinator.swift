@@ -64,6 +64,16 @@ final class AppCoordinator {
         let eventRepository = FirestorePreferenceEventRepository()
         let statusRepository = FirestorePreferenceStatusRepository()
         let translationRepository = OpenAITranslationRepository(repository: repository)
+
+        let profileRepository = FirestoreUserProfileRepository()
+        let fetchProfileUseCase = FetchUserProfileUseCase(
+            repository: profileRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let updateProfileUseCase = UpdateUserProfileUseCase(
+            repository: profileRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
         let calculatePreferenceUseCase = CalculatePreferenceUseCase(
             eventRepository: eventRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
@@ -156,6 +166,8 @@ final class AppCoordinator {
             parseMarkdownUseCase: parseMarkdownUseCase,
             calculatePreferenceUseCase: calculatePreferenceUseCase,
             updatePreferenceUseCase: updatePreferenceUseCase,
+            fetchProfileUseCase: fetchProfileUseCase,
+            updateProfileUseCase: updateProfileUseCase,
             uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
             detectImageRequestUseCase: detectImageRequestUseCase,
