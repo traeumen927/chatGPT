@@ -98,7 +98,7 @@ final class PreferenceHistoryViewController: UIViewController {
         let relations: [PreferenceRelation] = [.like, .dislike, .want, .avoid]
         relations.forEach { relation in
             alert.addAction(UIAlertAction(title: relation.rawValue, style: .default) { [weak self] _ in
-                guard var self else { return }
+                guard let self else { return }
                 var updated = status
                 updated.currentRelation = relation
                 updated.updatedAt = Date().timeIntervalSince1970
