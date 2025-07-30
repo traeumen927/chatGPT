@@ -78,47 +78,47 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
     }
 
     func test_like_sentence() {
-        let prompt = "I like apples"
+        let prompt = "사과를 좋아해"
         let exp = expectation(description: "like")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "apples")
+        XCTAssertEqual(item?.key, "사과")
         XCTAssertEqual(item?.relation, .like)
         XCTAssertEqual(item?.count, 1)
-        XCTAssertEqual(eventRepo.events.first?.key, "apples")
+        XCTAssertEqual(eventRepo.events.first?.key, "사과")
     }
 
     func test_avoid_sentence() {
-        let prompt = "avoid beer"
+        let prompt = "맥주 피하고 싶어"
         let exp = expectation(description: "avoid")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "beer")
+        XCTAssertEqual(item?.key, "맥주")
         XCTAssertEqual(item?.relation, .avoid)
         XCTAssertEqual(item?.count, 1)
     }
 
     func test_want_sentence() {
-        let prompt = "I want coke"
+        let prompt = "콜라 마시고 싶어"
         let exp = expectation(description: "want")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "coke")
+        XCTAssertEqual(item?.key, "콜라")
         XCTAssertEqual(item?.relation, .want)
         XCTAssertEqual(item?.count, 1)
     }
 
     func test_multiple_preferences_count() {
-        let prompt = "I like icons and I like icons"
+        let prompt = "아이콘 좋아하고 아이콘 좋아해"
         let exp = expectation(description: "multiple")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
@@ -143,7 +143,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
     }
 
     func test_parse_multiple_relations_in_sentence() {
-        let prompt = "I like apples but dislike bananas"
+        let prompt = "사과 좋아하지만 바나나는 싫어"
         let exp = expectation(description: "multi")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
@@ -151,13 +151,12 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         waitForExpectations(timeout: 1)
         XCTAssertEqual(repo.updatedItems.count, 2)
         XCTAssertEqual(repo.updatedItems[0].relation, .like)
-        XCTAssertEqual(repo.updatedItems[0].key, "apples")
+        XCTAssertEqual(repo.updatedItems[0].key, "사과")
         XCTAssertEqual(repo.updatedItems[1].relation, .dislike)
-        XCTAssertEqual(repo.updatedItems[1].key, "bananas")
+        XCTAssertEqual(repo.updatedItems[1].key, "바나나")
     }
 
     func test_parse_korean_sentence() {
-        translator.mapping["사과 좋아하고 맥주 피하고 싶어"] = "like apple avoid beer"
         let prompt = "사과 좋아하고 맥주 피하고 싶어"
         let exp = expectation(description: "korean")
         useCase.execute(prompt: prompt)
@@ -166,22 +165,22 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
         waitForExpectations(timeout: 1)
         XCTAssertEqual(repo.updatedItems.count, 2)
         XCTAssertEqual(repo.updatedItems[0].relation, .like)
-        XCTAssertEqual(repo.updatedItems[0].key, "apple")
+        XCTAssertEqual(repo.updatedItems[0].key, "사과")
         XCTAssertEqual(repo.updatedItems[1].relation, .avoid)
-        XCTAssertEqual(repo.updatedItems[1].key, "beer")
+        XCTAssertEqual(repo.updatedItems[1].key, "맥주")
     }
 
     func test_parse_with_punctuation_and_case() {
-        let prompt = "LIKE Pizza, AVOID Broccoli!"
+        let prompt = "사과 좋아!, 브로콜리 피하고 싶어!"
         let exp = expectation(description: "punctuation")
         useCase.execute(prompt: prompt)
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         XCTAssertEqual(repo.updatedItems.count, 2)
-        XCTAssertEqual(repo.updatedItems[0].key, "pizza")
+        XCTAssertEqual(repo.updatedItems[0].key, "사과")
         XCTAssertEqual(repo.updatedItems[0].relation, .like)
-        XCTAssertEqual(repo.updatedItems[1].key, "broccoli")
+        XCTAssertEqual(repo.updatedItems[1].key, "브로콜리")
         XCTAssertEqual(repo.updatedItems[1].relation, .avoid)
     }
 }
