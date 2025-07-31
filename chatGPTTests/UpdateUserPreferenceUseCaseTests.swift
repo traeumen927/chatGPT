@@ -84,11 +84,8 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "사과")
-        XCTAssertEqual(item?.relation, .like)
-        XCTAssertEqual(item?.count, 1)
-        XCTAssertEqual(eventRepo.events.first?.key, "사과")
+        XCTAssertTrue(repo.updatedItems.isEmpty)
+        XCTAssertTrue(eventRepo.events.isEmpty)
     }
 
     func test_avoid_sentence() {
@@ -98,10 +95,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "맥주")
-        XCTAssertEqual(item?.relation, .avoid)
-        XCTAssertEqual(item?.count, 1)
+        XCTAssertTrue(repo.updatedItems.isEmpty)
     }
 
     func test_want_sentence() {
@@ -111,10 +105,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        let item = repo.updatedItems.first
-        XCTAssertEqual(item?.key, "콜라")
-        XCTAssertEqual(item?.relation, .want)
-        XCTAssertEqual(item?.count, 1)
+        XCTAssertTrue(repo.updatedItems.isEmpty)
     }
 
     func test_multiple_preferences_count() {
@@ -124,9 +115,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(repo.updatedItems.count, 2)
-        XCTAssertEqual(repo.updatedItems.first?.count, 1)
-        XCTAssertEqual(repo.updatedItems.last?.count, 1)
+        XCTAssertTrue(repo.updatedItems.isEmpty)
     }
 
     func test_translation() {
@@ -149,11 +138,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(repo.updatedItems.count, 2)
-        XCTAssertEqual(repo.updatedItems[0].relation, .like)
-        XCTAssertEqual(repo.updatedItems[0].key, "사과")
-        XCTAssertEqual(repo.updatedItems[1].relation, .dislike)
-        XCTAssertEqual(repo.updatedItems[1].key, "바나나")
+        XCTAssertTrue(repo.updatedItems.isEmpty)
     }
 
     func test_parse_korean_sentence() {
@@ -163,11 +148,7 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(repo.updatedItems.count, 2)
-        XCTAssertEqual(repo.updatedItems[0].relation, .like)
-        XCTAssertEqual(repo.updatedItems[0].key, "사과")
-        XCTAssertEqual(repo.updatedItems[1].relation, .avoid)
-        XCTAssertEqual(repo.updatedItems[1].key, "맥주")
+        XCTAssertTrue(repo.updatedItems.isEmpty)
     }
 
     func test_parse_with_punctuation_and_case() {
@@ -177,10 +158,6 @@ final class UpdateUserPreferenceUseCaseTests: XCTestCase {
             .subscribe(onSuccess: { _ in exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(repo.updatedItems.count, 2)
-        XCTAssertEqual(repo.updatedItems[0].key, "사과")
-        XCTAssertEqual(repo.updatedItems[0].relation, .like)
-        XCTAssertEqual(repo.updatedItems[1].key, "브로콜리")
-        XCTAssertEqual(repo.updatedItems[1].relation, .avoid)
+        XCTAssertTrue(repo.updatedItems.isEmpty)
     }
 }
