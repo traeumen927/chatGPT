@@ -46,10 +46,14 @@ final class ChatViewModel {
     private let contextRepository: ChatContextRepository
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
+    private let updateProfileFromPromptUseCase: UpdateUserProfileFromPromptUseCase
+    private let fetchProfileUseCase: FetchUserProfileUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
     private let detectImageRequestUseCase: DetectImageRequestUseCase
     private let disposeBag = DisposeBag()
+
+    private var userProfile = UserProfile()
     
     private var draftMessages: [ChatMessage]? = nil
     
@@ -67,6 +71,8 @@ final class ChatViewModel {
          contextRepository: ChatContextRepository,
          calculatePreferenceUseCase: CalculatePreferenceUseCase,
          updatePreferenceUseCase: UpdateUserPreferenceUseCase,
+         updateProfileFromPromptUseCase: UpdateUserProfileFromPromptUseCase,
+         fetchProfileUseCase: FetchUserProfileUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
          detectImageRequestUseCase: DetectImageRequestUseCase) {
@@ -78,9 +84,16 @@ final class ChatViewModel {
         self.contextRepository = contextRepository
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
+        self.updateProfileFromPromptUseCase = updateProfileFromPromptUseCase
+        self.fetchProfileUseCase = fetchProfileUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
         self.detectImageRequestUseCase = detectImageRequestUseCase
+        fetchProfileUseCase.execute()
+            .subscribe(onSuccess: { [weak self] profile in
+                self?.userProfile = profile ?? UserProfile()
+            })
+            .disposed(by: disposeBag)
     }
     
     func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
@@ -103,11 +116,17 @@ final class ChatViewModel {
         let isFirst = messages.value.isEmpty
         let messageID = UUID()
         appendMessage(ChatMessage(id: messageID, type: .user, text: prompt))
-        
-        
+
+
         updatePreferenceUseCase.execute(prompt: prompt)
             .subscribe(onSuccess: { },
                        onFailure: { print("preference error:", $0) })
+            .disposed(by: disposeBag)
+
+        updateProfileFromPromptUseCase.execute(prompt: prompt)
+            .subscribe(onSuccess: { [weak self] profile in
+                self?.userProfile = profile
+            })
             .disposed(by: disposeBag)
         
         let allData = attachments.compactMap { item -> Data? in
@@ -164,10 +183,12 @@ final class ChatViewModel {
                 if case let .file(url) = item { return try? Data(contentsOf: url) }
                 return nil
             }
+            let profileMsg = self.profileText(from: self.userProfile)
             sendMessageUseCase.execute(prompt: prompt,
                                        model: model,
                                        stream: false,
                                        preference: prefMessage,
+                                       profile: profileMsg,
                                        images: imageData,
                                        files: fileData) { [weak self] result in
                 guard let self = self else { return }
@@ -210,7 +231,13 @@ final class ChatViewModel {
             if case let .file(url) = item { return try? Data(contentsOf: url) }
             return nil
         }
-        sendMessageUseCase.stream(prompt: prompt, model: model, preference: prefMessage, images: imageData, files: fileData)
+        let profileMsg = self.profileText(from: self.userProfile)
+        sendMessageUseCase.stream(prompt: prompt,
+                                  model: model,
+                                  preference: prefMessage,
+                                  profile: profileMsg,
+                                  images: imageData,
+                                  files: fileData)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
@@ -248,6 +275,15 @@ final class ChatViewModel {
         let texts = sorted.prefix(3).map { "\($0.relation.rawValue): \($0.key)" }
         let result = texts.joined(separator: ", ")
         return result.isEmpty ? nil : result
+    }
+
+    func profileText(from profile: UserProfile) -> String? {
+        var parts: [String] = []
+        if let age = profile.age { parts.append("age: \(age)") }
+        if let gender = profile.gender { parts.append("gender: \(gender)") }
+        if let job = profile.job { parts.append("job: \(job)") }
+        if let interest = profile.interest { parts.append("interest: \(interest)") }
+        return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
     
     private func saveFirstConversation(question: String,

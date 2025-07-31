@@ -74,6 +74,11 @@ final class AppCoordinator {
             repository: profileRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
+        let updateProfileFromPromptUseCase = UpdateUserProfileFromPromptUseCase(
+            fetchUseCase: fetchProfileUseCase,
+            updateUseCase: updateProfileUseCase,
+            translationRepository: translationRepository
+        )
         let calculatePreferenceUseCase = CalculatePreferenceUseCase(
             eventRepository: eventRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
@@ -166,6 +171,7 @@ final class AppCoordinator {
             parseMarkdownUseCase: parseMarkdownUseCase,
             calculatePreferenceUseCase: calculatePreferenceUseCase,
             updatePreferenceUseCase: updatePreferenceUseCase,
+            updateProfileFromPromptUseCase: updateProfileFromPromptUseCase,
             fetchProfileUseCase: fetchProfileUseCase,
             updateProfileUseCase: updateProfileUseCase,
             uploadFilesUseCase: uploadFilesUseCase,
