@@ -77,6 +77,31 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
             return Disposables.create()
         }
     }
+
+    func analyzeUserInput(prompt: String) -> Single<PreferenceAnalysisResult> {
+        Single.create { single in
+            let system = Message(
+                role: .system,
+                content: "Analyze the user's message and return JSON with 'preferences' as an array of {relation,key} and optional 'profile' with age, gender, job, interest. Respond only with JSON."
+            )
+            let user = Message(role: .user, content: prompt)
+            self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
+                switch result {
+                case .success(let decoded):
+                    let text = decoded.choices.first?.message.content ?? "{}"
+                    if let data = text.data(using: .utf8),
+                       let res = try? JSONDecoder().decode(PreferenceAnalysisResult.self, from: data) {
+                        single(.success(res))
+                    } else {
+                        single(.success(PreferenceAnalysisResult(preferences: [], profile: nil)))
+                    }
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
     
     /// 사용가능한 모델 조회
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {

@@ -23,7 +23,7 @@ final class StubChatContextRepository: ChatContextRepository {
     func clear() {}
 }
 final class StubCalculatePreferenceUseCase {}
-final class StubUpdateUserPreferenceUseCase {}
+final class StubAnalyzeUserInputUseCase {}
 final class StubUploadFilesUseCase {}
 final class StubGenerateImageUseCase {}
 final class StubDetectImageRequestUseCase {
@@ -46,7 +46,7 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             fetchMessagesUseCase: StubFetchConversationMessagesUseCase(),
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
-            updatePreferenceUseCase: StubUpdateUserPreferenceUseCase(),
+            updatePreferenceUseCase: StubAnalyzeUserInputUseCase(),
             updateProfileFromPromptUseCase: StubUpdateUserProfileFromPromptUseCase(),
             fetchProfileUseCase: StubFetchUserProfileUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
@@ -73,7 +73,7 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             fetchMessagesUseCase: StubFetchConversationMessagesUseCase(),
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
-            updatePreferenceUseCase: StubUpdateUserPreferenceUseCase(),
+            updatePreferenceUseCase: StubAnalyzeUserInputUseCase(),
             updateProfileFromPromptUseCase: StubUpdateUserProfileFromPromptUseCase(),
             fetchProfileUseCase: StubFetchUserProfileUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
