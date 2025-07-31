@@ -82,7 +82,7 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         Single.create { single in
             let system = Message(
                 role: .system,
-                content: "Analyze the user's message. Detect hobbies, what the user is good at or bad at, and likes or dislikes. Return JSON with 'preferences' as an array of {relation,key} and optional 'profile' with age, gender, job, interest. All values must be in English. Respond only with JSON."
+                content: "Analyze the user's message. If it is written in a non-English language, translate it into English before analyzing. Detect hobbies, what the user is good at or bad at, and likes or dislikes. Return JSON with 'preferences' as an array of {relation,key} and optional 'profile' with age, gender, job, interest. Store all values in English and respond only with JSON."
             )
             let user = Message(role: .user, content: prompt)
             self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
