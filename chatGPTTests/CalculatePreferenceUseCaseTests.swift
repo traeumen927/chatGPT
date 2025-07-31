@@ -34,9 +34,9 @@ final class CalculatePreferenceUseCaseTests: XCTestCase {
     func test_returns_sorted_by_decay_weight() {
         let now = Date().timeIntervalSince1970
         repo.events = [
-            PreferenceEvent(key: "a", relation: .like, timestamp: now - 1000),
-            PreferenceEvent(key: "b", relation: .like, timestamp: now - 10),
-            PreferenceEvent(key: "a", relation: .like, timestamp: now - 20)
+            PreferenceEvent(key: "a", relation: PreferenceRelation(rawValue: "like"), timestamp: now - 1000),
+            PreferenceEvent(key: "b", relation: PreferenceRelation(rawValue: "like"), timestamp: now - 10),
+            PreferenceEvent(key: "a", relation: PreferenceRelation(rawValue: "like"), timestamp: now - 20)
         ]
         let exp = expectation(description: "sorted")
         var output: [PreferenceEvent] = []
@@ -55,8 +55,8 @@ final class CalculatePreferenceUseCaseTests: XCTestCase {
     func test_handles_large_time_difference() {
         let now = Date().timeIntervalSince1970
         repo.events = [
-            PreferenceEvent(key: "old", relation: .like, timestamp: now - 31_536_000),
-            PreferenceEvent(key: "recent", relation: .like, timestamp: now - 1)
+            PreferenceEvent(key: "old", relation: PreferenceRelation(rawValue: "like"), timestamp: now - 31_536_000),
+            PreferenceEvent(key: "recent", relation: PreferenceRelation(rawValue: "like"), timestamp: now - 1)
         ]
         let exp = expectation(description: "decay")
         var output: [PreferenceEvent] = []

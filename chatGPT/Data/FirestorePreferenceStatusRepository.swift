@@ -13,9 +13,9 @@ final class FirestorePreferenceStatusRepository: PreferenceStatusRepository {
                         let data = doc.data()
                         guard
                             let key = data["key"] as? String,
-                            let raw = data["currentRelation"] as? String,
-                            let relation = PreferenceRelation(rawValue: raw)
+                            let raw = data["currentRelation"] as? String
                         else { return nil }
+                        let relation = PreferenceRelation(rawValue: raw)
                         let updated: TimeInterval
                         if let ts = data["updatedAt"] as? Timestamp {
                             updated = ts.dateValue().timeIntervalSince1970
@@ -25,7 +25,7 @@ final class FirestorePreferenceStatusRepository: PreferenceStatusRepository {
                             updated = Date().timeIntervalSince1970
                         }
                         let prevRaw = data["previousRelation"] as? String
-                        let prev = prevRaw.flatMap { PreferenceRelation(rawValue: $0) }
+                        let prev = prevRaw.map { PreferenceRelation(rawValue: $0) }
                         let changedAt = data["changedAt"] as? TimeInterval
                         return PreferenceStatus(key: key,
                                                 currentRelation: relation,
