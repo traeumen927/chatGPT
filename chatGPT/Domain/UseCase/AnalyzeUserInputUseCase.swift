@@ -22,6 +22,21 @@ final class AnalyzeUserInputUseCase {
             return .error(PreferenceError.noUser)
         }
         return openAIRepository.analyzeUserInput(prompt: prompt)
+            .do(onSuccess: { result in
+                if result.preferences.isEmpty && result.profile == nil {
+                    print("Analyzed the user message, but no preferences or personal information detected.")
+                } else {
+                    if !result.preferences.isEmpty {
+                        let prefs = result.preferences
+                            .map { "\($0.relation.rawValue): \($0.key)" }
+                            .joined(separator: ", ")
+                        print("Preferences ->", prefs)
+                    }
+                    if let profile = result.profile {
+                        print("Profile ->", profile)
+                    }
+                }
+            })
             .flatMap { [weak self] result -> Single<Void> in
                 guard let self else { return .just(()) }
                 let now = Date().timeIntervalSince1970
