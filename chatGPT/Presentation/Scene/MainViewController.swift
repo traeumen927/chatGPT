@@ -27,10 +27,9 @@ final class MainViewController: UIViewController {
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
     private let parseMarkdownUseCase: ParseMarkdownUseCase
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
-    private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
+    private let updatePreferenceUseCase: AnalyzeUserInputUseCase
     private let fetchProfileUseCase: FetchUserProfileUseCase
     private let updateProfileUseCase: UpdateUserProfileUseCase
-    private let updateProfileFromPromptUseCase: UpdateUserProfileFromPromptUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
     private let fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase
     private let fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase
@@ -166,8 +165,7 @@ final class MainViewController: UIViewController {
       observeAuthStateUseCase: ObserveAuthStateUseCase,
       parseMarkdownUseCase: ParseMarkdownUseCase,
       calculatePreferenceUseCase: CalculatePreferenceUseCase,
-      updatePreferenceUseCase: UpdateUserPreferenceUseCase,
-      updateProfileFromPromptUseCase: UpdateUserProfileFromPromptUseCase,
+      updatePreferenceUseCase: AnalyzeUserInputUseCase,
       fetchProfileUseCase: FetchUserProfileUseCase,
       updateProfileUseCase: UpdateUserProfileUseCase,
       uploadFilesUseCase: UploadFilesUseCase,
@@ -187,7 +185,6 @@ final class MainViewController: UIViewController {
                                            contextRepository: contextRepository,
                                            calculatePreferenceUseCase: calculatePreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase,
-                                           updateProfileFromPromptUseCase: updateProfileFromPromptUseCase,
                                            fetchProfileUseCase: fetchProfileUseCase,
                                            uploadFilesUseCase: uploadFilesUseCase,
                                            generateImageUseCase: generateImageUseCase,
@@ -202,7 +199,6 @@ final class MainViewController: UIViewController {
         self.parseMarkdownUseCase = parseMarkdownUseCase
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
-        self.updateProfileFromPromptUseCase = updateProfileFromPromptUseCase
         self.fetchProfileUseCase = fetchProfileUseCase
         self.updateProfileUseCase = updateProfileUseCase
         self.fetchPreferenceEventsUseCase = fetchPreferenceEventsUseCase

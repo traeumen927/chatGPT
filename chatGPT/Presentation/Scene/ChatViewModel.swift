@@ -45,8 +45,7 @@ final class ChatViewModel {
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
     private let contextRepository: ChatContextRepository
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
-    private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
-    private let updateProfileFromPromptUseCase: UpdateUserProfileFromPromptUseCase
+    private let updatePreferenceUseCase: AnalyzeUserInputUseCase
     private let fetchProfileUseCase: FetchUserProfileUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
@@ -70,8 +69,7 @@ final class ChatViewModel {
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
          contextRepository: ChatContextRepository,
          calculatePreferenceUseCase: CalculatePreferenceUseCase,
-         updatePreferenceUseCase: UpdateUserPreferenceUseCase,
-         updateProfileFromPromptUseCase: UpdateUserProfileFromPromptUseCase,
+         updatePreferenceUseCase: AnalyzeUserInputUseCase,
          fetchProfileUseCase: FetchUserProfileUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
@@ -84,7 +82,6 @@ final class ChatViewModel {
         self.contextRepository = contextRepository
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
-        self.updateProfileFromPromptUseCase = updateProfileFromPromptUseCase
         self.fetchProfileUseCase = fetchProfileUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
@@ -121,12 +118,6 @@ final class ChatViewModel {
         updatePreferenceUseCase.execute(prompt: prompt)
             .subscribe(onSuccess: { },
                        onFailure: { print("preference error:", $0) })
-            .disposed(by: disposeBag)
-
-        updateProfileFromPromptUseCase.execute(prompt: prompt)
-            .subscribe(onSuccess: { [weak self] profile in
-                self?.userProfile = profile
-            })
             .disposed(by: disposeBag)
         
         let allData = attachments.compactMap { item -> Data? in
