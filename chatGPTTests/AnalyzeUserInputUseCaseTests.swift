@@ -62,7 +62,7 @@ final class AnalyzeUserInputUseCaseTests: XCTestCase {
 
     func test_updates_preference_and_profile() {
         openAI.analysisResult = PreferenceAnalysisResult(
-            preferences: [PreferenceAnalysisResult.Preference(key: "coffee", relation: .like)],
+            preferences: [PreferenceAnalysisResult.Preference(key: "coffee", relation: PreferenceRelation(rawValue: "like"))],
             profile: UserProfile(age: 20, gender: "male", job: nil, interest: nil)
         )
         let exp = expectation(description: "update")
@@ -71,7 +71,7 @@ final class AnalyzeUserInputUseCaseTests: XCTestCase {
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
         XCTAssertEqual(prefRepo.updatedItems.first?.key, "coffee")
-        XCTAssertEqual(prefRepo.updatedItems.first?.relation, .like)
+        XCTAssertEqual(prefRepo.updatedItems.first?.relation, PreferenceRelation(rawValue: "like"))
         XCTAssertEqual(profileRepo.updated?.age, 20)
     }
 }

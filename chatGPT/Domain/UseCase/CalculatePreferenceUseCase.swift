@@ -28,7 +28,7 @@ final class CalculatePreferenceUseCase {
                 let sorted = scores.sorted { $0.value > $1.value }.prefix(top)
                 return sorted.map { entry in
                     let comps = entry.key.split(separator: ":", maxSplits: 1)
-                    let relation = PreferenceRelation(rawValue: String(comps[0]))!
+                    let relation = PreferenceRelation(rawValue: String(comps[0]))
                     let key = String(comps[1])
                     return PreferenceEvent(key: key, relation: relation, timestamp: now)
                 }

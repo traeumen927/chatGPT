@@ -55,10 +55,10 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
         )
         let now = Date().timeIntervalSince1970
         let events = [
-            PreferenceEvent(key: "banana", relation: .like, timestamp: now - 30),
-            PreferenceEvent(key: "apple", relation: .avoid, timestamp: now - 10),
-            PreferenceEvent(key: "orange", relation: .want, timestamp: now - 20),
-            PreferenceEvent(key: "cake", relation: .like, timestamp: now)
+            PreferenceEvent(key: "banana", relation: PreferenceRelation(rawValue: "like"), timestamp: now - 30),
+            PreferenceEvent(key: "apple", relation: PreferenceRelation(rawValue: "avoid"), timestamp: now - 10),
+            PreferenceEvent(key: "orange", relation: PreferenceRelation(rawValue: "want"), timestamp: now - 20),
+            PreferenceEvent(key: "cake", relation: PreferenceRelation(rawValue: "like"), timestamp: now)
         ]
         let text = vm.preferenceText(from: events)
         XCTAssertEqual(text, "like: cake, avoid: apple, want: orange")

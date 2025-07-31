@@ -18,9 +18,9 @@ final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
                         guard
                             let key = data["key"] as? String,
                             let raw = data["relation"] as? String,
-                            let relation = PreferenceRelation(rawValue: raw),
                             let count = data["count"] as? Int
                         else { return nil }
+                        let relation = PreferenceRelation(rawValue: raw)
                         let updated: TimeInterval
                         if let ts = data["updatedAt"] as? Timestamp {
                             updated = ts.dateValue().timeIntervalSince1970
@@ -51,7 +51,7 @@ final class FirestoreUserPreferenceRepository: UserPreferenceRepository {
                 let doc = self.db.collection("preferences")
                     .document(uid)
                     .collection("items")
-                    .document("\(item.key)_\(item.relation.rawValue)")
+                    .document("\(item.key)_\(item.relation.sanitized)")
                 let data: [String: Any] = [
                     "key": item.key,
                     "relation": item.relation.rawValue,

@@ -39,9 +39,9 @@ final class FirestorePreferenceEventRepository: PreferenceEventRepository {
                         guard
                             let key = data["key"] as? String,
                             let raw = data["relation"] as? String,
-                            let relation = PreferenceRelation(rawValue: raw),
                             let timestamp = data["timestamp"] as? TimeInterval
                         else { return nil }
+                        let relation = PreferenceRelation(rawValue: raw)
                         return PreferenceEvent(id: doc.documentID,
                                                key: key,
                                                relation: relation,

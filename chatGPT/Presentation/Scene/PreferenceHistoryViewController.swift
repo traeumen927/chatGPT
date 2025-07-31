@@ -95,7 +95,12 @@ final class PreferenceHistoryViewController: UIViewController {
 
     private func showEditAlert(status: PreferenceStatus) {
         let alert = UIAlertController(title: "수정", message: nil, preferredStyle: .actionSheet)
-        let relations: [PreferenceRelation] = [.like, .dislike, .want, .avoid]
+        let relations: [PreferenceRelation] = [
+            PreferenceRelation(rawValue: "like"),
+            PreferenceRelation(rawValue: "dislike"),
+            PreferenceRelation(rawValue: "want"),
+            PreferenceRelation(rawValue: "avoid")
+        ]
         relations.forEach { relation in
             alert.addAction(UIAlertAction(title: relation.rawValue, style: .default) { [weak self] _ in
                 guard let self else { return }
