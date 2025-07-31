@@ -4,8 +4,8 @@ import RxSwift
 
 // Stub types implementing required protocols
 final class StubSendChatWithContextUseCase {
-    func execute(prompt: String, model: OpenAIModel, stream: Bool, preference: String?, images: [Data], files: [Data], completion: @escaping (Result<String, Error>) -> Void) {}
-    func stream(prompt: String, model: OpenAIModel, preference: String?, images: [Data], files: [Data]) -> Observable<String> { .empty() }
+    func execute(prompt: String, model: OpenAIModel, stream: Bool, preference: String?, profile: String?, images: [Data], files: [Data], completion: @escaping (Result<String, Error>) -> Void) {}
+    func stream(prompt: String, model: OpenAIModel, preference: String?, profile: String?, images: [Data], files: [Data]) -> Observable<String> { .empty() }
     func finalize(prompt: String, reply: String, model: OpenAIModel) {}
 }
 
@@ -29,6 +29,12 @@ final class StubGenerateImageUseCase {}
 final class StubDetectImageRequestUseCase {
     func execute(prompt: String) -> Single<Bool> { .just(false) }
 }
+final class StubUpdateUserProfileFromPromptUseCase {
+    func execute(prompt: String) -> Single<UserProfile> { .just(UserProfile()) }
+}
+final class StubFetchUserProfileUseCase {
+    func execute() -> Single<UserProfile?> { .just(nil) }
+}
 
 final class ChatViewModelPreferenceTextTests: XCTestCase {
     func test_preferenceText_sorts_and_truncates() {
@@ -41,6 +47,8 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
             updatePreferenceUseCase: StubUpdateUserPreferenceUseCase(),
+            updateProfileFromPromptUseCase: StubUpdateUserProfileFromPromptUseCase(),
+            fetchProfileUseCase: StubFetchUserProfileUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
             generateImageUseCase: StubGenerateImageUseCase(),
             detectImageRequestUseCase: StubDetectImageRequestUseCase()
@@ -54,5 +62,30 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
         ]
         let text = vm.preferenceText(from: events)
         XCTAssertEqual(text, "like: cake, avoid: apple, want: orange")
+    }
+
+    func test_profileText_builds_string() {
+        let vm = ChatViewModel(
+            sendMessageUseCase: StubSendChatWithContextUseCase(),
+            summarizeUseCase: StubSummarizeMessagesUseCase(),
+            saveConversationUseCase: StubSaveConversationUseCase(),
+            appendMessageUseCase: StubAppendMessageUseCase(),
+            fetchMessagesUseCase: StubFetchConversationMessagesUseCase(),
+            contextRepository: StubChatContextRepository(),
+            calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
+            updatePreferenceUseCase: StubUpdateUserPreferenceUseCase(),
+            updateProfileFromPromptUseCase: StubUpdateUserProfileFromPromptUseCase(),
+            fetchProfileUseCase: StubFetchUserProfileUseCase(),
+            uploadFilesUseCase: StubUploadFilesUseCase(),
+            generateImageUseCase: StubGenerateImageUseCase(),
+            detectImageRequestUseCase: StubDetectImageRequestUseCase()
+        )
+        var profile = UserProfile()
+        profile.age = 20
+        profile.gender = "male"
+        profile.job = "student"
+        profile.interest = "game"
+        let text = vm.profileText(from: profile)
+        XCTAssertEqual(text, "age: 20, gender: male, job: student, interest: game")
     }
 }
