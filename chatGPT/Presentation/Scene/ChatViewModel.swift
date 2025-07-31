@@ -46,6 +46,7 @@ final class ChatViewModel {
     private let contextRepository: ChatContextRepository
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: AnalyzeUserInputUseCase
+    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
     private let fetchProfileUseCase: FetchUserProfileUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
@@ -53,6 +54,7 @@ final class ChatViewModel {
     private let disposeBag = DisposeBag()
 
     private var userProfile = UserProfile()
+    private var userPreference: UserPreference?
     
     private var draftMessages: [ChatMessage]? = nil
     
@@ -70,6 +72,7 @@ final class ChatViewModel {
          contextRepository: ChatContextRepository,
          calculatePreferenceUseCase: CalculatePreferenceUseCase,
          updatePreferenceUseCase: AnalyzeUserInputUseCase,
+         fetchPreferenceUseCase: FetchUserPreferenceUseCase,
          fetchProfileUseCase: FetchUserProfileUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
@@ -82,6 +85,7 @@ final class ChatViewModel {
         self.contextRepository = contextRepository
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
+        self.fetchPreferenceUseCase = fetchPreferenceUseCase
         self.fetchProfileUseCase = fetchProfileUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
@@ -89,6 +93,11 @@ final class ChatViewModel {
         fetchProfileUseCase.execute()
             .subscribe(onSuccess: { [weak self] profile in
                 self?.userProfile = profile ?? UserProfile()
+            })
+            .disposed(by: disposeBag)
+        fetchPreferenceUseCase.execute()
+            .subscribe(onSuccess: { [weak self] pref in
+                self?.userPreference = pref
             })
             .disposed(by: disposeBag)
     }
@@ -165,7 +174,8 @@ final class ChatViewModel {
                               preference: [PreferenceEvent],
                               isFirst: Bool) {
         guard stream else {
-            let prefMessage = self.preferenceText(from: preference)
+            let eventsToUse = preference.isEmpty ? self.preferenceFallback() : preference
+            let prefMessage = self.preferenceText(from: eventsToUse)
             let imageData = attachments.compactMap { item -> Data? in
                 if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
                 return nil
@@ -213,7 +223,8 @@ final class ChatViewModel {
         appendMessage(ChatMessage(id: assistantID, type: .assistant, text: ""))
         var fullText = ""
         
-        let prefMessage = self.preferenceText(from: preference)
+        let eventsToUse = preference.isEmpty ? self.preferenceFallback() : preference
+        let prefMessage = self.preferenceText(from: eventsToUse)
         let imageData = attachments.compactMap { item -> Data? in
             if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
             return nil
@@ -266,6 +277,13 @@ final class ChatViewModel {
         let texts = sorted.prefix(3).map { "\($0.relation.rawValue): \($0.key)" }
         let result = texts.joined(separator: ", ")
         return result.isEmpty ? nil : result
+    }
+
+    private func preferenceFallback() -> [PreferenceEvent] {
+        guard let items = userPreference?.items else { return [] }
+        return items.map { PreferenceEvent(key: $0.key,
+                                           relation: $0.relation,
+                                           timestamp: $0.updatedAt) }
     }
 
     func profileText(from profile: UserProfile) -> String? {

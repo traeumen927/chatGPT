@@ -29,11 +29,21 @@ final class StubGenerateImageUseCase {}
 final class StubDetectImageRequestUseCase {
     func execute(prompt: String) -> Single<Bool> { .just(false) }
 }
-final class StubUpdateUserProfileFromPromptUseCase {
-    func execute(prompt: String) -> Single<UserProfile> { .just(UserProfile()) }
-}
 final class StubFetchUserProfileUseCase {
     func execute() -> Single<UserProfile?> { .just(nil) }
+}
+final class StubFetchUserPreferenceUseCase {
+    func execute() -> Single<UserPreference?> { .just(nil) }
+}
+final class StubUserPreferenceRepository: UserPreferenceRepository {
+    func fetch(uid: String) -> Single<UserPreference?> { .just(nil) }
+    func update(uid: String, items: [PreferenceItem]) -> Single<Void> { .just(()) }
+}
+final class StubAuthRepository: AuthRepository {
+    var user: AuthUser? = AuthUser(uid: "u1", displayName: nil, photoURL: nil)
+    func observeAuthState() -> Observable<AuthUser?> { .empty() }
+    func currentUser() -> AuthUser? { user }
+    func signOut() throws {}
 }
 
 final class ChatViewModelPreferenceTextTests: XCTestCase {
@@ -47,7 +57,7 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
             updatePreferenceUseCase: StubAnalyzeUserInputUseCase(),
-            updateProfileFromPromptUseCase: StubUpdateUserProfileFromPromptUseCase(),
+            fetchPreferenceUseCase: StubFetchUserPreferenceUseCase(),
             fetchProfileUseCase: StubFetchUserProfileUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
             generateImageUseCase: StubGenerateImageUseCase(),
@@ -74,7 +84,7 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
             updatePreferenceUseCase: StubAnalyzeUserInputUseCase(),
-            updateProfileFromPromptUseCase: StubUpdateUserProfileFromPromptUseCase(),
+            fetchPreferenceUseCase: StubFetchUserPreferenceUseCase(),
             fetchProfileUseCase: StubFetchUserProfileUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
             generateImageUseCase: StubGenerateImageUseCase(),

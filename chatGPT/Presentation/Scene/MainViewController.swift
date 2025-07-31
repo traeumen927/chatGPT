@@ -28,6 +28,7 @@ final class MainViewController: UIViewController {
     private let parseMarkdownUseCase: ParseMarkdownUseCase
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: AnalyzeUserInputUseCase
+    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
     private let fetchProfileUseCase: FetchUserProfileUseCase
     private let updateProfileUseCase: UpdateUserProfileUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
@@ -166,6 +167,7 @@ final class MainViewController: UIViewController {
       parseMarkdownUseCase: ParseMarkdownUseCase,
       calculatePreferenceUseCase: CalculatePreferenceUseCase,
       updatePreferenceUseCase: AnalyzeUserInputUseCase,
+      fetchPreferenceUseCase: FetchUserPreferenceUseCase,
       fetchProfileUseCase: FetchUserProfileUseCase,
       updateProfileUseCase: UpdateUserProfileUseCase,
       uploadFilesUseCase: UploadFilesUseCase,
@@ -185,6 +187,7 @@ final class MainViewController: UIViewController {
                                            contextRepository: contextRepository,
                                            calculatePreferenceUseCase: calculatePreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase,
+                                           fetchPreferenceUseCase: fetchPreferenceUseCase,
                                            fetchProfileUseCase: fetchProfileUseCase,
                                            uploadFilesUseCase: uploadFilesUseCase,
                                            generateImageUseCase: generateImageUseCase,
@@ -199,6 +202,7 @@ final class MainViewController: UIViewController {
         self.parseMarkdownUseCase = parseMarkdownUseCase
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
+        self.fetchPreferenceUseCase = fetchPreferenceUseCase
         self.fetchProfileUseCase = fetchProfileUseCase
         self.updateProfileUseCase = updateProfileUseCase
         self.fetchPreferenceEventsUseCase = fetchPreferenceEventsUseCase
