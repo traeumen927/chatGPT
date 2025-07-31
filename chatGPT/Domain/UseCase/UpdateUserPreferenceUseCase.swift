@@ -69,47 +69,27 @@ final class UpdateUserPreferenceUseCase {
         let tokens = MorphTokenizer.tokenize(prompt)
         var items: [PreferenceItem] = []
         var index = 0
-        func nextNoun(after idx: Int) -> (String, Int)? {
-            var i = idx + 1
-            while i < tokens.count {
-                if tokens[i].isNoun {
-                    return (tokens[i].text, i)
-                }
-                i += 1
-            }
-            return nil
+        func nextWord(after idx: Int) -> (String, Int)? {
+            let next = idx + 1
+            guard next < tokens.count else { return nil }
+            return (tokens[next].text, next)
         }
 
         while index < tokens.count {
             let token = tokens[index].text
             let time = Date().timeIntervalSince1970
-            if token == "like" || token.hasPrefix("좋아"), let (key, i) = nextNoun(after: index) {
+            if token == "like", let (key, i) = nextWord(after: index) {
                 items.append(PreferenceItem(key: key, relation: .like, updatedAt: time, count: 1))
                 index = i
-            } else if token == "dislike" || token.hasPrefix("싫어"), let (key, i) = nextNoun(after: index) {
+            } else if token == "dislike", let (key, i) = nextWord(after: index) {
                 items.append(PreferenceItem(key: key, relation: .dislike, updatedAt: time, count: 1))
                 index = i
-            } else if token == "want" || token.hasPrefix("원") || token.contains("싶"), let (key, i) = nextNoun(after: index) {
+            } else if token == "want", let (key, i) = nextWord(after: index) {
                 items.append(PreferenceItem(key: key, relation: .want, updatedAt: time, count: 1))
                 index = i
-            } else if token == "avoid" || token.hasPrefix("피하"), let (key, i) = nextNoun(after: index) {
+            } else if token == "avoid", let (key, i) = nextWord(after: index) {
                 items.append(PreferenceItem(key: key, relation: .avoid, updatedAt: time, count: 1))
                 index = i
-            } else if tokens[index].isNoun, index + 1 < tokens.count {
-                let next = tokens[index + 1].text
-                if next == "like" || next.hasPrefix("좋아") {
-                    items.append(PreferenceItem(key: token, relation: .like, updatedAt: time, count: 1))
-                    index += 1
-                } else if next == "dislike" || next.hasPrefix("싫어") {
-                    items.append(PreferenceItem(key: token, relation: .dislike, updatedAt: time, count: 1))
-                    index += 1
-                } else if next == "want" || next.hasPrefix("원") || next.contains("싶") {
-                    items.append(PreferenceItem(key: token, relation: .want, updatedAt: time, count: 1))
-                    index += 1
-                } else if next == "avoid" || next.hasPrefix("피하") {
-                    items.append(PreferenceItem(key: token, relation: .avoid, updatedAt: time, count: 1))
-                    index += 1
-                }
             }
             index += 1
         }
