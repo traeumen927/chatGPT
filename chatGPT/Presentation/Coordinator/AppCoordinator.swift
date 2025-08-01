@@ -63,7 +63,7 @@ final class AppCoordinator {
         let infoRepository = FirestoreUserInfoRepository()
         let eventRepository = FirestorePreferenceEventRepository()
         let statusRepository = FirestorePreferenceStatusRepository()
-        let translationRepository = OpenAITranslationRepository(repository: repository)
+        _ = OpenAITranslationRepository(repository: repository)
 
         let fetchInfoUseCase = FetchUserInfoUseCase(
             repository: infoRepository,
