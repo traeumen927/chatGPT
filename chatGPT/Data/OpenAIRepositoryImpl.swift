@@ -90,11 +90,15 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
                 case .success(let decoded):
                     print(decoded)
                     let text = decoded.choices.first?.message.content ?? "{}"
-                    if let data = text.data(using: .utf8),
-                       let res = try? JSONDecoder().decode(PreferenceAnalysisResult.self, from: data) {
-                        single(.success(res))
+                    if let data = text.data(using: .utf8) {
+                        do {
+                            let res = try JSONDecoder().decode(PreferenceAnalysisResult.self, from: data)
+                            single(.success(res))
+                        } catch {
+                            single(.failure(OpenAIError.decodingError))
+                        }
                     } else {
-                        single(.success(PreferenceAnalysisResult(preferences: [], profile: nil)))
+                        single(.failure(OpenAIError.decodingError))
                     }
                 case .failure(let error):
                     single(.failure(error))
