@@ -287,11 +287,9 @@ final class ChatViewModel {
     }
 
     func profileText(from profile: UserProfile) -> String? {
-        var parts: [String] = []
-        if let age = profile.age { parts.append("age: \(age)") }
-        if let gender = profile.gender { parts.append("gender: \(gender)") }
-        if let job = profile.job { parts.append("job: \(job)") }
-        if let interest = profile.interest { parts.append("interest: \(interest)") }
+        let parts = profile.attributes
+            .sorted { $0.key < $1.key }
+            .map { "\($0.key): \($0.value)" }
         return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
     

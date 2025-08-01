@@ -13,21 +13,15 @@ final class FirestoreUserProfileRepository: UserProfileRepository {
         Single.create { single in
             self.db.collection("profiles").document(uid).getDocument { snapshot, error in
                 if let data = snapshot?.data() {
-                    let name = data["displayName"] as? String
-                    var url: URL?
-                    if let str = data["photoURL"] as? String {
-                        url = URL(string: str)
+                    var attributes: [String: String] = [:]
+                    data.forEach { key, value in
+                        if let str = value as? String {
+                            attributes[key] = str
+                        } else {
+                            attributes[key] = "\(value)"
+                        }
                     }
-                    let age = data["age"] as? Int
-                    let gender = data["gender"] as? String
-                    let job = data["job"] as? String
-                    let interest = data["interest"] as? String
-                    single(.success(UserProfile(displayName: name,
-                                              photoURL: url,
-                                              age: age,
-                                              gender: gender,
-                                              job: job,
-                                              interest: interest)))
+                    single(.success(UserProfile(attributes: attributes)))
                 } else if let error = error {
                     single(.failure(error))
                 } else {
@@ -41,12 +35,9 @@ final class FirestoreUserProfileRepository: UserProfileRepository {
     func update(uid: String, profile: UserProfile) -> Single<Void> {
         Single.create { single in
             var data: [String: Any] = [:]
-            if let name = profile.displayName { data["displayName"] = name }
-            if let url = profile.photoURL { data["photoURL"] = url.absoluteString }
-            if let age = profile.age { data["age"] = age }
-            if let gender = profile.gender { data["gender"] = gender }
-            if let job = profile.job { data["job"] = job }
-            if let interest = profile.interest { data["interest"] = interest }
+            profile.attributes.forEach { key, value in
+                data[key] = value
+            }
             self.db.collection("profiles").document(uid).setData(data, merge: true) { error in
                 if let error = error {
                     single(.failure(error))
