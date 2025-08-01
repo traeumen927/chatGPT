@@ -88,12 +88,18 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
             self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
                 switch result {
                 case .success(let decoded):
-                    print(decoded)
                     let text = decoded.choices.first?.message.content ?? "{}"
                     if let data = text.data(using: .utf8) {
                         do {
-                            let res = try JSONDecoder().decode(PreferenceAnalysisResult.self, from: data)
-                            single(.success(res))
+                            let obj = try JSONSerialization.jsonObject(with: data)
+                            if let root = obj as? [String: Any],
+                               let info = root["info"] as? [String: Any] {
+                                let attrs = info.mapValues { String(describing: $0) }
+                                let res = PreferenceAnalysisResult(info: UserInfo(attributes: attrs))
+                                single(.success(res))
+                            } else {
+                                single(.failure(OpenAIError.decodingError))
+                            }
                         } catch {
                             single(.failure(OpenAIError.decodingError))
                         }

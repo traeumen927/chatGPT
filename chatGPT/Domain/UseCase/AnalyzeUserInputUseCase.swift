@@ -30,17 +30,6 @@ final class AnalyzeUserInputUseCase {
             return .error(PreferenceError.noUser)
         }
         return openAIRepository.analyzeUserInput(prompt: prompt)
-            .do(onSuccess: { result in
-                if result.info.attributes.isEmpty {
-                    print(Strings.emptyResult)
-                } else {
-                    print("Info ->", result.info.attributes)
-                }
-            }, onError: { error in
-                if case OpenAIError.decodingError = error {
-                    print(Strings.parseError)
-                }
-            })
             .catch { error in
                 if case OpenAIError.decodingError = error {
                     return .just(PreferenceAnalysisResult(info: UserInfo(attributes: [:])))
