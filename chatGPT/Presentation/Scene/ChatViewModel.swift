@@ -272,7 +272,10 @@ final class ChatViewModel {
     func infoText(from info: UserInfo) -> String? {
         let parts = info.attributes
             .sorted { $0.key < $1.key }
-            .map { "\($0.key): \($0.value)" }
+            .map { key, facts in
+                let values = facts.map { $0.value }.joined(separator: ", ")
+                return "\(key): \(values)"
+            }
         return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
     
