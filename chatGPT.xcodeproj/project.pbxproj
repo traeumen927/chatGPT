@@ -115,6 +115,8 @@
 		F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */; };
 		F1D782962E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782952E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift */; };
 		F1D782982E391E17001C9653 /* PreferenceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782972E391E17001C9653 /* PreferenceStatus.swift */; };
+				BA3AF610B6F24E0A872A7C13 /* PreferenceRelation.swift in Sources */,
+		BA3AF610B6F24E0A872A7C13 /* PreferenceRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD437210114438BA7F24471 /* PreferenceRelation.swift */; };
 		F1D7829A2E391E24001C9653 /* PreferenceStatusRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782992E391E24001C9653 /* PreferenceStatusRepository.swift */; };
 		F1DE5A762E094BD6001B0CA8 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */; };
 		F1DE5A782E094C37001B0CA8 /* FirebaseAuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */; };
@@ -189,6 +191,7 @@
 		79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendMessageUseCase.swift; sourceTree = "<group>"; };
 		7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlockAttachment.swift; sourceTree = "<group>"; };
 		7b5d4e4a1234567800000001 /* PreferenceAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceAnalysisResult.swift; sourceTree = "<group>"; };
+		ACD437210114438BA7F24471 /* PreferenceRelation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceRelation.swift; sourceTree = "<group>"; };
 		7b5d4f1234567800000006 /* AnalyzeUserInputUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUserInputUseCaseTests.swift; sourceTree = "<group>"; };
 		7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingfisherImageRepository.swift; sourceTree = "<group>"; };
 		896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutUseCase.swift; sourceTree = "<group>"; };
@@ -382,6 +385,7 @@
 				F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */,
 				F1051DEF2E004CFA008D5D80 /* OpenAIModel.swift */,
 				7b5d4e4a1234567800000001 /* PreferenceAnalysisResult.swift */,
+			ACD437210114438BA7F24471 /* PreferenceRelation.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -869,6 +873,7 @@
 				F1BFC82D2E38FC0F00FF3DA6 /* FirestorePreferenceEventRepository.swift in Sources */,
 				ED3EEADB42E0AF92425F1398 /* SwiftMarkdownRepository.swift in Sources */,
 				F1D782982E391E17001C9653 /* PreferenceStatus.swift in Sources */,
+				BA3AF610B6F24E0A872A7C13 /* PreferenceRelation.swift in Sources */,
 				F1DF3B032DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift in Sources */,
 				F1D52BC72E2679F900239002 /* ModelConfig.swift in Sources */,
 				F1C3BF152E0EBF8A000E4A99 /* ModelSelectCell.swift in Sources */,
