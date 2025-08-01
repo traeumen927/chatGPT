@@ -32,6 +32,11 @@ service cloud.firestore {
     match /profiles/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // userInfo 컬렉션
+    match /userInfo/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }
 ```
