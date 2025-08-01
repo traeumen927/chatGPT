@@ -3,9 +3,9 @@ import RxSwift
 @testable import chatGPT
 
 final class StubInfoRepository: UserInfoRepository {
-    private(set) var updated: [String: String] = [:]
+    private(set) var updated: [String: [UserFact]] = [:]
     func fetch(uid: String) -> Single<UserInfo?> { .just(nil) }
-    func update(uid: String, attributes: [String : String]) -> Single<Void> {
+    func update(uid: String, attributes: [String : [UserFact]]) -> Single<Void> {
         updated = attributes
         return .just(())
     }
@@ -50,13 +50,15 @@ final class AnalyzeUserInputUseCaseTests: XCTestCase {
 
     func test_updates_info() {
         openAI.analysisResult = PreferenceAnalysisResult(
-            info: UserInfo(attributes: ["drink": "coffee"])
+            info: UserInfo(attributes: [
+                "drink": [UserFact(value: "coffee", count: 1, firstMentioned: 0, lastMentioned: 0)]
+            ])
         )
         let exp = expectation(description: "update")
         useCase.execute(prompt: "I like coffee")
             .subscribe(onSuccess: { exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(infoRepo.updated["drink"], "coffee")
+        XCTAssertEqual(infoRepo.updated["drink"]?.first?.value, "coffee")
     }
 }

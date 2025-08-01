@@ -29,17 +29,37 @@ final class AnalyzeUserInputUseCase {
         guard let user = getCurrentUserUseCase.execute() else {
             return .error(PreferenceError.noUser)
         }
-        return openAIRepository.analyzeUserInput(prompt: prompt)
+        let analysis = openAIRepository.analyzeUserInput(prompt: prompt)
             .catch { error in
                 if case OpenAIError.decodingError = error {
                     return .just(PreferenceAnalysisResult(info: UserInfo(attributes: [:])))
                 }
                 return .error(error)
             }
-            .flatMap { [weak self] result -> Single<Void> in
+        let existing = infoRepository.fetch(uid: user.uid)
+        let now = Date().timeIntervalSince1970
+        return Single.zip(analysis, existing)
+            .flatMap { [weak self] result, current -> Single<Void> in
                 guard let self else { return .just(()) }
-                return self.infoRepository.update(uid: user.uid,
-                                                  attributes: result.info.attributes)
+                var merged = current?.attributes ?? [:]
+                for (key, facts) in result.info.attributes {
+                    var arr = merged[key] ?? []
+                    for fact in facts {
+                        if let idx = arr.firstIndex(where: { $0.value == fact.value }) {
+                            var old = arr[idx]
+                            old.count += 1
+                            old.lastMentioned = now
+                            arr[idx] = old
+                        } else {
+                            var newFact = fact
+                            newFact.firstMentioned = now
+                            newFact.lastMentioned = now
+                            arr.append(newFact)
+                        }
+                    }
+                    merged[key] = arr
+                }
+                return self.infoRepository.update(uid: user.uid, attributes: merged)
             }
     }
 }

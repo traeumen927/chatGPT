@@ -82,10 +82,10 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             detectImageRequestUseCase: StubDetectImageRequestUseCase()
         )
         let info = UserInfo(attributes: [
-            "age": "20",
-            "gender": "male",
-            "job": "student",
-            "interest": "game"
+            "age": [UserFact(value: "20", count: 1, firstMentioned: 0, lastMentioned: 0)],
+            "gender": [UserFact(value: "male", count: 1, firstMentioned: 0, lastMentioned: 0)],
+            "job": [UserFact(value: "student", count: 1, firstMentioned: 0, lastMentioned: 0)],
+            "interest": [UserFact(value: "game", count: 1, firstMentioned: 0, lastMentioned: 0)]
         ])
         let text = vm.infoText(from: info)
         XCTAssertEqual(text, "age: 20, gender: male, interest: game, job: student")
