@@ -115,7 +115,6 @@
 		F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */; };
 		F1D782962E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782952E391E0B001C9653 /* FirestorePreferenceStatusRepository.swift */; };
 		F1D782982E391E17001C9653 /* PreferenceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782972E391E17001C9653 /* PreferenceStatus.swift */; };
-				BA3AF610B6F24E0A872A7C13 /* PreferenceRelation.swift in Sources */,
 		BA3AF610B6F24E0A872A7C13 /* PreferenceRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD437210114438BA7F24471 /* PreferenceRelation.swift */; };
 		F1D7829A2E391E24001C9653 /* PreferenceStatusRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D782992E391E24001C9653 /* PreferenceStatusRepository.swift */; };
 		F1DE5A762E094BD6001B0CA8 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DE5A752E094BD6001B0CA8 /* AuthRepository.swift */; };
