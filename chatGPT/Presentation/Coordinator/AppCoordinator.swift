@@ -60,18 +60,17 @@ final class AppCoordinator {
         )
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
         
-        let preferenceRepository = FirestoreUserPreferenceRepository()
+        let infoRepository = FirestoreUserInfoRepository()
         let eventRepository = FirestorePreferenceEventRepository()
         let statusRepository = FirestorePreferenceStatusRepository()
         let translationRepository = OpenAITranslationRepository(repository: repository)
 
-        let profileRepository = FirestoreUserProfileRepository()
-        let fetchProfileUseCase = FetchUserProfileUseCase(
-            repository: profileRepository,
+        let fetchInfoUseCase = FetchUserInfoUseCase(
+            repository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
-        let updateProfileUseCase = UpdateUserProfileUseCase(
-            repository: profileRepository,
+        let updateInfoUseCase = UpdateUserInfoUseCase(
+            repository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let calculatePreferenceUseCase = CalculatePreferenceUseCase(
@@ -80,12 +79,7 @@ final class AppCoordinator {
         )
         let updatePreferenceUseCase = AnalyzeUserInputUseCase(
             openAIRepository: repository,
-            preferenceRepository: preferenceRepository,
-            profileRepository: profileRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
-        let fetchPreferenceUseCase = FetchUserPreferenceUseCase(
-            repository: preferenceRepository,
+            infoRepository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let fetchPreferenceEventsUseCase = FetchPreferenceEventsUseCase(
@@ -169,9 +163,8 @@ final class AppCoordinator {
             parseMarkdownUseCase: parseMarkdownUseCase,
             calculatePreferenceUseCase: calculatePreferenceUseCase,
             updatePreferenceUseCase: updatePreferenceUseCase,
-            fetchPreferenceUseCase: fetchPreferenceUseCase,
-            fetchProfileUseCase: fetchProfileUseCase,
-            updateProfileUseCase: updateProfileUseCase,
+            fetchInfoUseCase: fetchInfoUseCase,
+            updateInfoUseCase: updateInfoUseCase,
             uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
             detectImageRequestUseCase: detectImageRequestUseCase,

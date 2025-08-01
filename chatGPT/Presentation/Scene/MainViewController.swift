@@ -28,9 +28,8 @@ final class MainViewController: UIViewController {
     private let parseMarkdownUseCase: ParseMarkdownUseCase
     private let calculatePreferenceUseCase: CalculatePreferenceUseCase
     private let updatePreferenceUseCase: AnalyzeUserInputUseCase
-    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
-    private let fetchProfileUseCase: FetchUserProfileUseCase
-    private let updateProfileUseCase: UpdateUserProfileUseCase
+    private let fetchInfoUseCase: FetchUserInfoUseCase
+    private let updateInfoUseCase: UpdateUserInfoUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
     private let fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase
     private let fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase
@@ -155,31 +154,30 @@ final class MainViewController: UIViewController {
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-       appendMessageUseCase: AppendMessageUseCase,
-       fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
-       contextRepository: ChatContextRepository,
-      observeConversationsUseCase: ObserveConversationsUseCase,
-      signOutUseCase: SignOutUseCase,
-      updateTitleUseCase: UpdateConversationTitleUseCase,
-      deleteConversationUseCase: DeleteConversationUseCase,
-      loadUserImageUseCase: LoadUserProfileImageUseCase,
-      observeAuthStateUseCase: ObserveAuthStateUseCase,
-      parseMarkdownUseCase: ParseMarkdownUseCase,
-      calculatePreferenceUseCase: CalculatePreferenceUseCase,
-      updatePreferenceUseCase: AnalyzeUserInputUseCase,
-      fetchPreferenceUseCase: FetchUserPreferenceUseCase,
-      fetchProfileUseCase: FetchUserProfileUseCase,
-      updateProfileUseCase: UpdateUserProfileUseCase,
-      uploadFilesUseCase: UploadFilesUseCase,
-       generateImageUseCase: GenerateImageUseCase,
-      detectImageRequestUseCase: DetectImageRequestUseCase,
-      fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase,
-      fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase,
-      updatePreferenceStatusUseCase: UpdatePreferenceStatusUseCase,
-      deletePreferenceEventUseCase: DeletePreferenceEventUseCase,
-      deletePreferenceStatusUseCase: DeletePreferenceStatusUseCase) {
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+         contextRepository: ChatContextRepository,
+         observeConversationsUseCase: ObserveConversationsUseCase,
+         signOutUseCase: SignOutUseCase,
+         updateTitleUseCase: UpdateConversationTitleUseCase,
+         deleteConversationUseCase: DeleteConversationUseCase,
+         loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase,
+         parseMarkdownUseCase: ParseMarkdownUseCase,
+         calculatePreferenceUseCase: CalculatePreferenceUseCase,
+         updatePreferenceUseCase: AnalyzeUserInputUseCase,
+         fetchInfoUseCase: FetchUserInfoUseCase,
+         updateInfoUseCase: UpdateUserInfoUseCase,
+         uploadFilesUseCase: UploadFilesUseCase,
+         generateImageUseCase: GenerateImageUseCase,
+         detectImageRequestUseCase: DetectImageRequestUseCase,
+         fetchPreferenceEventsUseCase: FetchPreferenceEventsUseCase,
+         fetchPreferenceStatusUseCase: FetchPreferenceStatusUseCase,
+         updatePreferenceStatusUseCase: UpdatePreferenceStatusUseCase,
+         deletePreferenceEventUseCase: DeletePreferenceEventUseCase,
+         deletePreferenceStatusUseCase: DeletePreferenceStatusUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
-       self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
+        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
                                            appendMessageUseCase: appendMessageUseCase,
@@ -187,8 +185,7 @@ final class MainViewController: UIViewController {
                                            contextRepository: contextRepository,
                                            calculatePreferenceUseCase: calculatePreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase,
-                                           fetchPreferenceUseCase: fetchPreferenceUseCase,
-                                           fetchProfileUseCase: fetchProfileUseCase,
+                                           fetchInfoUseCase: fetchInfoUseCase,
                                            uploadFilesUseCase: uploadFilesUseCase,
                                            generateImageUseCase: generateImageUseCase,
                                            detectImageRequestUseCase: detectImageRequestUseCase)
@@ -202,9 +199,8 @@ final class MainViewController: UIViewController {
         self.parseMarkdownUseCase = parseMarkdownUseCase
         self.calculatePreferenceUseCase = calculatePreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
-        self.fetchPreferenceUseCase = fetchPreferenceUseCase
-        self.fetchProfileUseCase = fetchProfileUseCase
-        self.updateProfileUseCase = updateProfileUseCase
+        self.fetchInfoUseCase = fetchInfoUseCase
+        self.updateInfoUseCase = updateInfoUseCase
         self.fetchPreferenceEventsUseCase = fetchPreferenceEventsUseCase
         self.fetchPreferenceStatusUseCase = fetchPreferenceStatusUseCase
         self.updatePreferenceStatusUseCase = updatePreferenceStatusUseCase

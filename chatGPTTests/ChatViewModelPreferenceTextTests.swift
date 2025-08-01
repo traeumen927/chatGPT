@@ -29,15 +29,8 @@ final class StubGenerateImageUseCase {}
 final class StubDetectImageRequestUseCase {
     func execute(prompt: String) -> Single<Bool> { .just(false) }
 }
-final class StubFetchUserProfileUseCase {
-    func execute() -> Single<UserProfile?> { .just(nil) }
-}
-final class StubFetchUserPreferenceUseCase {
-    func execute() -> Single<UserPreference?> { .just(nil) }
-}
-final class StubUserPreferenceRepository: UserPreferenceRepository {
-    func fetch(uid: String) -> Single<UserPreference?> { .just(nil) }
-    func update(uid: String, items: [PreferenceItem]) -> Single<Void> { .just(()) }
+final class StubFetchUserInfoUseCase {
+    func execute() -> Single<UserInfo?> { .just(nil) }
 }
 final class StubAuthRepository: AuthRepository {
     var user: AuthUser? = AuthUser(uid: "u1", displayName: nil, photoURL: nil)
@@ -57,8 +50,7 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
             updatePreferenceUseCase: StubAnalyzeUserInputUseCase(),
-            fetchPreferenceUseCase: StubFetchUserPreferenceUseCase(),
-            fetchProfileUseCase: StubFetchUserProfileUseCase(),
+            fetchInfoUseCase: StubFetchUserInfoUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
             generateImageUseCase: StubGenerateImageUseCase(),
             detectImageRequestUseCase: StubDetectImageRequestUseCase()
@@ -84,19 +76,18 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             contextRepository: StubChatContextRepository(),
             calculatePreferenceUseCase: StubCalculatePreferenceUseCase(),
             updatePreferenceUseCase: StubAnalyzeUserInputUseCase(),
-            fetchPreferenceUseCase: StubFetchUserPreferenceUseCase(),
-            fetchProfileUseCase: StubFetchUserProfileUseCase(),
+            fetchInfoUseCase: StubFetchUserInfoUseCase(),
             uploadFilesUseCase: StubUploadFilesUseCase(),
             generateImageUseCase: StubGenerateImageUseCase(),
             detectImageRequestUseCase: StubDetectImageRequestUseCase()
         )
-        let profile = UserProfile(attributes: [
+        let info = UserInfo(attributes: [
             "age": "20",
             "gender": "male",
             "job": "student",
             "interest": "game"
         ])
-        let text = vm.profileText(from: profile)
+        let text = vm.infoText(from: info)
         XCTAssertEqual(text, "age: 20, gender: male, interest: game, job: student")
     }
 }

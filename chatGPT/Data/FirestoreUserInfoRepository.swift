@@ -2,16 +2,16 @@ import Foundation
 import FirebaseFirestore
 import RxSwift
 
-final class FirestoreUserProfileRepository: UserProfileRepository {
+final class FirestoreUserInfoRepository: UserInfoRepository {
     private let db: Firestore
 
     init(db: Firestore = Firestore.firestore()) {
         self.db = db
     }
 
-    func fetch(uid: String) -> Single<UserProfile?> {
+    func fetch(uid: String) -> Single<UserInfo?> {
         Single.create { single in
-            self.db.collection("profiles").document(uid).getDocument { snapshot, error in
+            self.db.collection("userInfo").document(uid).getDocument { snapshot, error in
                 if let data = snapshot?.data() {
                     var attributes: [String: String] = [:]
                     data.forEach { key, value in
@@ -21,7 +21,7 @@ final class FirestoreUserProfileRepository: UserProfileRepository {
                             attributes[key] = "\(value)"
                         }
                     }
-                    single(.success(UserProfile(attributes: attributes)))
+                    single(.success(UserInfo(attributes: attributes)))
                 } else if let error = error {
                     single(.failure(error))
                 } else {
@@ -32,13 +32,14 @@ final class FirestoreUserProfileRepository: UserProfileRepository {
         }
     }
 
-    func update(uid: String, profile: UserProfile) -> Single<Void> {
-        Single.create { single in
+    func update(uid: String, attributes: [String: String]) -> Single<Void> {
+        guard !attributes.isEmpty else { return .just(()) }
+        return Single.create { single in
             var data: [String: Any] = [:]
-            profile.attributes.forEach { key, value in
+            attributes.forEach { key, value in
                 data[key] = value
             }
-            self.db.collection("profiles").document(uid).setData(data, merge: true) { error in
+            self.db.collection("userInfo").document(uid).setData(data, merge: true) { error in
                 if let error = error {
                     single(.failure(error))
                 } else {
