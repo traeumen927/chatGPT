@@ -37,7 +37,7 @@ final class AnalyzeUserInputUseCase {
                     print("Info ->", result.info.attributes)
                 }
             }, onError: { error in
-                if (error as? OpenAIError) == .decodingError {
+                if case OpenAIError.decodingError = error {
                     print(Strings.parseError)
                 }
             })
