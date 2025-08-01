@@ -88,7 +88,6 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
             self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
                 switch result {
                 case .success(let decoded):
-                    print(decoded)
                     let text = decoded.choices.first?.message.content ?? "{}"
                     if let data = text.data(using: .utf8) {
                         do {

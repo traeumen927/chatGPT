@@ -87,8 +87,7 @@ final class LoginViewController: UIViewController {
                 .flatMapLatest { [weak self] _ -> Observable<AuthDataResult> in
                     guard let self = self else { return .empty() }
                     return self.signInWithGoogle()
-                        .catch { error in
-                            print("❌ 로그인 에러 발생: \(error.localizedDescription)")
+                        .catch { _ in
                             return .empty() // ✅ 에러로 끊지 않고 스트림 유지
                         }
                 }

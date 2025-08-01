@@ -163,7 +163,7 @@ final class MenuViewController: UIViewController {
                     try self.signOutUseCase.execute()
                     self.onClose?()
                 } catch {
-                    print("❌ Sign out failed: \(error.localizedDescription)")
+                    // ignore sign-out failure
                 }
             }
             .disposed(by: disposeBag)
@@ -221,9 +221,7 @@ final class MenuViewController: UIViewController {
                 self.availableModels = models
                 let index = IndexSet(integer: Section.setting.rawValue)
                 self.tableView.reloadSections(index, with: .none)
-            }, onFailure: { error in
-                print("❌ 모델 로딩 실패: \(error.localizedDescription)")
-            })
+            }, onFailure: { _ in })
             .disposed(by: disposeBag)
     }
 
