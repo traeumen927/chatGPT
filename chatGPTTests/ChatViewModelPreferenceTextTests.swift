@@ -90,12 +90,13 @@ final class ChatViewModelPreferenceTextTests: XCTestCase {
             generateImageUseCase: StubGenerateImageUseCase(),
             detectImageRequestUseCase: StubDetectImageRequestUseCase()
         )
-        var profile = UserProfile()
-        profile.age = 20
-        profile.gender = "male"
-        profile.job = "student"
-        profile.interest = "game"
+        let profile = UserProfile(attributes: [
+            "age": "20",
+            "gender": "male",
+            "job": "student",
+            "interest": "game"
+        ])
         let text = vm.profileText(from: profile)
-        XCTAssertEqual(text, "age: 20, gender: male, job: student, interest: game")
+        XCTAssertEqual(text, "age: 20, gender: male, interest: game, job: student")
     }
 }
