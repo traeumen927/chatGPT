@@ -159,10 +159,6 @@ final class OpenAIService: OpenAIServiceProtocol {
                 case .success(let decoded):
                     completion(.success(decoded))
                 case .failure(let error):
-                    if let data = response.data,
-                       let message = String(data: data, encoding: .utf8) {
-                        print("❌ OpenAI upload error: \(message)")
-                    }
                     completion(.failure(error as Error))
                 }
             }

@@ -116,8 +116,7 @@ final class ChatViewModel {
 
 
         updatePreferenceUseCase.execute(prompt: prompt)
-            .subscribe(onSuccess: { },
-                       onFailure: { print("preference error:", $0) })
+            .subscribe()
             .disposed(by: disposeBag)
         
         let allData = attachments.compactMap { item -> Data? in
