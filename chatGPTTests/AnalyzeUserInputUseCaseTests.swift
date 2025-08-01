@@ -2,26 +2,17 @@ import XCTest
 import RxSwift
 @testable import chatGPT
 
-final class StubPreferenceRepository: UserPreferenceRepository {
-    private(set) var updatedItems: [PreferenceItem] = []
-    func fetch(uid: String) -> Single<UserPreference?> { .just(nil) }
-    func update(uid: String, items: [PreferenceItem]) -> Single<Void> {
-        updatedItems = items
-        return .just(())
-    }
-}
-
-final class StubProfileRepository: UserProfileRepository {
-    private(set) var updated: UserProfile?
-    func fetch(uid: String) -> Single<UserProfile?> { .just(nil) }
-    func update(uid: String, profile: UserProfile) -> Single<Void> {
-        updated = profile
+final class StubInfoRepository: UserInfoRepository {
+    private(set) var updated: [String: String] = [:]
+    func fetch(uid: String) -> Single<UserInfo?> { .just(nil) }
+    func update(uid: String, attributes: [String : String]) -> Single<Void> {
+        updated = attributes
         return .just(())
     }
 }
 
 final class StubOpenAIRepository: OpenAIRepository {
-    var analysisResult: PreferenceAnalysisResult = .init(preferences: [], profile: nil)
+    var analysisResult: PreferenceAnalysisResult = .init(info: UserInfo(attributes: [:]))
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {}
     func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {}
     func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> { .empty() }
@@ -41,37 +32,31 @@ final class StubAuthRepository: AuthRepository {
 
 final class AnalyzeUserInputUseCaseTests: XCTestCase {
     private var useCase: AnalyzeUserInputUseCase!
-    private var prefRepo: StubPreferenceRepository!
-    private var profileRepo: StubProfileRepository!
+    private var infoRepo: StubInfoRepository!
     private var openAI: StubOpenAIRepository!
     private var disposeBag: DisposeBag!
 
     override func setUp() {
         super.setUp()
-        prefRepo = StubPreferenceRepository()
-        profileRepo = StubProfileRepository()
+        infoRepo = StubInfoRepository()
         openAI = StubOpenAIRepository()
         let auth = StubAuthRepository()
         let getUser = GetCurrentUserUseCase(repository: auth)
         useCase = AnalyzeUserInputUseCase(openAIRepository: openAI,
-                                          preferenceRepository: prefRepo,
-                                          profileRepository: profileRepo,
+                                          infoRepository: infoRepo,
                                           getCurrentUserUseCase: getUser)
         disposeBag = DisposeBag()
     }
 
-    func test_updates_preference_and_profile() {
+    func test_updates_info() {
         openAI.analysisResult = PreferenceAnalysisResult(
-            preferences: [PreferenceAnalysisResult.Preference(key: "coffee", relation: PreferenceRelation(rawValue: "like"))],
-            profile: UserProfile(attributes: ["age": "20", "gender": "male"])
+            info: UserInfo(attributes: ["drink": "coffee"])
         )
         let exp = expectation(description: "update")
         useCase.execute(prompt: "I like coffee")
             .subscribe(onSuccess: { exp.fulfill() })
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
-        XCTAssertEqual(prefRepo.updatedItems.first?.key, "coffee")
-        XCTAssertEqual(prefRepo.updatedItems.first?.relation, PreferenceRelation(rawValue: "like"))
-        XCTAssertEqual(profileRepo.updated?.attributes["age"], "20")
+        XCTAssertEqual(infoRepo.updated["drink"], "coffee")
     }
 }
