@@ -20,7 +20,7 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
             for (name, facts) in attributes {
                 for fact in facts {
                     let docPath = "profiles/\(uid)/facts/\(name)-\(fact.value)"
-                    let ref = DocumentReference(path: docPath)
+                    let ref = self.db.document(docPath)
                     let data: [String: Any] = [
                         "name": name,
                         "value": fact.value,
