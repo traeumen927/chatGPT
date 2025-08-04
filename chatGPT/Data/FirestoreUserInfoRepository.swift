@@ -15,12 +15,30 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
 
     func update(uid: String, attributes: [String: [UserFact]]) -> Single<Void> {
         guard !attributes.isEmpty else { return .just(()) }
-        return Single.create { single in
-            let batch = self.db.batch()
-            for (name, facts) in attributes {
-                for fact in facts {
-                    let docPath = "profiles/\(uid)/facts/\(name)-\(fact.value)"
-                    let ref = self.db.document(docPath)
+        let tasks = attributes.flatMap { name, facts in
+            facts.map { fact in updateFact(uid: uid, name: name, fact: fact) }
+        }
+        return Single.zip(tasks) { _ in () }
+    }
+
+    private func updateFact(uid: String, name: String, fact: UserFact) -> Single<Void> {
+        Single.create { single in
+            let docPath = "profiles/\(uid)/facts/\(name)-\(fact.value)"
+            let ref = self.db.document(docPath)
+            ref.getDocument { snapshot, error in
+                if let error {
+                    single(.failure(error))
+                    return
+                }
+                if snapshot?.exists == true {
+                    ref.updateData([
+                        "count": FieldValue.increment(Int64(fact.count)),
+                        "lastMentioned": fact.lastMentioned
+                    ]) { error in
+                        if let error { single(.failure(error)) }
+                        else { single(.success(())) }
+                    }
+                } else {
                     let data: [String: Any] = [
                         "name": name,
                         "value": fact.value,
@@ -28,12 +46,11 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
                         "firstMentioned": fact.firstMentioned,
                         "lastMentioned": fact.lastMentioned
                     ]
-                    batch.setData(data, forDocument: ref, merge: true)
+                    ref.setData(data) { error in
+                        if let error { single(.failure(error)) }
+                        else { single(.success(())) }
+                    }
                 }
-            }
-            batch.commit { error in
-                if let error { single(.failure(error)) }
-                else { single(.success(())) }
             }
             return Disposables.create()
         }
