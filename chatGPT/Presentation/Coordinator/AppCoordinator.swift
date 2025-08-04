@@ -61,8 +61,6 @@ final class AppCoordinator {
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
         
         let infoRepository = FirestoreUserInfoRepository()
-        let eventRepository = FirestorePreferenceEventRepository()
-        let statusRepository = FirestorePreferenceStatusRepository()
         _ = OpenAITranslationRepository(repository: repository)
 
         let fetchInfoUseCase = FetchUserInfoUseCase(
@@ -73,33 +71,9 @@ final class AppCoordinator {
             repository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
-        let calculatePreferenceUseCase = CalculatePreferenceUseCase(
-            eventRepository: eventRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
         let updatePreferenceUseCase = AnalyzeUserInputUseCase(
             openAIRepository: repository,
             infoRepository: infoRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
-        let fetchPreferenceEventsUseCase = FetchPreferenceEventsUseCase(
-            repository: eventRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
-        let fetchPreferenceStatusUseCase = FetchPreferenceStatusUseCase(
-            repository: statusRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
-        let updatePreferenceStatusUseCase = UpdatePreferenceStatusUseCase(
-            repository: statusRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
-        let deletePreferenceEventUseCase = DeletePreferenceEventUseCase(
-            repository: eventRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
-        )
-        let deletePreferenceStatusUseCase = DeletePreferenceStatusUseCase(
-            repository: statusRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let conversationRepository = FirestoreConversationRepository()
@@ -161,18 +135,12 @@ final class AppCoordinator {
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase,
             parseMarkdownUseCase: parseMarkdownUseCase,
-            calculatePreferenceUseCase: calculatePreferenceUseCase,
             updatePreferenceUseCase: updatePreferenceUseCase,
             fetchInfoUseCase: fetchInfoUseCase,
             updateInfoUseCase: updateInfoUseCase,
             uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
-            detectImageRequestUseCase: detectImageRequestUseCase,
-            fetchPreferenceEventsUseCase: fetchPreferenceEventsUseCase,
-            fetchPreferenceStatusUseCase: fetchPreferenceStatusUseCase,
-            updatePreferenceStatusUseCase: updatePreferenceStatusUseCase,
-            deletePreferenceEventUseCase: deletePreferenceEventUseCase,
-            deletePreferenceStatusUseCase: deletePreferenceStatusUseCase
+            detectImageRequestUseCase: detectImageRequestUseCase
         )
         
         let nav = UINavigationController(rootViewController: vc)
