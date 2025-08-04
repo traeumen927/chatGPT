@@ -10,7 +10,38 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
     }
 
     func fetch(uid: String) -> Single<UserInfo?> {
-        .just(nil)
+        Single.create { single in
+            self.db.collection("profiles").document(uid).collection("facts").getDocuments { snapshot, error in
+                if let error = error {
+                    single(.failure(error))
+                    return
+                }
+                guard let docs = snapshot?.documents else {
+                    single(.success(nil))
+                    return
+                }
+                var attributes: [String: [UserFact]] = [:]
+                for doc in docs {
+                    let data = doc.data()
+                    guard let name = data["name"] as? String,
+                          let value = data["value"] as? String,
+                          let count = data["count"] as? Int,
+                          let first = data["firstMentioned"] as? TimeInterval,
+                          let last = data["lastMentioned"] as? TimeInterval else { continue }
+                    let fact = UserFact(value: value,
+                                        count: count,
+                                        firstMentioned: first,
+                                        lastMentioned: last)
+                    attributes[name, default: []].append(fact)
+                }
+                if attributes.isEmpty {
+                    single(.success(nil))
+                } else {
+                    single(.success(UserInfo(attributes: attributes)))
+                }
+            }
+            return Disposables.create()
+        }
     }
 
     func update(uid: String, attributes: [String: [UserFact]]) -> Single<Void> {

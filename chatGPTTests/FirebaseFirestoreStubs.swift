@@ -13,6 +13,15 @@ class CollectionReference {
     init(store: Firestore, path: String) { self.store = store; self.path = path }
     func document(_ id: String) -> DocumentReference { DocumentReference(store: store, path: "\(path)/\(id)") }
     func collection(_ id: String) -> CollectionReference { CollectionReference(store: store, path: "\(path)/\(id)") }
+    func getDocuments(completion: (QuerySnapshot?, Error?) -> Void) {
+        let prefix = path + "/"
+        var docs: [QueryDocumentSnapshot] = []
+        for (key, value) in store.documents where key.hasPrefix(prefix) {
+            let id = String(key.dropFirst(prefix.count))
+            docs.append(QueryDocumentSnapshot(documentID: id, data: value))
+        }
+        completion(QuerySnapshot(documents: docs), nil)
+    }
 }
 
 class DocumentReference {
@@ -47,6 +56,21 @@ class DocumentSnapshot {
     init(data: [String: Any]?) { self.dataMap = data }
     var exists: Bool { dataMap != nil }
     func data() -> [String: Any]? { dataMap }
+}
+
+class QueryDocumentSnapshot {
+    let documentID: String
+    private let dataMap: [String: Any]
+    init(documentID: String, data: [String: Any]) {
+        self.documentID = documentID
+        self.dataMap = data
+    }
+    func data() -> [String: Any] { dataMap }
+}
+
+class QuerySnapshot {
+    let documents: [QueryDocumentSnapshot]
+    init(documents: [QueryDocumentSnapshot]) { self.documents = documents }
 }
 
 class FieldValue {
