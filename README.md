@@ -334,7 +334,7 @@ UIKit 기반 구성 요소 및 커스텀 UI 모두 traitCollection에 따라 적
 
 ## 🔒 Firestore 보안 규칙
 
-Firestore에 저장되는 `preferences` 컬렉션의 `items`, `events`, `status` 하위 컬렉션과 `conversations` 컬렉션은 인증된 사용자만 접근할 수 있도록 권한을 설정해야 합니다.
+Firestore에 저장되는 `profiles` 컬렉션의 `facts` 하위 컬렉션과 `conversations` 컬렉션은 인증된 사용자만 접근할 수 있도록 권한을 설정해야 합니다.
 
 Firebase 콘솔의 **Firestore Database > 규칙** 탭에서 [`firebase/firestore_rules.md`](firebase/firestore_rules.md) 파일의 내용을 적용하세요.
 또한 `/models` 컬렉션에 대한 규칙도 동일하게 설정해야 합니다.
