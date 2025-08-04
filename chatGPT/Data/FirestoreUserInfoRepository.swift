@@ -23,7 +23,8 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
 
     private func updateFact(uid: String, name: String, fact: UserFact) -> Single<Void> {
         Single.create { single in
-            let docPath = "profiles/\(uid)/facts/\(name)-\(fact.value)"
+            let canonical = fact.value.factIdentifier()
+            let docPath = "profiles/\(uid)/facts/\(canonical)"
             let ref = self.db.document(docPath)
             ref.getDocument { snapshot, error in
                 if let error {
@@ -42,6 +43,7 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
                     let data: [String: Any] = [
                         "name": name,
                         "value": fact.value,
+                        "canonicalValue": canonical,
                         "count": fact.count,
                         "firstMentioned": fact.firstMentioned,
                         "lastMentioned": fact.lastMentioned

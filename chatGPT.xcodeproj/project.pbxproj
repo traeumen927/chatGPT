@@ -44,9 +44,10 @@
 		F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */; };
 		F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111122F0A000100D00000 /* HorizontalRuleView.swift */; };
 		F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D12E0C034B006E81DD /* ConversationMessage.swift */; };
-		F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */; };
-		F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */; };
-		F13C62542E2E60EB0028EE88 /* TrailingFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13C62532E2E60EB0028EE88 /* TrailingFlowLayout.swift */; };
+                F122E5D42E0C0352006E81DD /* FetchConversationMessagesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */; };
+                F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */; };
+                8BBE823102644506A09FA61B /* String+Canonical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7824C90AC37444DE95C40C0B /* String+Canonical.swift */; };
+                F13C62542E2E60EB0028EE88 /* TrailingFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13C62532E2E60EB0028EE88 /* TrailingFlowLayout.swift */; };
 		F13DAC982E310EB0005A1A67 /* OpenAIImageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */; };
 		F13DAC9A2E310EC4005A1A67 /* GenerateImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */; };
 		F13EB5992E12BFED00171AFC /* MarkdownRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */; };
@@ -197,10 +198,11 @@
 		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRuleAttachment.swift; sourceTree = "<group>"; };
 		F12111122F0A000100D00000 /* HorizontalRuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRuleView.swift; sourceTree = "<group>"; };
-		F122E5D12E0C034B006E81DD /* ConversationMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
-		F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConversationMessagesUseCase.swift; sourceTree = "<group>"; };
-		F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Sanitize.swift"; sourceTree = "<group>"; };
-		F13C62532E2E60EB0028EE88 /* TrailingFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailingFlowLayout.swift; sourceTree = "<group>"; };
+                F122E5D12E0C034B006E81DD /* ConversationMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessage.swift; sourceTree = "<group>"; };
+                F122E5D32E0C0352006E81DD /* FetchConversationMessagesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConversationMessagesUseCase.swift; sourceTree = "<group>"; };
+                F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Sanitize.swift"; sourceTree = "<group>"; };
+                7824C90AC37444DE95C40C0B /* String+Canonical.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Canonical.swift"; sourceTree = "<group>"; };
+                F13C62532E2E60EB0028EE88 /* TrailingFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailingFlowLayout.swift; sourceTree = "<group>"; };
 		F13DAC972E310EB0005A1A67 /* OpenAIImageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIImageRequest.swift; sourceTree = "<group>"; };
 		F13DAC992E310EC4005A1A67 /* GenerateImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateImageUseCase.swift; sourceTree = "<group>"; };
 		F13EB5982E12BFED00171AFC /* MarkdownRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRepository.swift; sourceTree = "<group>"; };
@@ -355,23 +357,31 @@
 			path = Entity;
 			sourceTree = "<group>";
 		};
-		F117E06F2E01586400D1C95F /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */,
-				F117E0702E01587F00D1C95F /* String+Truncate.swift */,
-				F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */,
-				F1EF04EE2E044EC5005D2CF9 /* UIColor+Hex.swift */,
-				F1452D882E09796F00795A9E /* UIImage.swift */,
-				6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */,
-				F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */,
-			);
-			path = Helpers;
-			sourceTree = "<group>";
-		};
-		F117E07C2E018AF400D1C95F /* Cells */ = {
-			isa = PBXGroup;
-			children = (
+                F117E06F2E01586400D1C95F /* Helpers */ = {
+                        isa = PBXGroup;
+                        children = (
+                                F122E5D52E0C0F01006E81DD /* String+Sanitize.swift */,
+                                F117E0702E01587F00D1C95F /* String+Truncate.swift */,
+                                F16D6E2E2E0D3DCA00E0718A /* UIColor+Dynamic.swift */,
+                                F1EF04EE2E044EC5005D2CF9 /* UIColor+Hex.swift */,
+                                F1452D882E09796F00795A9E /* UIImage.swift */,
+                                6A7745C5EDAA99DD0CAA4DF5 /* UITextView+Attachment.swift */,
+                                F1D52BC02E266CAE00239002 /* UIApplication+TopViewController.swift */,
+                        );
+                        path = Helpers;
+                        sourceTree = "<group>";
+                };
+                C55B60FD56804AF68DD188E6 /* Extensions */ = {
+                        isa = PBXGroup;
+                        children = (
+                                7824C90AC37444DE95C40C0B /* String+Canonical.swift */,
+                        );
+                        path = Extensions;
+                        sourceTree = "<group>";
+                };
+                F117E07C2E018AF400D1C95F /* Cells */ = {
+                        isa = PBXGroup;
+                        children = (
 				F1C3BF142E0EBF8A000E4A99 /* ModelSelectCell.swift */,
 				F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */,
 				06D64F3141B541D0BD80EE52 /* StreamToggleCell.swift */,
@@ -408,10 +418,11 @@
 				F1DF3B202DF9B47E00D8445A /* Service */,
 				F1DF3B012DF9AF5700D8445A /* Data */,
 				F1DF3B042DF9AF9900D8445A /* Domain */,
-				F1DF3B122DF9B07800D8445A /* Presentation */,
-				F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
-				F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */,
-				F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
+                                F1DF3B122DF9B07800D8445A /* Presentation */,
+                                C55B60FD56804AF68DD188E6 /* Extensions */,
+                                F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */,
+                                F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */,
+                                F166CA0D2DF9A39B00AAB5B0 /* Info.plist */,
 				F1452D822E095F7D00795A9E /* GoogleService-Info.plist */,
 			);
 			path = chatGPT;
@@ -786,11 +797,12 @@
 				F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */,
 				F16D6E2F2E0D3DCA00E0718A /* UIColor+Dynamic.swift in Sources */,
 				F1EF04EF2E044EC5005D2CF9 /* UIColor+Hex.swift in Sources */,
-				F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
-				F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */,
-				F1D52BC52E2679F000239002 /* FirestoreModelConfigRepository.swift in Sources */,
-				F1452D852E09741500795A9E /* AuthUser.swift in Sources */,
-				F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
+                                F1DF3B272DF9B61400D8445A /* BorderedTextView.swift in Sources */,
+                                F122E5D62E0C0F01006E81DD /* String+Sanitize.swift in Sources */,
+                                8BBE823102644506A09FA61B /* String+Canonical.swift in Sources */,
+                                F1D52BC52E2679F000239002 /* FirestoreModelConfigRepository.swift in Sources */,
+                                F1452D852E09741500795A9E /* AuthUser.swift in Sources */,
+                                F1DF3B1A2DF9B0FC00D8445A /* MainViewController.swift in Sources */,
 				F18F0CEA2E3B80090055D516 /* AnalyzeUserInputUseCase.swift in Sources */,
 				E6BFBABECC6C47DA818A13E5 /* LoginViewController.swift in Sources */,
 				F15BC4F62E0A955B00F25923 /* SaveConversationUseCase.swift in Sources */,

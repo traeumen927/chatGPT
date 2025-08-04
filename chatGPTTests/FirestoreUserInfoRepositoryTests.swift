@@ -28,9 +28,33 @@ final class FirestoreUserInfoRepositoryTests: XCTestCase {
             .disposed(by: disposeBag)
         waitForExpectations(timeout: 1)
 
-        let doc = firestore.documents["profiles/u1/facts/likes-udon"]
+        let doc = firestore.documents["profiles/u1/facts/udon"]
         XCTAssertEqual(doc?["count"] as? Int, 2)
         XCTAssertEqual(doc?["firstMentioned"] as? TimeInterval, 100)
         XCTAssertEqual(doc?["lastMentioned"] as? TimeInterval, 200)
+    }
+
+    func test_update_merges_different_casing_and_symbols_into_one_document() {
+        let firestore = Firestore()
+        let repository = FirestoreUserInfoRepository(db: firestore)
+
+        let exp1 = expectation(description: "first")
+        let first = UserFact(value: "Udon!", count: 1, firstMentioned: 100, lastMentioned: 100)
+        repository.update(uid: "u1", attributes: ["likes": [first]])
+            .subscribe(onSuccess: { exp1.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+
+        let exp2 = expectation(description: "second")
+        let second = UserFact(value: "u_don", count: 1, firstMentioned: 200, lastMentioned: 200)
+        repository.update(uid: "u1", attributes: ["likes": [second]])
+            .subscribe(onSuccess: { exp2.fulfill() })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+
+        XCTAssertEqual(firestore.documents.count, 1)
+        let doc = firestore.documents["profiles/u1/facts/udon"]
+        XCTAssertEqual(doc?["count"] as? Int, 2)
+        XCTAssertEqual(doc?["canonicalValue"] as? String, "udon")
     }
 }
