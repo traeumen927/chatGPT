@@ -18,6 +18,4 @@ protocol OpenAIRepository {
     func generateImage(prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void)
 
     func detectImageIntent(prompt: String) -> Single<Bool>
-
-    func analyzeUserInput(prompt: String) -> Single<PreferenceAnalysisResult>
 }

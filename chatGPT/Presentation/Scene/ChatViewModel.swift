@@ -44,15 +44,10 @@ final class ChatViewModel {
     private let appendMessageUseCase: AppendMessageUseCase
     private let fetchMessagesUseCase: FetchConversationMessagesUseCase
     private let contextRepository: ChatContextRepository
-    private let calculatePreferenceUseCase: CalculatePreferenceUseCase
-    private let updatePreferenceUseCase: AnalyzeUserInputUseCase
-    private let fetchInfoUseCase: FetchUserInfoUseCase
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
     private let detectImageRequestUseCase: DetectImageRequestUseCase
     private let disposeBag = DisposeBag()
-
-    private var userInfo = UserInfo(attributes: [:])
     
     private var draftMessages: [ChatMessage]? = nil
     
@@ -68,9 +63,6 @@ final class ChatViewModel {
          appendMessageUseCase: AppendMessageUseCase,
          fetchMessagesUseCase: FetchConversationMessagesUseCase,
          contextRepository: ChatContextRepository,
-         calculatePreferenceUseCase: CalculatePreferenceUseCase,
-         updatePreferenceUseCase: AnalyzeUserInputUseCase,
-         fetchInfoUseCase: FetchUserInfoUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
          detectImageRequestUseCase: DetectImageRequestUseCase) {
@@ -80,17 +72,9 @@ final class ChatViewModel {
         self.appendMessageUseCase = appendMessageUseCase
         self.fetchMessagesUseCase = fetchMessagesUseCase
         self.contextRepository = contextRepository
-        self.calculatePreferenceUseCase = calculatePreferenceUseCase
-        self.updatePreferenceUseCase = updatePreferenceUseCase
-        self.fetchInfoUseCase = fetchInfoUseCase
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
         self.detectImageRequestUseCase = detectImageRequestUseCase
-        fetchInfoUseCase.execute()
-            .subscribe(onSuccess: { [weak self] info in
-                self?.userInfo = info ?? UserInfo(attributes: [:])
-            })
-            .disposed(by: disposeBag)
     }
     
     func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
@@ -115,10 +99,6 @@ final class ChatViewModel {
         appendMessage(ChatMessage(id: messageID, type: .user, text: prompt))
 
 
-        updatePreferenceUseCase.execute(prompt: prompt)
-            .subscribe()
-            .disposed(by: disposeBag)
-        
         let allData = attachments.compactMap { item -> Data? in
             switch item {
             case .image(let img):
@@ -130,8 +110,8 @@ final class ChatViewModel {
         
         uploadFilesUseCase.execute(datas: allData)
             .catchAndReturn([])
-            .flatMap { [weak self] urls -> Single<[PreferenceEvent]> in
-                guard let self else { return .just([]) }
+            .flatMap { [weak self] urls -> Single<Void> in
+                guard let self else { return .just(()) }
                 self.updateMessage(id: messageID, text: prompt, urls: urls.map { $0.absoluteString })
                 if let id = self.conversationID {
                     self.appendMessageUseCase.execute(conversationID: id,
@@ -141,31 +121,25 @@ final class ChatViewModel {
                     .subscribe()
                     .disposed(by: self.disposeBag)
                 }
-                return self.calculatePreferenceUseCase.execute(top: 3).map { events in
-                    self.sendInternal(prompt: prompt,
-                                      attachments: attachments,
-                                      urls: urls.map { $0.absoluteString },
-                                      model: model,
-                                      stream: stream,
-                                      preference: events,
-                                      isFirst: isFirst)
-                    return events
-                }
+                self.sendInternal(prompt: prompt,
+                                   attachments: attachments,
+                                   urls: urls.map { $0.absoluteString },
+                                   model: model,
+                                   stream: stream,
+                                   isFirst: isFirst)
+                return .just(())
             }
             .subscribe()
             .disposed(by: disposeBag)
     }
-    
+
     private func sendInternal(prompt: String,
                               attachments: [Attachment],
                               urls: [String],
                               model: OpenAIModel,
                               stream: Bool,
-                              preference: [PreferenceEvent],
                               isFirst: Bool) {
         guard stream else {
-            let eventsToUse = preference
-            let prefMessage = self.preferenceText(from: eventsToUse)
             let imageData = attachments.compactMap { item -> Data? in
                 if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
                 return nil
@@ -174,12 +148,11 @@ final class ChatViewModel {
                 if case let .file(url) = item { return try? Data(contentsOf: url) }
                 return nil
             }
-            let profileMsg = self.infoText(from: self.userInfo)
             sendMessageUseCase.execute(prompt: prompt,
                                        model: model,
                                        stream: false,
-                                       preference: prefMessage,
-                                       profile: profileMsg,
+                                       preference: nil,
+                                       profile: nil,
                                        images: imageData,
                                        files: fileData) { [weak self] result in
                 guard let self = self else { return }
@@ -213,8 +186,6 @@ final class ChatViewModel {
         appendMessage(ChatMessage(id: assistantID, type: .assistant, text: ""))
         var fullText = ""
         
-        let eventsToUse = preference
-        let prefMessage = self.preferenceText(from: eventsToUse)
         let imageData = attachments.compactMap { item -> Data? in
             if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
             return nil
@@ -223,11 +194,10 @@ final class ChatViewModel {
             if case let .file(url) = item { return try? Data(contentsOf: url) }
             return nil
         }
-        let profileMsg = self.infoText(from: self.userInfo)
         sendMessageUseCase.stream(prompt: prompt,
                                   model: model,
-                                  preference: prefMessage,
-                                  profile: profileMsg,
+                                  preference: nil,
+                                  profile: nil,
                                   images: imageData,
                                   files: fileData)
             .observe(on: MainScheduler.instance)
@@ -259,24 +229,6 @@ final class ChatViewModel {
                 }
             })
             .disposed(by: disposeBag)
-    }
-    
-    func preferenceText(from preference: [PreferenceEvent]) -> String? {
-        guard !preference.isEmpty else { return nil }
-        let sorted = preference.sorted { $0.timestamp > $1.timestamp }
-        let texts = sorted.prefix(3).map { "\($0.relation.rawValue): \($0.key)" }
-        let result = texts.joined(separator: ", ")
-        return result.isEmpty ? nil : result
-    }
-
-    func infoText(from info: UserInfo) -> String? {
-        let parts = info.attributes
-            .sorted { $0.key < $1.key }
-            .map { key, facts in
-                let values = facts.map { $0.value }.joined(separator: ", ")
-                return "\(key): \(values)"
-            }
-        return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
     
     private func saveFirstConversation(question: String,
