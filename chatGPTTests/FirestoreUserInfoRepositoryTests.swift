@@ -57,4 +57,30 @@ final class FirestoreUserInfoRepositoryTests: XCTestCase {
         XCTAssertEqual(doc?["count"] as? Int, 2)
         XCTAssertEqual(doc?["canonicalValue"] as? String, "udon")
     }
+
+    func test_fetch_returns_user_info() {
+        let firestore = Firestore()
+        firestore.documents["profiles/u1/facts/udon"] = [
+            "name": "likes",
+            "value": "udon",
+            "canonicalValue": "udon",
+            "count": 2,
+            "firstMentioned": 100.0,
+            "lastMentioned": 200.0
+        ]
+        let repository = FirestoreUserInfoRepository(db: firestore)
+
+        let exp = expectation(description: "fetch")
+        var result: UserInfo?
+        repository.fetch(uid: "u1")
+            .subscribe(onSuccess: { info in
+                result = info
+                exp.fulfill()
+            })
+            .disposed(by: disposeBag)
+        waitForExpectations(timeout: 1)
+
+        let expectedFact = UserFact(value: "udon", count: 2, firstMentioned: 100, lastMentioned: 200)
+        XCTAssertEqual(result, UserInfo(attributes: ["likes": [expectedFact]]))
+    }
 }
