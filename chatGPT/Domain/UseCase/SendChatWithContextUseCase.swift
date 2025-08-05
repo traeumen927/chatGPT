@@ -31,12 +31,16 @@ final class SendChatWithContextUseCase {
                  model: OpenAIModel,
                  stream: Bool,
                  preference: String?,
+                 profile: String?,
                  images: [Data] = [],
                  files: [Data] = [],
                  completion: @escaping (Result<String, Error>) -> Void) {
         var messages = [Message]()
         if let preference {
             messages.append(Message(role: .system, content: preference))
+        }
+        if let profile {
+            messages.append(Message(role: .system, content: profile))
         }
         if let summary = contextRepository.summary {
             messages.append(Message(role: .system, content: summary))
@@ -92,11 +96,15 @@ final class SendChatWithContextUseCase {
     func stream(prompt: String,
                 model: OpenAIModel,
                 preference: String?,
+                profile: String?,
                 images: [Data] = [],
                 files: [Data] = []) -> Observable<String> {
         var messages = [Message]()
         if let preference {
             messages.append(Message(role: .system, content: preference))
+        }
+        if let profile {
+            messages.append(Message(role: .system, content: profile))
         }
         if let summary = contextRepository.summary {
             messages.append(Message(role: .system, content: summary))

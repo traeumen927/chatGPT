@@ -6,11 +6,6 @@ Firebase 콘솔에서 **Firestore Database** 메뉴의 **규칙** 탭에 아래 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // preferences 컬렉션
-    match /preferences/{userId}/items/{itemId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
     // conversations 컬렉션
     match /conversations/{userId}/items/{conversationId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -20,6 +15,11 @@ service cloud.firestore {
     match /models/{modelId} {
       allow read: if true;
       allow write: if request.auth != null;
+    }
+
+    // profiles 컬렉션
+    match /profiles/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }

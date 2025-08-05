@@ -60,13 +60,20 @@ final class AppCoordinator {
         )
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
         
-        let preferenceRepository = FirestoreUserPreferenceRepository()
-        let fetchPreferenceUseCase = FetchUserPreferenceUseCase(
-            repository: preferenceRepository,
+        let infoRepository = FirestoreUserInfoRepository()
+        _ = OpenAITranslationRepository(repository: repository)
+
+        let fetchInfoUseCase = FetchUserInfoUseCase(
+            repository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
-        let updatePreferenceUseCase = UpdateUserPreferenceUseCase(
-            repository: preferenceRepository,
+        let updateInfoUseCase = UpdateUserInfoUseCase(
+            repository: infoRepository,
+            getCurrentUserUseCase: getCurrentUserUseCase
+        )
+        let updatePreferenceUseCase = AnalyzeUserInputUseCase(
+            openAIRepository: repository,
+            infoRepository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
         let conversationRepository = FirestoreConversationRepository()
@@ -127,12 +134,11 @@ final class AppCoordinator {
             deleteConversationUseCase: deleteConversationUseCase,
             loadUserImageUseCase: loadUserImageUseCase,
             observeAuthStateUseCase: observeAuthStateUseCase,
-            parseMarkdownUseCase: parseMarkdownUseCase
-        ,
-            fetchPreferenceUseCase: fetchPreferenceUseCase,
+            parseMarkdownUseCase: parseMarkdownUseCase,
             updatePreferenceUseCase: updatePreferenceUseCase,
-            uploadFilesUseCase: uploadFilesUseCase
-        ,
+            fetchInfoUseCase: fetchInfoUseCase,
+            updateInfoUseCase: updateInfoUseCase,
+            uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
             detectImageRequestUseCase: detectImageRequestUseCase
         )

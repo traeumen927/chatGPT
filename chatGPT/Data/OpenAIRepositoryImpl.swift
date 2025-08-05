@@ -77,6 +77,35 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
             return Disposables.create()
         }
     }
+
+    func analyzeUserInput(prompt: String) -> Single<PreferenceAnalysisResult> {
+        Single.create { single in
+            let system = Message(
+                role: .system,
+                content: "Analyze the user's message. Translate any non-English input into English before analysis. Record any personal facts as key-value pairs(For example, all personalized information such as occupation, hobbies, gender, age, likes and dislikes, etc.). Ignore any guesses or questions. Return only JSON { \"info\": { ... } } in English only."
+            )
+            let user = Message(role: .user, content: prompt)
+            self.service.request(.chat(messages: [system, user], model: OpenAIModel(id: "gpt-3.5-turbo"))) { (result: Result<OpenAIResponse, Error>) in
+                switch result {
+                case .success(let decoded):
+                    let text = decoded.choices.first?.message.content ?? "{}"
+                    if let data = text.data(using: .utf8) {
+                        do {
+                            let res = try JSONDecoder().decode(PreferenceAnalysisResult.self, from: data)
+                            single(.success(res))
+                        } catch {
+                            single(.failure(OpenAIError.decodingError))
+                        }
+                    } else {
+                        single(.failure(OpenAIError.decodingError))
+                    }
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
     
     /// 사용가능한 모델 조회
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {
