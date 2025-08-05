@@ -44,6 +44,44 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
         }
     }
 
+    func observe(uid: String) -> Observable<UserInfo?> {
+        Observable.create { observer in
+            let listener = self.db.collection("profiles")
+                .document(uid)
+                .collection("facts")
+                .addSnapshotListener { snapshot, error in
+                    if let error = error {
+                        observer.onError(error)
+                        return
+                    }
+                    guard let docs = snapshot?.documents else {
+                        observer.onNext(nil)
+                        return
+                    }
+                    var attributes: [String: [UserFact]] = [:]
+                    for doc in docs {
+                        let data = doc.data()
+                        guard let name = data["name"] as? String,
+                              let value = data["value"] as? String,
+                              let count = data["count"] as? Int,
+                              let first = data["firstMentioned"] as? TimeInterval,
+                              let last = data["lastMentioned"] as? TimeInterval else { continue }
+                        let fact = UserFact(value: value,
+                                            count: count,
+                                            firstMentioned: first,
+                                            lastMentioned: last)
+                        attributes[name, default: []].append(fact)
+                    }
+                    if attributes.isEmpty {
+                        observer.onNext(nil)
+                    } else {
+                        observer.onNext(UserInfo(attributes: attributes))
+                    }
+                }
+            return Disposables.create { listener.remove() }
+        }
+    }
+
     func update(uid: String, attributes: [String: [UserFact]]) -> Single<Void> {
         guard !attributes.isEmpty else { return .just(()) }
         let tasks = attributes.flatMap { name, facts in

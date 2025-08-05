@@ -22,6 +22,17 @@ class CollectionReference {
         }
         completion(QuerySnapshot(documents: docs), nil)
     }
+
+    func addSnapshotListener(_ listener: @escaping (QuerySnapshot?, Error?) -> Void) -> ListenerRegistration {
+        let prefix = path + "/"
+        var docs: [QueryDocumentSnapshot] = []
+        for (key, value) in store.documents where key.hasPrefix(prefix) {
+            let id = String(key.dropFirst(prefix.count))
+            docs.append(QueryDocumentSnapshot(documentID: id, data: value))
+        }
+        listener(QuerySnapshot(documents: docs), nil)
+        return ListenerRegistration {}
+    }
 }
 
 class DocumentReference {
@@ -75,4 +86,10 @@ class QuerySnapshot {
 
 class FieldValue {
     static func increment(_ value: Int64) -> Int64 { value }
+}
+
+class ListenerRegistration {
+    private let onRemove: () -> Void
+    init(_ onRemove: @escaping () -> Void) { self.onRemove = onRemove }
+    func remove() { onRemove() }
 }
