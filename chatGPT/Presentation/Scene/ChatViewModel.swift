@@ -117,12 +117,8 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
         
         let allData = attachments.compactMap { item -> Data? in
-            switch item {
-            case .image(let img):
-                return img.jpegData(compressionQuality: 0.8)
-            case .file(let url):
-                return try? Data(contentsOf: url)
-            }
+            if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
+            return nil
         }
         
         uploadFilesUseCase.execute(datas: allData)
@@ -155,22 +151,18 @@ final class ChatViewModel {
                               stream: Bool,
                               isFirst: Bool) {
         guard stream else {
-            let imageData = attachments.compactMap { item -> Data? in
-                if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
-                return nil
-            }
-            let fileData = attachments.compactMap { item -> Data? in
-                if case let .file(url) = item { return try? Data(contentsOf: url) }
-                return nil
-            }
-            let profileMsg = self.infoText(from: self.userInfo)
-            sendMessageUseCase.execute(prompt: prompt,
-                                       model: model,
-                                       stream: false,
-                                       preference: nil,
-                                       profile: profileMsg,
-                                       images: imageData,
-                                       files: fileData) { [weak self] result in
+        let imageData = attachments.compactMap { item -> Data? in
+            if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
+            return nil
+        }
+        let profileMsg = self.infoText(from: self.userInfo)
+        sendMessageUseCase.execute(prompt: prompt,
+                                   model: model,
+                                   stream: false,
+                                   preference: nil,
+                                   profile: profileMsg,
+                                   images: imageData,
+                                   files: []) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success(let reply):
@@ -205,17 +197,13 @@ final class ChatViewModel {
             if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
             return nil
         }
-        let fileData = attachments.compactMap { item -> Data? in
-            if case let .file(url) = item { return try? Data(contentsOf: url) }
-            return nil
-        }
         let profileMsg = self.infoText(from: self.userInfo)
         sendMessageUseCase.stream(prompt: prompt,
                                   model: model,
                                   preference: nil,
                                   profile: profileMsg,
                                   images: imageData,
-                                  files: fileData)
+                                  files: [])
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
                 guard let self else { return }
@@ -351,12 +339,8 @@ final class ChatViewModel {
         appendMessage(ChatMessage(id: id, type: .user, text: prompt))
 
         let uploadData = attachments.compactMap { item -> Data? in
-            switch item {
-            case .image(let img):
-                return img.jpegData(compressionQuality: 0.8)
-            case .file(let url):
-                return try? Data(contentsOf: url)
-            }
+            if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
+            return nil
         }
 
         uploadFilesUseCase.execute(datas: uploadData)

@@ -10,7 +10,6 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import PhotosUI
-import UniformTypeIdentifiers
 
 final class MainViewController: UIViewController {
     
@@ -359,10 +358,7 @@ final class MainViewController: UIViewController {
         let albumAction = UIAction(title: "앨범", image: UIImage(systemName: "photo")) { [weak self] _ in
             self?.handleAlbumOption()
         }
-        let fileAction = UIAction(title: "파일", image: UIImage(systemName: "doc")) { [weak self] _ in
-            self?.presentDocumentPicker()
-        }
-        composerView.plusButtonMenu = UIMenu(title: "", children: [photoAction, albumAction, fileAction])
+        composerView.plusButtonMenu = UIMenu(title: "", children: [photoAction, albumAction])
         composerView.onPlusButtonTapped = nil
     }
 
@@ -399,12 +395,6 @@ final class MainViewController: UIViewController {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else { return }
         let picker = UIImagePickerController()
         picker.sourceType = .camera
-        picker.delegate = self
-        present(picker, animated: true)
-    }
-
-    private func presentDocumentPicker() {
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.data], asCopy: true)
         picker.delegate = self
         present(picker, animated: true)
     }
@@ -499,16 +489,6 @@ extension MainViewController: UIImagePickerControllerDelegate, UINavigationContr
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
-    }
-}
-
-extension MainViewController: UIDocumentPickerDelegate {
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        controller.dismiss(animated: true)
-        guard !urls.isEmpty else { return }
-        var current = composerView.attachments.value
-        current.append(contentsOf: urls.map { .file($0) })
-        composerView.attachments.accept(current)
     }
 }
 

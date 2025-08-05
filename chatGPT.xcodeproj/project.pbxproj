@@ -32,7 +32,6 @@
 		F1051DF82E004EBB008D5D80 /* OpenAIEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */; };
 		F1051DFA2E004EC9008D5D80 /* OpenAIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DF92E004EC8008D5D80 /* OpenAIError.swift */; };
 		F1051DFC2E0050EE008D5D80 /* OpenAIChatRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */; };
-		F10E27FE2E37A6AA00F3821A /* DocumentViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */; };
 		F117E06E2E01525100D1C95F /* OpenAIModelListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */; };
 		F117E0712E01587F00D1C95F /* String+Truncate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0702E01587F00D1C95F /* String+Truncate.swift */; };
 		F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */; };
@@ -187,7 +186,6 @@
 		F1051DF72E004EBB008D5D80 /* OpenAIEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIEndPoint.swift; sourceTree = "<group>"; };
 		F1051DF92E004EC8008D5D80 /* OpenAIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIError.swift; sourceTree = "<group>"; };
 		F1051DFB2E0050EE008D5D80 /* OpenAIChatRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIChatRequest.swift; sourceTree = "<group>"; };
-		F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewerViewController.swift; sourceTree = "<group>"; };
 		F117E06D2E01525100D1C95F /* OpenAIModelListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModelListResponse.swift; sourceTree = "<group>"; };
 		F117E0702E01587F00D1C95F /* String+Truncate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Truncate.swift"; sourceTree = "<group>"; };
 		F117E0722E01847E00D1C95F /* FetchAvailableModelsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchAvailableModelsUseCase.swift; sourceTree = "<group>"; };
@@ -564,7 +562,6 @@
 				e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
 				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
 				F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */,
-				F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */,
 				F117E07C2E018AF400D1C95F /* Cells */,
 			);
 			path = Scene;
@@ -781,7 +778,6 @@
 			files = (
 				F13EB59B2E12BFF400171AFC /* ParseMarkdownUseCase.swift in Sources */,
 				F15BC4FA2E0A959200F25923 /* FirestoreConversationRepository.swift in Sources */,
-				F10E27FE2E37A6AA00F3821A /* DocumentViewerViewController.swift in Sources */,
 				F1EF04ED2E044CDE005D2CF9 /* GoogleLoginButton.swift in Sources */,
 				F164B1062E3CD4FD00D8DABA /* UserInfoRepository.swift in Sources */,
 				F1452D892E09796F00795A9E /* UIImage.swift in Sources */,

@@ -6,7 +6,6 @@ import RxCocoa
 
 enum Attachment {
     case image(UIImage)
-    case file(URL)
 }
 
 final class ChatComposerImageCell: UICollectionViewCell {
@@ -53,13 +52,9 @@ final class ChatComposerImageCell: UICollectionViewCell {
     }
 
     func configure(attachment: Attachment, onDelete: (() -> Void)? = nil) {
-        switch attachment {
-        case .image(let image):
+        if case let .image(image) = attachment {
             imageView.image = image
             imageView.contentMode = .scaleAspectFill
-        case .file:
-            imageView.image = UIImage(systemName: "doc.fill")
-            imageView.contentMode = .scaleAspectFit
         }
         removeHandler = onDelete
         closeButton.isHidden = onDelete == nil

@@ -279,7 +279,6 @@ final class ChatMessageCell: UITableViewCell {
         messageView.text = nil
         messageView.attributedText = nil
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        attachmentsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         attachmentsImageCollectionView.reloadData()
         stackView.isHidden = true
         messageView.isHidden = false
@@ -305,13 +304,12 @@ final class ChatMessageCell: UITableViewCell {
     // 셀 내용을 주어진 메시지로 구성
     func configure(with message: ChatViewModel.ChatMessage,
                    parser: ParseMarkdownUseCase) {
-        attachmentsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         userImageCollectionView.reloadData()
+        attachmentsImageCollectionView.reloadData()
 
         let urls = message.urls.compactMap { URL(string: $0) }
         let imageExts = ["png","jpg","jpeg","gif","heic","heif","webp"]
         let imageUrls = urls.filter { imageExts.contains($0.pathExtension.lowercased()) }
-        let fileUrls = urls.filter { !imageExts.contains($0.pathExtension.lowercased()) }
 
         if message.type == .user {
             if imageUrls.isEmpty {
@@ -330,72 +328,31 @@ final class ChatMessageCell: UITableViewCell {
                     .disposed(by: userImageDisposeBag)
             }
 
-            if fileUrls.isEmpty {
-                attachmentsStackView.isHidden = true
-                messageTopConstraint?.update(offset: 0)
-                stackTopConstraint?.update(offset: 0)
-            } else {
-                attachmentsStackView.isHidden = false
-                messageTopConstraint?.update(offset: 8)
-                stackTopConstraint?.update(offset: 8)
-                for url in fileUrls {
-                    let button = UIButton(type: .system)
-                    let image = UIImage(systemName: "doc.fill")
-                    button.setImage(image, for: .normal)
-                    button.setTitle(" " + url.lastPathComponent, for: .normal)
-                    button.contentHorizontalAlignment = .left
-                    button.rx.tap.bind {
-                        let viewer = DocumentViewerViewController(url: url)
-                        viewer.modalPresentationStyle = .overFullScreen
-                        viewer.modalTransitionStyle = .crossDissolve
-                        UIApplication.topViewController?.present(viewer, animated: true)
-                    }.disposed(by: disposeBag)
-                    attachmentsStackView.addArrangedSubview(button)
-                    button.snp.makeConstraints { $0.width.equalToSuperview() }
-                }
-            }
+            attachmentsStackView.isHidden = true
+            messageTopConstraint?.update(offset: 0)
+            stackTopConstraint?.update(offset: 0)
         } else {
             userImageCollectionView.isHidden = true
             userImageHeightConstraint?.update(offset: 0)
-            if urls.isEmpty {
+            if imageUrls.isEmpty {
                 attachmentsStackView.isHidden = true
+                attachmentsImageCollectionView.isHidden = true
+                attachmentsImageHeightConstraint?.update(offset: 0)
                 messageTopConstraint?.update(offset: 0)
                 stackTopConstraint?.update(offset: 0)
             } else {
                 attachmentsStackView.isHidden = false
+                attachmentsImageCollectionView.isHidden = false
                 messageTopConstraint?.update(offset: 8)
                 stackTopConstraint?.update(offset: 8)
                 attachmentsImageDisposeBag = DisposeBag()
-                let attachImageUrls = urls.filter { imageExts.contains($0.pathExtension.lowercased()) }
-                let attachFileUrls = urls.filter { !imageExts.contains($0.pathExtension.lowercased()) }
-                if attachImageUrls.isEmpty {
-                    attachmentsImageCollectionView.isHidden = true
-                    attachmentsImageHeightConstraint?.update(offset: 0)
-                } else {
-                    attachmentsImageCollectionView.isHidden = false
-                    attachmentsImageHeightConstraint?.update(offset: expectedAttachmentImageHeight(for: attachImageUrls.count))
-                    layoutIfNeeded()
-                    Observable.just(attachImageUrls)
-                        .bind(to: attachmentsImageCollectionView.rx.items(cellIdentifier: "RemoteImageCollectionCell", cellType: RemoteImageCollectionCell.self)) { _, url, cell in
-                            cell.configure(url: url)
-                        }
-                        .disposed(by: attachmentsImageDisposeBag)
-                }
-                for url in attachFileUrls {
-                    let button = UIButton(type: .system)
-                    let image = UIImage(systemName: "doc.fill")
-                    button.setImage(image, for: .normal)
-                    button.setTitle(" " + url.lastPathComponent, for: .normal)
-                    button.contentHorizontalAlignment = .left
-                    button.rx.tap.bind {
-                        let viewer = DocumentViewerViewController(url: url)
-                        viewer.modalPresentationStyle = .overFullScreen
-                        viewer.modalTransitionStyle = .crossDissolve
-                        UIApplication.topViewController?.present(viewer, animated: true)
-                    }.disposed(by: disposeBag)
-                    attachmentsStackView.addArrangedSubview(button)
-                    button.snp.makeConstraints { $0.width.equalToSuperview() }
-                }
+                attachmentsImageHeightConstraint?.update(offset: expectedAttachmentImageHeight(for: imageUrls.count))
+                layoutIfNeeded()
+                Observable.just(imageUrls)
+                    .bind(to: attachmentsImageCollectionView.rx.items(cellIdentifier: "RemoteImageCollectionCell", cellType: RemoteImageCollectionCell.self)) { _, url, cell in
+                        cell.configure(url: url)
+                    }
+                    .disposed(by: attachmentsImageDisposeBag)
             }
         }
 
