@@ -44,12 +44,15 @@ final class FirestoreUserInfoRepository: UserInfoRepository {
         }
     }
 
-    func observe(uid: String) -> Observable<UserInfo?> {
+    func observe(uid: String, since: TimeInterval?) -> Observable<UserInfo?> {
         Observable.create { observer in
-            let listener = self.db.collection("profiles")
+            var query: Query = self.db.collection("profiles")
                 .document(uid)
                 .collection("facts")
-                .addSnapshotListener { snapshot, error in
+            if let since {
+                query = query.whereField("lastMentioned", isGreaterThan: since)
+            }
+            let listener = query.addSnapshotListener { snapshot, error in
                     if let error = error {
                         observer.onError(error)
                         return

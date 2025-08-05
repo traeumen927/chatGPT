@@ -67,9 +67,10 @@
 		F164B1062E3CD4FD00D8DABA /* UserInfoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B1052E3CD4FD00D8DABA /* UserInfoRepository.swift */; };
 		F164B1092E3CD51100D8DABA /* UpdateUserInfoUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B1082E3CD51100D8DABA /* UpdateUserInfoUseCase.swift */; };
 		F164B10A2E3CD51100D8DABA /* FetchUserInfoUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B1072E3CD51100D8DABA /* FetchUserInfoUseCase.swift */; };
-		F164B10F2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B10D2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift */; };
-		F164B1112E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B10C2E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift */; };
-		F164B1152E3CD57900D8DABA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F164B1132E3CD57900D8DABA /* Localizable.strings */; };
+F164B10F2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B10D2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift */; };
+F164B1112E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B10C2E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift */; };
+D08E9B032CA34FCC995B5105 /* UserContextBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDFC348FD9941E0B237914D /* UserContextBuilderTests.swift */; };
+F164B1152E3CD57900D8DABA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F164B1132E3CD57900D8DABA /* Localizable.strings */; };
 		F164B1172E3CD66800D8DABA /* FirestoreUserInfoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164B1162E3CD66800D8DABA /* FirestoreUserInfoRepository.swift */; };
 		F166CA132DF9A39B00AAB5B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA0B2DF9A39B00AAB5B0 /* AppDelegate.swift */; };
 		F166CA142DF9A39B00AAB5B0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F166CA102DF9A39B00AAB5B0 /* SceneDelegate.swift */; };
@@ -86,8 +87,10 @@
 		F18040AF2E25175E009B8527 /* RemoteImageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040AC2E25175E009B8527 /* RemoteImageAttachment.swift */; };
 		F18040B02E251760009B8527 /* RemoteImageGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B12E251760009B8527 /* RemoteImageGroupView.swift */; };
 		F18040B22E251760009B8527 /* RemoteImageGroupAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */; };
-		F18F0CEA2E3B80090055D516 /* AnalyzeUserInputUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18F0CE92E3B80090055D516 /* AnalyzeUserInputUseCase.swift */; };
-		F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
+                F18F0CEA2E3B80090055D516 /* AnalyzeUserInputUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18F0CE92E3B80090055D516 /* AnalyzeUserInputUseCase.swift */; };
+                F196CB2B2E152D3400814FD5 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */; };
+                F20000042F10001000000003 /* UserMemoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000032F10001000000003 /* UserMemoryStore.swift */; };
+                F20000062F10001000000004 /* UserContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000052F10001000000004 /* UserContextBuilder.swift */; };
 		F19F74312DFC57E6007AB4C1 /* ChatComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */; };
 		F1B7F7602DF9DC68002D12BB /* LinkLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */; };
 		F1B7F7632DF9E541002D12BB /* KeyboardAdjustable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */; };
@@ -171,8 +174,9 @@
 		79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendMessageUseCase.swift; sourceTree = "<group>"; };
 		7E3AE2342A568CE6890C03F0 /* CodeBlockAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlockAttachment.swift; sourceTree = "<group>"; };
 		7b5d4e4a1234567800000001 /* PreferenceAnalysisResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceAnalysisResult.swift; sourceTree = "<group>"; };
-		7b5d4f1234567800000006 /* AnalyzeUserInputUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUserInputUseCaseTests.swift; sourceTree = "<group>"; };
-		7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingfisherImageRepository.swift; sourceTree = "<group>"; };
+7b5d4f1234567800000006 /* AnalyzeUserInputUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUserInputUseCaseTests.swift; sourceTree = "<group>"; };
+8BDFC348FD9941E0B237914D /* UserContextBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContextBuilderTests.swift; sourceTree = "<group>"; };
+7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingfisherImageRepository.swift; sourceTree = "<group>"; };
 		896db1fb7f9843dbb43a9831 /* SignOutUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutUseCase.swift; sourceTree = "<group>"; };
 		9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserveAuthStateUseCase.swift; sourceTree = "<group>"; };
 		A1D564E2F8AC41B39D235947 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -245,9 +249,11 @@
 		F18040AD2E25175E009B8527 /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
 		F18040B12E251760009B8527 /* RemoteImageGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupView.swift; sourceTree = "<group>"; };
 		F18040B32E251760009B8527 /* RemoteImageGroupAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageGroupAttachment.swift; sourceTree = "<group>"; };
-		F18F0CE92E3B80090055D516 /* AnalyzeUserInputUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUserInputUseCase.swift; sourceTree = "<group>"; };
-		F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
-		F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
+                F18F0CE92E3B80090055D516 /* AnalyzeUserInputUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUserInputUseCase.swift; sourceTree = "<group>"; };
+                F196CB2A2E152D3400814FD5 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
+                F20000032F10001000000003 /* UserMemoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMemoryStore.swift; sourceTree = "<group>"; };
+                F20000052F10001000000004 /* UserContextBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContextBuilder.swift; sourceTree = "<group>"; };
+                F19F74302DFC57E6007AB4C1 /* ChatComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatComposerView.swift; sourceTree = "<group>"; };
 		F1B7F75F2DF9DC68002D12BB /* LinkLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkLabel.swift; sourceTree = "<group>"; };
 		F1B7F7622DF9E541002D12BB /* KeyboardAdjustable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustable.swift; sourceTree = "<group>"; };
 		F1BFC8342E38FF8400FF3DA6 /* OpenAITranslationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAITranslationRepository.swift; sourceTree = "<group>"; };
@@ -433,14 +439,15 @@
 			children = (
 				F164B10C2E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift */,
 				F164B10D2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift */,
-				F1F4CC3E2E39198000690C4D /* FirebaseFirestoreStubs.swift */,
-				7b5d4f1234567800000006 /* AnalyzeUserInputUseCaseTests.swift */,
-				F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */,
-				F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */,
-			);
-			path = chatGPTTests;
-			sourceTree = "<group>";
-		};
+                F1F4CC3E2E39198000690C4D /* FirebaseFirestoreStubs.swift */,
+                7b5d4f1234567800000006 /* AnalyzeUserInputUseCaseTests.swift */,
+                F1D772CD2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift */,
+                8BDFC348FD9941E0B237914D /* UserContextBuilderTests.swift */,
+                F166CA192DF9A3A300AAB5B0 /* chatGPTTests.swift */,
+        );
+        path = chatGPTTests;
+        sourceTree = "<group>";
+}; 
 		F166CA1E2DF9A3A500AAB5B0 /* chatGPTUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -469,11 +476,12 @@
 				F1DE5A772E094C37001B0CA8 /* FirebaseAuthRepository.swift */,
 				F1DF3B022DF9AF7B00D8445A /* KeychainAPIKeyRepository.swift */,
 				F117E0742E0184A900D1C95F /* OpenAIRepository.swift */,
-				F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */,
-				d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */,
-				7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */,
-				F20000012F00000200000002 /* FirebaseFileRepository.swift */,
-			);
+                                F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */,
+                                d3ab64ef73ac4fbca561c2f3 /* ChatContextRepositoryImpl.swift */,
+                                7d4726864e6840b090b6e407 /* KingfisherImageRepository.swift */,
+                                F20000012F00000200000002 /* FirebaseFileRepository.swift */,
+                                F20000032F10001000000003 /* UserMemoryStore.swift */,
+                        );
 			path = Data;
 			sourceTree = "<group>";
 		};
@@ -529,11 +537,12 @@
 				eef3624df55348a684cdc5fd /* LoadUserProfileImageUseCase.swift */,
 				9b8f82223d524f878b330338 /* ObserveAuthStateUseCase.swift */,
 				79766A3D81B253405488FCA1 /* AppendMessageUseCase.swift */,
-				F20000032F00000300000003 /* UploadFilesUseCase.swift */,
-				3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */,
-				D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */,
-				64EB7DD9103C65295FB89E7C /* DeleteConversationUseCase.swift */,
-			);
+                                F20000032F00000300000003 /* UploadFilesUseCase.swift */,
+                                3e924cb7e10d40a1a28fc225 /* ObserveConversationsUseCase.swift */,
+                                D1429C4B96A13E73C35752E4 /* UpdateConversationTitleUseCase.swift */,
+                                64EB7DD9103C65295FB89E7C /* DeleteConversationUseCase.swift */,
+                                F20000052F10001000000004 /* UserContextBuilder.swift */,
+                        );
 			path = UseCase;
 			sourceTree = "<group>";
 		};
@@ -895,14 +904,15 @@
 		F16563DA2DF9A310001CDF3B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = (
-				F164B10F2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift in Sources */,
-				F164B1112E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift in Sources */,
-				F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */,
-				7b5d4e4e1234567800000005 /* (null) in Sources */,
-				F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */,
-				F1F4CC422E39198000690C4D /* FirebaseFirestoreStubs.swift in Sources */,
-			);
+                        files = (
+                                F164B10F2E3CD52500D8DABA /* FirestoreUserInfoRepositoryTests.swift in Sources */,
+                                F164B1112E3CD52500D8DABA /* ChatContextRepositoryImplTests.swift in Sources */,
+                                F1D772CE2E321FBD006F749A /* DetectImageRequestUseCaseTests.swift in Sources */,
+                                D08E9B032CA34FCC995B5105 /* UserContextBuilderTests.swift in Sources */,
+                                7b5d4e4e1234567800000005 /* (null) in Sources */,
+                                F166CA1B2DF9A3A300AAB5B0 /* chatGPTTests.swift in Sources */,
+                                F1F4CC422E39198000690C4D /* FirebaseFirestoreStubs.swift in Sources */,
+                        );
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F16563E42DF9A310001CDF3B /* Sources */ = {

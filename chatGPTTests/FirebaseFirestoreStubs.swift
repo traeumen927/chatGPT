@@ -7,12 +7,15 @@ class Firestore {
     static func firestore() -> Firestore { Firestore() }
 }
 
+typealias Query = CollectionReference
+
 class CollectionReference {
     let store: Firestore
     let path: String
     init(store: Firestore, path: String) { self.store = store; self.path = path }
     func document(_ id: String) -> DocumentReference { DocumentReference(store: store, path: "\(path)/\(id)") }
     func collection(_ id: String) -> CollectionReference { CollectionReference(store: store, path: "\(path)/\(id)") }
+    func whereField(_ field: String, isGreaterThan value: TimeInterval) -> CollectionReference { self }
     func getDocuments(completion: (QuerySnapshot?, Error?) -> Void) {
         let prefix = path + "/"
         var docs: [QueryDocumentSnapshot] = []

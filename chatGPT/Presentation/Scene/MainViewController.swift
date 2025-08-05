@@ -158,7 +158,8 @@ final class MainViewController: UIViewController {
          updateInfoUseCase: UpdateUserInfoUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
-         detectImageRequestUseCase: DetectImageRequestUseCase) {
+         detectImageRequestUseCase: DetectImageRequestUseCase,
+         contextBuilder: UserContextBuilder) {
         self.fetchModelsUseCase = fetchModelsUseCase
         self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
@@ -170,7 +171,8 @@ final class MainViewController: UIViewController {
                                            fetchInfoUseCase: fetchInfoUseCase,
                                            uploadFilesUseCase: uploadFilesUseCase,
                                            generateImageUseCase: generateImageUseCase,
-                                           detectImageRequestUseCase: detectImageRequestUseCase)
+                                           detectImageRequestUseCase: detectImageRequestUseCase,
+                                           contextBuilder: contextBuilder)
         self.fetchConversationMessagesUseCase = fetchConversationMessagesUseCase
         self.signOutUseCase = signOutUseCase
         self.observeConversationsUseCase = observeConversationsUseCase
