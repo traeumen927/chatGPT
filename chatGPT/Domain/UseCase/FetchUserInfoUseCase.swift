@@ -14,4 +14,9 @@ final class FetchUserInfoUseCase {
         guard let user = getCurrentUserUseCase.execute() else { return .just(nil) }
         return repository.fetch(uid: user.uid)
     }
+
+    func observe() -> Observable<UserInfo?> {
+        guard let user = getCurrentUserUseCase.execute() else { return .just(nil) }
+        return repository.observe(uid: user.uid)
+    }
 }

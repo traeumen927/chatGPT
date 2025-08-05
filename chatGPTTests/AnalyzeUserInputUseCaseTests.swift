@@ -5,6 +5,7 @@ import RxSwift
 final class StubInfoRepository: UserInfoRepository {
     private(set) var updated: [String: [UserFact]] = [:]
     func fetch(uid: String) -> Single<UserInfo?> { .just(nil) }
+    func observe(uid: String) -> Observable<UserInfo?> { .empty() }
     func update(uid: String, attributes: [String : [UserFact]]) -> Single<Void> {
         updated = attributes
         return .just(())

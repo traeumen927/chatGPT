@@ -51,7 +51,7 @@ final class ChatViewModel {
     private let detectImageRequestUseCase: DetectImageRequestUseCase
     private let disposeBag = DisposeBag()
 
-    private var userInfo = UserInfo(attributes: [:])
+    private let userInfoRelay = BehaviorRelay<UserInfo>(value: UserInfo(attributes: [:]))
     
     private var draftMessages: [ChatMessage]? = nil
     
@@ -83,10 +83,9 @@ final class ChatViewModel {
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
         self.detectImageRequestUseCase = detectImageRequestUseCase
-        fetchInfoUseCase.execute()
-            .subscribe(onSuccess: { [weak self] info in
-                self?.userInfo = info ?? UserInfo(attributes: [:])
-            })
+        fetchInfoUseCase.observe()
+            .map { $0 ?? UserInfo(attributes: [:]) }
+            .bind(to: userInfoRelay)
             .disposed(by: disposeBag)
     }
     
@@ -113,7 +112,16 @@ final class ChatViewModel {
 
 
         updatePreferenceUseCase.execute(prompt: prompt)
-            .subscribe()
+            .asObservable()
+            .flatMapLatest { [weak self] _ -> Observable<UserInfo?> in
+                guard let self else { return .empty() }
+                return self.fetchInfoUseCase.execute().asObservable()
+            }
+            .map { [weak self] info -> UserInfo in
+                guard let self else { return UserInfo(attributes: [:]) }
+                return info ?? self.userInfoRelay.value
+            }
+            .bind(to: userInfoRelay)
             .disposed(by: disposeBag)
         
         let allData = attachments.compactMap { item -> Data? in
@@ -163,7 +171,7 @@ final class ChatViewModel {
                 if case let .file(url) = item { return try? Data(contentsOf: url) }
                 return nil
             }
-            let profileMsg = self.infoText(from: self.userInfo)
+            let profileMsg = self.infoText(from: self.userInfoRelay.value)
             sendMessageUseCase.execute(prompt: prompt,
                                        model: model,
                                        stream: false,
@@ -209,7 +217,7 @@ final class ChatViewModel {
             if case let .file(url) = item { return try? Data(contentsOf: url) }
             return nil
         }
-        let profileMsg = self.infoText(from: self.userInfo)
+        let profileMsg = self.infoText(from: self.userInfoRelay.value)
         sendMessageUseCase.stream(prompt: prompt,
                                   model: model,
                                   preference: nil,
