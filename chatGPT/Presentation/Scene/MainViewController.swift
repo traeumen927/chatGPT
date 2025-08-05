@@ -26,8 +26,9 @@ final class MainViewController: UIViewController {
     private let loadUserImageUseCase: LoadUserProfileImageUseCase
     private let observeAuthStateUseCase: ObserveAuthStateUseCase
     private let parseMarkdownUseCase: ParseMarkdownUseCase
-    private let fetchPreferenceUseCase: FetchUserPreferenceUseCase
-    private let updatePreferenceUseCase: UpdateUserPreferenceUseCase
+    private let updatePreferenceUseCase: AnalyzeUserInputUseCase
+    private let fetchInfoUseCase: FetchUserInfoUseCase
+    private let updateInfoUseCase: UpdateUserInfoUseCase
     private let fetchConversationMessagesUseCase: FetchConversationMessagesUseCase
 
     private let disposeBag = DisposeBag()
@@ -142,30 +143,31 @@ final class MainViewController: UIViewController {
          sendChatMessageUseCase: SendChatWithContextUseCase,
          summarizeUseCase: SummarizeMessagesUseCase,
          saveConversationUseCase: SaveConversationUseCase,
-       appendMessageUseCase: AppendMessageUseCase,
-       fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
-       contextRepository: ChatContextRepository,
-      observeConversationsUseCase: ObserveConversationsUseCase,
-      signOutUseCase: SignOutUseCase,
-      updateTitleUseCase: UpdateConversationTitleUseCase,
-      deleteConversationUseCase: DeleteConversationUseCase,
-      loadUserImageUseCase: LoadUserProfileImageUseCase,
-      observeAuthStateUseCase: ObserveAuthStateUseCase,
-      parseMarkdownUseCase: ParseMarkdownUseCase,
-      fetchPreferenceUseCase: FetchUserPreferenceUseCase,
-      updatePreferenceUseCase: UpdateUserPreferenceUseCase,
-      uploadFilesUseCase: UploadFilesUseCase,
-       generateImageUseCase: GenerateImageUseCase,
-       detectImageRequestUseCase: DetectImageRequestUseCase) {
+         appendMessageUseCase: AppendMessageUseCase,
+         fetchConversationMessagesUseCase: FetchConversationMessagesUseCase,
+         contextRepository: ChatContextRepository,
+         observeConversationsUseCase: ObserveConversationsUseCase,
+         signOutUseCase: SignOutUseCase,
+         updateTitleUseCase: UpdateConversationTitleUseCase,
+         deleteConversationUseCase: DeleteConversationUseCase,
+         loadUserImageUseCase: LoadUserProfileImageUseCase,
+         observeAuthStateUseCase: ObserveAuthStateUseCase,
+         parseMarkdownUseCase: ParseMarkdownUseCase,
+         updatePreferenceUseCase: AnalyzeUserInputUseCase,
+         fetchInfoUseCase: FetchUserInfoUseCase,
+         updateInfoUseCase: UpdateUserInfoUseCase,
+         uploadFilesUseCase: UploadFilesUseCase,
+         generateImageUseCase: GenerateImageUseCase,
+         detectImageRequestUseCase: DetectImageRequestUseCase) {
         self.fetchModelsUseCase = fetchModelsUseCase
-       self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
+        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
                                            appendMessageUseCase: appendMessageUseCase,
                                            fetchMessagesUseCase: fetchConversationMessagesUseCase,
                                            contextRepository: contextRepository,
-                                           fetchPreferenceUseCase: fetchPreferenceUseCase,
                                            updatePreferenceUseCase: updatePreferenceUseCase,
+                                           fetchInfoUseCase: fetchInfoUseCase,
                                            uploadFilesUseCase: uploadFilesUseCase,
                                            generateImageUseCase: generateImageUseCase,
                                            detectImageRequestUseCase: detectImageRequestUseCase)
@@ -177,8 +179,9 @@ final class MainViewController: UIViewController {
         self.loadUserImageUseCase = loadUserImageUseCase
         self.observeAuthStateUseCase = observeAuthStateUseCase
         self.parseMarkdownUseCase = parseMarkdownUseCase
-        self.fetchPreferenceUseCase = fetchPreferenceUseCase
         self.updatePreferenceUseCase = updatePreferenceUseCase
+        self.fetchInfoUseCase = fetchInfoUseCase
+        self.updateInfoUseCase = updateInfoUseCase
         super.init(nibName: nil, bundle: nil)
     }
     

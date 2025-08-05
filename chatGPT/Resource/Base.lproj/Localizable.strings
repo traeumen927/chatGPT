@@ -1,0 +1,2 @@
+"analyze_input_parse_error" = "Failed to parse analysis result";
+"analyze_input_empty" = "Analyzed the user message, but no preferences or personal information detected.";

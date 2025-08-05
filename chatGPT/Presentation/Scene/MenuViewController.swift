@@ -119,8 +119,6 @@ final class MenuViewController: UIViewController {
                         if let cell = self.tableView.cellForRow(at: indexPath) as? ModelSelectCell {
                             cell.showMenu()
                         }
-                    } else if indexPath.row == 1 {
-                        return
                     }
                 case .history:
                     let convo = self.conversations[indexPath.row]
@@ -141,7 +139,7 @@ final class MenuViewController: UIViewController {
                     try self.signOutUseCase.execute()
                     self.onClose?()
                 } catch {
-                    print("❌ Sign out failed: \(error.localizedDescription)")
+                    // ignore sign-out failure
                 }
             }
             .disposed(by: disposeBag)
@@ -199,9 +197,7 @@ final class MenuViewController: UIViewController {
                 self.availableModels = models
                 let index = IndexSet(integer: Section.setting.rawValue)
                 self.tableView.reloadSections(index, with: .none)
-            }, onFailure: { error in
-                print("❌ 모델 로딩 실패: \(error.localizedDescription)")
-            })
+            }, onFailure: { _ in })
             .disposed(by: disposeBag)
     }
 
@@ -255,7 +251,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
-        case .setting: return 3
+        case .setting: return 2
         case .history: return conversations.count
         case .none: return 0
         }
@@ -272,12 +268,6 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                 let name = availableModels.first { $0.modelId == selectedModel.id }?.displayName ?? selectedModel.displayName
                 modelCell.configure(title: "모델", modelName: name, loading: availableModels.isEmpty, menu: menu)
                 return modelCell
-            } else if indexPath.row == 1 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-                cell.textLabel?.text = "맞춤 설정"
-                cell.accessoryType = .disclosureIndicator
-                cell.selectionStyle = .default
-                return cell
             } else {
                 guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
                     return UITableViewCell()
