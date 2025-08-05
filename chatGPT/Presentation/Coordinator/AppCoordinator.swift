@@ -59,13 +59,15 @@ final class AppCoordinator {
             summarizeUseCase: summarizeUseCase
         )
         let getCurrentUserUseCase = GetCurrentUserUseCase(repository: authRepository)
-        
+
         let infoRepository = FirestoreUserInfoRepository()
         _ = OpenAITranslationRepository(repository: repository)
+        let memoryStore = UserMemoryStore()
 
         let fetchInfoUseCase = FetchUserInfoUseCase(
             repository: infoRepository,
-            getCurrentUserUseCase: getCurrentUserUseCase
+            getCurrentUserUseCase: getCurrentUserUseCase,
+            memoryStore: memoryStore
         )
         let updateInfoUseCase = UpdateUserInfoUseCase(
             repository: infoRepository,
@@ -76,6 +78,7 @@ final class AppCoordinator {
             infoRepository: infoRepository,
             getCurrentUserUseCase: getCurrentUserUseCase
         )
+        let contextBuilder = UserContextBuilder(store: memoryStore)
         let conversationRepository = FirestoreConversationRepository()
         
         let saveConversationUseCase = SaveConversationUseCase(
@@ -140,7 +143,8 @@ final class AppCoordinator {
             updateInfoUseCase: updateInfoUseCase,
             uploadFilesUseCase: uploadFilesUseCase,
             generateImageUseCase: generateImageUseCase,
-            detectImageRequestUseCase: detectImageRequestUseCase
+            detectImageRequestUseCase: detectImageRequestUseCase,
+            contextBuilder: contextBuilder
         )
         
         let nav = UINavigationController(rootViewController: vc)

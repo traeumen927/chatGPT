@@ -49,6 +49,7 @@ final class ChatViewModel {
     private let uploadFilesUseCase: UploadFilesUseCase
     private let generateImageUseCase: GenerateImageUseCase
     private let detectImageRequestUseCase: DetectImageRequestUseCase
+    private let contextBuilder: UserContextBuilder
     private let disposeBag = DisposeBag()
 
     private let userInfoRelay = BehaviorRelay<UserInfo>(value: UserInfo(attributes: [:]))
@@ -71,7 +72,8 @@ final class ChatViewModel {
          fetchInfoUseCase: FetchUserInfoUseCase,
          uploadFilesUseCase: UploadFilesUseCase,
          generateImageUseCase: GenerateImageUseCase,
-         detectImageRequestUseCase: DetectImageRequestUseCase) {
+         detectImageRequestUseCase: DetectImageRequestUseCase,
+         contextBuilder: UserContextBuilder) {
         self.sendMessageUseCase = sendMessageUseCase
         self.summarizeUseCase = summarizeUseCase
         self.saveConversationUseCase = saveConversationUseCase
@@ -83,6 +85,7 @@ final class ChatViewModel {
         self.uploadFilesUseCase = uploadFilesUseCase
         self.generateImageUseCase = generateImageUseCase
         self.detectImageRequestUseCase = detectImageRequestUseCase
+        self.contextBuilder = contextBuilder
         fetchInfoUseCase.observe()
             .map { $0 ?? UserInfo(attributes: [:]) }
             .bind(to: userInfoRelay)
@@ -171,7 +174,7 @@ final class ChatViewModel {
                 if case let .file(url) = item { return try? Data(contentsOf: url) }
                 return nil
             }
-            let profileMsg = self.infoText(from: self.userInfoRelay.value)
+            let profileMsg = self.contextBuilder.buildProfile(for: prompt)
             sendMessageUseCase.execute(prompt: prompt,
                                        model: model,
                                        stream: false,
@@ -217,7 +220,7 @@ final class ChatViewModel {
             if case let .file(url) = item { return try? Data(contentsOf: url) }
             return nil
         }
-        let profileMsg = self.infoText(from: self.userInfoRelay.value)
+        let profileMsg = self.contextBuilder.buildProfile(for: prompt)
         sendMessageUseCase.stream(prompt: prompt,
                                   model: model,
                                   preference: nil,
@@ -255,16 +258,6 @@ final class ChatViewModel {
             .disposed(by: disposeBag)
     }
 
-    func infoText(from info: UserInfo) -> String? {
-        let parts = info.attributes
-            .sorted { $0.key < $1.key }
-            .map { key, facts in
-                let values = facts.map { $0.value }.joined(separator: ", ")
-                return "\(key): \(values)"
-            }
-        return parts.isEmpty ? nil : parts.joined(separator: ", ")
-    }
-    
     private func saveFirstConversation(question: String,
                                        questionURLs: [String],
                                        answer: String,
