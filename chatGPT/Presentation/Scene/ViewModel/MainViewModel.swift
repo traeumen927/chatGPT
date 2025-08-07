@@ -1,5 +1,5 @@
 //
-//  ChatViewModel.swift
+//  MainViewModel.swift
 //  chatGPT
 //
 //  Created by 홍정연 on 6/17/25.
@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxRelay
 
-final class ChatViewModel {
+final class MainViewModel {
     enum MessageType {
         case user
         case assistant

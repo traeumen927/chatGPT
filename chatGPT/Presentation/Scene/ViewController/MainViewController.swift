@@ -18,7 +18,7 @@ final class MainViewController: UIViewController {
     private let fetchModelsUseCase: FetchModelConfigsUseCase
     
     // MARK: 채팅관련 ViewModel
-    private let chatViewModel: ChatViewModel
+    private let viewModel: MainViewModel
     private let signOutUseCase: SignOutUseCase
     private let observeConversationsUseCase: ObserveConversationsUseCase
     private let updateTitleUseCase: UpdateConversationTitleUseCase
@@ -76,8 +76,8 @@ final class MainViewController: UIViewController {
             fetchMessagesUseCase: fetchConversationMessagesUseCase,
             selectedModel: selectedModel,
             streamEnabled: streamEnabled,
-            currentConversationID: chatViewModel.conversationID,
-            draftExists: chatViewModel.hasDraft,
+            currentConversationID: viewModel.conversationID,
+            draftExists: viewModel.hasDraft,
             availableModels: availableModels
         )
         let menuVC = MenuViewController(viewModel: vm)
@@ -91,19 +91,19 @@ final class MainViewController: UIViewController {
         menuVC.onConversationSelected = { [weak self] id in
             guard let self else { return }
             if let id {
-                self.chatViewModel.loadConversation(id: id)
+                self.viewModel.loadConversation(id: id)
             } else {
-                if self.chatViewModel.hasDraft {
-                    self.chatViewModel.resumeDraftConversation()
+                if self.viewModel.hasDraft {
+                    self.viewModel.resumeDraftConversation()
                 } else {
-                    self.chatViewModel.startNewConversation()
+                    self.viewModel.startNewConversation()
                 }
             }
         }
         menuVC.onConversationDeleted = { [weak self] id in
             guard let self else { return }
-            if self.chatViewModel.conversationID == id {
-                self.chatViewModel.startNewConversation()
+            if self.viewModel.conversationID == id {
+                self.viewModel.startNewConversation()
             }
         }
         menuVC.onClose = { [weak menuVC] in
@@ -137,7 +137,7 @@ final class MainViewController: UIViewController {
     private var composerViewBottomConstraint: Constraint?
     
     // MARK: 채팅 dataSource
-    private var dataSource: UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>!
+    private var dataSource: UITableViewDiffableDataSource<Int, MainViewModel.ChatMessage>!
 
     
     init(fetchModelsUseCase: FetchModelConfigsUseCase,
@@ -162,7 +162,7 @@ final class MainViewController: UIViewController {
          detectImageRequestUseCase: DetectImageRequestUseCase,
          contextBuilder: UserContextBuilder) {
         self.fetchModelsUseCase = fetchModelsUseCase
-        self.chatViewModel = ChatViewModel(sendMessageUseCase: sendChatMessageUseCase,
+        self.viewModel = MainViewModel(sendMessageUseCase: sendChatMessageUseCase,
                                            summarizeUseCase: summarizeUseCase,
                                            saveConversationUseCase: saveConversationUseCase,
                                            appendMessageUseCase: appendMessageUseCase,
@@ -243,7 +243,7 @@ final class MainViewController: UIViewController {
         // MARK: ChatComposerView 전송버튼 클로져
         self.composerView.onSendButtonTapped = { [weak self] text, items in
             guard let self else { return }
-            self.chatViewModel.send(prompt: text,
+            self.viewModel.send(prompt: text,
                                     attachments: items,
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
@@ -254,20 +254,20 @@ final class MainViewController: UIViewController {
         
         // 메시지 상태 → UI 업데이트
         self.dataSource = createDataSource()
-        self.chatViewModel.messages
+        self.viewModel.messages
             .asDriver(onErrorJustReturn: [])
             .drive(onNext: { [weak self] messages in
                 self?.applySnapshot(messages)
             })
             .disposed(by: disposeBag)
         
-        chatViewModel.streamingMessage
+        viewModel.streamingMessage
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] message in
                 guard let self else { return }
                 
                 // 메시지가 변경된 인덱스 탐색
-                guard let index = self.chatViewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
+                guard let index = self.viewModel.messages.value.firstIndex(where: { $0.id == message.id }) else { return }
                 let indexPath = IndexPath(row: index, section: 0)
                 
                 // 셀을 찾아 직접 업데이트
@@ -292,7 +292,7 @@ final class MainViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        chatViewModel.conversationIDObservable
+        viewModel.conversationIDObservable
             .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] id in
@@ -302,7 +302,7 @@ final class MainViewController: UIViewController {
         
         newChatButton.rx.tap
             .bind(onNext: { [weak self] in
-                self?.chatViewModel.startNewConversation()
+                self?.viewModel.startNewConversation()
             })
             .disposed(by: disposeBag)
         
@@ -320,8 +320,8 @@ final class MainViewController: UIViewController {
     
     
     // MARK: TableView Helpers
-    private func createDataSource() -> UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage> {
-        let dataSource = UITableViewDiffableDataSource<Int, ChatViewModel.ChatMessage>(tableView: tableView) { tableView, indexPath, message in
+    private func createDataSource() -> UITableViewDiffableDataSource<Int, MainViewModel.ChatMessage> {
+        let dataSource = UITableViewDiffableDataSource<Int, MainViewModel.ChatMessage>(tableView: tableView) { tableView, indexPath, message in
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChatMessageCell", for: indexPath) as! ChatMessageCell
             cell.configure(with: message, parser: self.parseMarkdownUseCase)
             return cell
@@ -330,8 +330,8 @@ final class MainViewController: UIViewController {
         return dataSource
     }
 
-    private func applySnapshot(_ messages: [ChatViewModel.ChatMessage]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatViewModel.ChatMessage>()
+    private func applySnapshot(_ messages: [MainViewModel.ChatMessage]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, MainViewModel.ChatMessage>()
         snapshot.appendSections([0])
         snapshot.appendItems(messages)
         UIView.performWithoutAnimation {
@@ -344,8 +344,8 @@ final class MainViewController: UIViewController {
     }
 
     private func scrollToBottom() {
-        guard !chatViewModel.messages.value.isEmpty else { return }
-        let lastRow = chatViewModel.messages.value.count - 1
+        guard !viewModel.messages.value.isEmpty else { return }
+        let lastRow = viewModel.messages.value.count - 1
         let indexPath = IndexPath(row: lastRow, section: 0)
         tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }

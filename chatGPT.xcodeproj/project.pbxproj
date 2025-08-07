@@ -42,8 +42,9 @@
 		F117E0752E0184A900D1C95F /* OpenAIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0742E0184A900D1C95F /* OpenAIRepository.swift */; };
 		F117E0772E0184FF00D1C95F /* OpenAIRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */; };
 		F117E0792E0185D100D1C95F /* SendChatMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */; };
-		F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* ChatViewModel.swift */; };
-		F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
+                F117E07B2E0188F200D1C95F /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07A2E0188F200D1C95F /* MainViewModel.swift */; };
+                9A880C92584B44F1B4ABEA5E /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7B59F5C42342358A876B11 /* LoginViewModel.swift */; };
+                F117E07E2E018B1000D1C95F /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */; };
 		F12111112F0A000100D00000 /* HorizontalRuleAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */; };
 		F12111132F0A000100D00000 /* HorizontalRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12111122F0A000100D00000 /* HorizontalRuleView.swift */; };
 		F122E5D22E0C034B006E81DD /* ConversationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F122E5D12E0C034B006E81DD /* ConversationMessage.swift */; };
@@ -199,7 +200,8 @@
 		F117E0742E0184A900D1C95F /* OpenAIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRepository.swift; sourceTree = "<group>"; };
 		F117E0762E0184FF00D1C95F /* OpenAIRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRepositoryImpl.swift; sourceTree = "<group>"; };
 		F117E0782E0185D100D1C95F /* SendChatMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatMessageUseCase.swift; sourceTree = "<group>"; };
-		F117E07A2E0188F200D1C95F /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+            F117E07A2E0188F200D1C95F /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+            6F7B59F5C42342358A876B11 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		F117E07D2E018B1000D1C95F /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		F12111102F0A000100D00000 /* HorizontalRuleAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRuleAttachment.swift; sourceTree = "<group>"; };
 		F12111122F0A000100D00000 /* HorizontalRuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalRuleView.swift; sourceTree = "<group>"; };
@@ -406,15 +408,16 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
-		F15F9E262E44B30E0062BCDA /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				194BF4C4E68B49E490052C9E /* MenuViewModel.swift */,
-				F117E07A2E0188F200D1C95F /* ChatViewModel.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
+                F15F9E262E44B30E0062BCDA /* ViewModel */ = {
+                        isa = PBXGroup;
+                        children = (
+                                194BF4C4E68B49E490052C9E /* MenuViewModel.swift */,
+                                6F7B59F5C42342358A876B11 /* LoginViewModel.swift */,
+                                F117E07A2E0188F200D1C95F /* MainViewModel.swift */,
+                        );
+                        path = ViewModel;
+                        sourceTree = "<group>";
+                };
 		F16563BF2DF9A30F001CDF3B = {
 			isa = PBXGroup;
 			children = (
@@ -835,9 +838,10 @@
 				F13DAC9A2E310EC4005A1A67 /* GenerateImageUseCase.swift in Sources */,
 				F1D52BC32E266CCF00239002 /* ImageViewerViewController.swift in Sources */,
 				FC3E2F78E32E01AD12EAC399 /* AppendMessageUseCase.swift in Sources */,
-				F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
-				F117E07B2E0188F200D1C95F /* ChatViewModel.swift in Sources */,
-				F17898942E1414AF000AEA35 /* TableBlockAttachment.swift in Sources */,
+                                F117E0732E01847E00D1C95F /* FetchAvailableModelsUseCase.swift in Sources */,
+                                F117E07B2E0188F200D1C95F /* MainViewModel.swift in Sources */,
+                                9A880C92584B44F1B4ABEA5E /* LoginViewModel.swift in Sources */,
+                                F17898942E1414AF000AEA35 /* TableBlockAttachment.swift in Sources */,
 				F17898952E1414AF000AEA35 /* TableBlockView.swift in Sources */,
 				F164B1042E3CD4F600D8DABA /* UserInfo.swift in Sources */,
 				F1DF3B252DF9B5CD00D8445A /* BorderedTextField.swift in Sources */,
