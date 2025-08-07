@@ -303,7 +303,7 @@ final class ChatMessageCell: UITableViewCell {
     }
 
     // 셀 내용을 주어진 메시지로 구성
-    func configure(with message: ChatViewModel.ChatMessage,
+    func configure(with message: MainViewModel.ChatMessage,
                    parser: ParseMarkdownUseCase) {
         attachmentsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         userImageCollectionView.reloadData()

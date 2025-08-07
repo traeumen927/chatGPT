@@ -161,7 +161,8 @@ final class AppCoordinator {
     }
 
     private func showLogin() {
-        let vc = LoginViewController { [weak self] in
+        let vm = LoginViewModel()
+        let vc = LoginViewController(viewModel: vm) { [weak self] in
             guard let self = self else { return }
             if self.getKeyUseCase.execute() != nil {
                 self.showMain()
