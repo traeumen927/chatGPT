@@ -67,7 +67,7 @@ final class MainViewController: UIViewController {
     
     // MARK: 메뉴 화면 프레젠트용
     private func presentMenu() {
-        let menuVC = MenuViewController(
+        let vm = MenuViewModel(
             observeConversationsUseCase: observeConversationsUseCase,
             signOutUseCase: signOutUseCase,
             fetchModelsUseCase: fetchModelsUseCase,
@@ -80,6 +80,7 @@ final class MainViewController: UIViewController {
             draftExists: chatViewModel.hasDraft,
             availableModels: availableModels
         )
+        let menuVC = MenuViewController(viewModel: vm)
         menuVC.modalPresentationStyle = .formSheet
         menuVC.onModelSelected = { [weak self] model in
             self?.selectedModel = model

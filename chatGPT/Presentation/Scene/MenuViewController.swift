@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxRelay
 
 final class MenuViewController: UIViewController {
     private enum Section: Int, CaseIterable {
@@ -16,19 +17,7 @@ final class MenuViewController: UIViewController {
         }
     }
 
-    private var conversations: [ConversationSummary] = []
-    private var availableModels: [ModelConfig] = []
-    private var selectedModel: OpenAIModel
-    private var streamEnabled: Bool
-
-    private let observeConversationsUseCase: ObserveConversationsUseCase
-    private let signOutUseCase: SignOutUseCase
-    private let fetchModelsUseCase: FetchModelConfigsUseCase
-    private let updateTitleUseCase: UpdateConversationTitleUseCase
-    private let deleteConversationUseCase: DeleteConversationUseCase
-    private let fetchMessagesUseCase: FetchConversationMessagesUseCase
-    private var currentConversationID: String?
-    private let draftExists: Bool
+    private let viewModel: MenuViewModel
     private let disposeBag = DisposeBag()
 
     private let logoutButton: UIButton = {
@@ -38,8 +27,6 @@ final class MenuViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         return button
     }()
-
-
 
     // 메뉴 닫기용 클로저
     var onClose: (() -> Void)?
@@ -53,34 +40,12 @@ final class MenuViewController: UIViewController {
         tv.register(StreamToggleCell.self, forCellReuseIdentifier: "StreamToggleCell")
         return tv
     }()
-  
 
     var onModelSelected: ((OpenAIModel) -> Void)?
     var onStreamChanged: ((Bool) -> Void)?
 
-    init(observeConversationsUseCase: ObserveConversationsUseCase,
-         signOutUseCase: SignOutUseCase,
-         fetchModelsUseCase: FetchModelConfigsUseCase,
-         updateTitleUseCase: UpdateConversationTitleUseCase,
-         deleteConversationUseCase: DeleteConversationUseCase,
-         fetchMessagesUseCase: FetchConversationMessagesUseCase,
-         selectedModel: OpenAIModel,
-         streamEnabled: Bool,
-         currentConversationID: String?,
-         draftExists: Bool,
-         availableModels: [ModelConfig] = [],
-         onClose: (() -> Void)? = nil) {
-        self.observeConversationsUseCase = observeConversationsUseCase
-        self.signOutUseCase = signOutUseCase
-        self.fetchModelsUseCase = fetchModelsUseCase
-        self.updateTitleUseCase = updateTitleUseCase
-        self.deleteConversationUseCase = deleteConversationUseCase
-        self.fetchMessagesUseCase = fetchMessagesUseCase
-        self.selectedModel = selectedModel
-        self.streamEnabled = streamEnabled
-        self.currentConversationID = currentConversationID
-        self.draftExists = draftExists
-        self.availableModels = availableModels
+    init(viewModel: MenuViewModel, onClose: (() -> Void)? = nil) {
+        self.viewModel = viewModel
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
     }
@@ -91,8 +56,8 @@ final class MenuViewController: UIViewController {
         super.viewDidLoad()
         layout()
         bind()
-        load()
-        loadModels()
+        viewModel.load()
+        viewModel.loadModels()
     }
 
     private func layout() {
@@ -103,9 +68,7 @@ final class MenuViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
     }
-
 
     private func bind() {
         tableView.rx.itemSelected
@@ -121,9 +84,9 @@ final class MenuViewController: UIViewController {
                         }
                     }
                 case .history:
-                    let convo = self.conversations[indexPath.row]
-                    self.currentConversationID = convo.id == "draft" ? nil : convo.id
-                    self.onConversationSelected?(self.currentConversationID)
+                    let convo = self.viewModel.conversations.value[indexPath.row]
+                    self.viewModel.selectConversation(id: convo.id)
+                    self.onConversationSelected?(self.viewModel.currentConversationID)
                     self.onClose?()
                 case .none:
                     break
@@ -136,7 +99,7 @@ final class MenuViewController: UIViewController {
             .bind { [weak self] in
                 guard let self else { return }
                 do {
-                    try self.signOutUseCase.execute()
+                    try self.viewModel.signOut()
                     self.onClose?()
                 } catch {
                     // ignore sign-out failure
@@ -144,70 +107,31 @@ final class MenuViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
-    }
-
-    private func load() {
-        var initial: [ConversationSummary] = []
-        if currentConversationID == nil || draftExists {
-            let draft = ConversationSummary(id: "draft", title: "새로운 대화", timestamp: Date())
-            initial.append(draft)
-        }
-        conversations = initial
-        tableView.reloadData()
-
-        observeConversationsUseCase.execute()
-            .flatMapLatest { [weak self] list -> Single<[ConversationSummary]> in
-                guard let self else { return .just(list) }
-                return self.sortConversationsByLastQuestion(list)
-            }
+        viewModel.conversations
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] list in
-                guard let self else { return }
-                var items = list
-                if self.currentConversationID == nil || self.draftExists {
-                    let draft = ConversationSummary(id: "draft", title: "새로운 대화", timestamp: Date())
-                    items.insert(draft, at: 0)
-                }
-                self.conversations = items
-                self.tableView.reloadData()
-            })
+            .bind { [weak self] _ in
+                self?.tableView.reloadData()
+            }
             .disposed(by: disposeBag)
-    }
 
-    private func sortConversationsByLastQuestion(_ list: [ConversationSummary]) -> Single<[ConversationSummary]> {
-        guard !list.isEmpty else { return .just([]) }
-        let singles = list.map { summary in
-            fetchMessagesUseCase.execute(conversationID: summary.id)
-                .map { messages -> (ConversationSummary, Date) in
-                    let lastUserDate = messages.last { $0.role == .user }?.timestamp ?? summary.timestamp
-                    return (summary, lastUserDate)
-                }
-        }
-        return Single.zip(singles)
-            .map { results in
-                results.sorted { $0.1 > $1.1 }.map { $0.0 }
-            }
-    }
-
-    private func loadModels() {
-        fetchModelsUseCase.execute()
+        viewModel.availableModels
             .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] models in
+            .bind { [weak self] _ in
                 guard let self else { return }
-                self.availableModels = models
                 let index = IndexSet(integer: Section.setting.rawValue)
                 self.tableView.reloadSections(index, with: .none)
-            }, onFailure: { _ in })
+            }
             .disposed(by: disposeBag)
     }
 
     private func makeModelMenu() -> UIMenu? {
-        guard !availableModels.isEmpty else { return nil }
-        let actions = availableModels.map { model in
-            UIAction(title: model.displayName, state: model.modelId == selectedModel.id ? .on : .off) { [weak self] _ in
+        let models = viewModel.availableModels.value
+        guard !models.isEmpty else { return nil }
+        let actions = models.map { model in
+            UIAction(title: model.displayName, state: model.modelId == viewModel.selectedModel.value.id ? .on : .off) { [weak self] _ in
                 guard let self else { return }
-                self.selectedModel = model.openAIModel
-                self.onModelSelected?(self.selectedModel)
+                self.viewModel.selectedModel.accept(model.openAIModel)
+                self.onModelSelected?(model.openAIModel)
                 let index = IndexPath(row: 0, section: Section.setting.rawValue)
                 self.tableView.reloadRows(at: [index], with: .none)
             }
@@ -223,26 +147,22 @@ final class MenuViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         alert.addAction(UIAlertAction(title: "저장", style: .default) { [weak self, weak alert] _ in
             guard let self, let title = alert?.textFields?.first?.text, !title.isEmpty else { return }
-            self.updateTitleUseCase.execute(conversationID: convo.id, title: title)
-                .subscribe()
-                .disposed(by: self.disposeBag)
+            self.viewModel.updateTitle(id: convo.id, title: title)
         })
         present(alert, animated: true)
     }
 
     private func deleteConversation(id: String) {
-        deleteConversationUseCase.execute(conversationID: id)
+        viewModel.deleteConversation(id: id)
             .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] in
+            .subscribe(onSuccess: { [weak self] wasCurrent in
                 guard let self else { return }
-                if self.currentConversationID == id {
-                    self.currentConversationID = nil
+                if wasCurrent {
                     self.onConversationDeleted?(id)
                 }
             })
             .disposed(by: disposeBag)
     }
-
 }
 
 extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
@@ -252,7 +172,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .setting: return 2
-        case .history: return conversations.count
+        case .history: return viewModel.conversations.value.count
         case .none: return 0
         }
     }
@@ -265,29 +185,30 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                     return UITableViewCell()
                 }
                 let menu = makeModelMenu()
-                let name = availableModels.first { $0.modelId == selectedModel.id }?.displayName ?? selectedModel.displayName
-                modelCell.configure(title: "모델", modelName: name, loading: availableModels.isEmpty, menu: menu)
+                let name = viewModel.availableModels.value.first { $0.modelId == viewModel.selectedModel.value.id }?.displayName ?? viewModel.selectedModel.value.displayName
+                modelCell.configure(title: "모델", modelName: name, loading: viewModel.availableModels.value.isEmpty, menu: menu)
                 return modelCell
             } else {
                 guard let toggleCell = tableView.dequeueReusableCell(withIdentifier: "StreamToggleCell", for: indexPath) as? StreamToggleCell else {
                     return UITableViewCell()
                 }
-                toggleCell.configure(isOn: streamEnabled)
+                toggleCell.configure(isOn: viewModel.streamEnabled.value)
                 toggleCell.onToggle = { [weak self] isOn in
-                    self?.streamEnabled = isOn
-                    self?.onStreamChanged?(isOn)
+                    guard let self else { return }
+                    self.viewModel.streamEnabled.accept(isOn)
+                    self.onStreamChanged?(isOn)
                 }
                 return toggleCell
             }
         case .history:
-            let convo = conversations[indexPath.row]
+            let convo = viewModel.conversations.value[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
             cell.textLabel?.text = convo.title
             let isSelected: Bool
-            if currentConversationID == nil {
+            if viewModel.currentConversationID == nil {
                 isSelected = convo.id == "draft"
             } else {
-                isSelected = convo.id == currentConversationID
+                isSelected = convo.id == viewModel.currentConversationID
             }
             cell.accessoryType = isSelected ? .checkmark : .none
             cell.selectionStyle = .default
@@ -303,7 +224,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         case .setting:
             return section.title
         case .history:
-            let hasItem = !conversations.isEmpty
+            let hasItem = !viewModel.conversations.value.isEmpty
             return hasItem ? section.title : nil
         }
     }
@@ -324,7 +245,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard Section(rawValue: indexPath.section) == .history else { return nil }
-        let convo = conversations[indexPath.row]
+        let convo = viewModel.conversations.value[indexPath.row]
         guard convo.id != "draft" else { return nil }
 
         let edit = UIContextualAction(style: .normal, title: "수정") { [weak self] _, _, completion in
@@ -340,5 +261,3 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         return UISwipeActionsConfiguration(actions: [delete, edit])
     }
 }
-
-
