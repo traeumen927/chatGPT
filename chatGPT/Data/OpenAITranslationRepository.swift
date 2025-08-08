@@ -14,7 +14,7 @@ final class OpenAITranslationRepository: TranslationRepository {
         Single.create { single in
             let system = Message(role: .system, content: "Translate the following text to English. Respond only with the translated text.")
             let user = Message(role: .user, content: text)
-            self.repository.sendChat(messages: [system, user], model: self.model, stream: false) { result in
+            let token = self.repository.sendChat(messages: [system, user], model: self.model, stream: false) { result in
                 switch result {
                 case .success(let translated):
                     single(.success(translated.trimmingCharacters(in: .whitespacesAndNewlines)))
@@ -22,7 +22,7 @@ final class OpenAITranslationRepository: TranslationRepository {
                     single(.failure(error))
                 }
             }
-            return Disposables.create()
+            return Disposables.create { token.cancel() }
         }
     }
 }

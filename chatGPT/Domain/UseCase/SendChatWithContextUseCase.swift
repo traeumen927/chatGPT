@@ -14,6 +14,7 @@ final class SendChatWithContextUseCase {
     private let summarizeUseCase: SummarizeMessagesUseCase
     private let maxHistory: Int
     private let summaryTrigger: Int
+    private var cancelToken: CancelToken?
 
     init(openAIRepository: OpenAIRepository,
          contextRepository: ChatContextRepository,
@@ -48,7 +49,7 @@ final class SendChatWithContextUseCase {
         messages += contextRepository.messages
         if images.isEmpty && files.isEmpty {
             messages.append(Message(role: .user, content: prompt))
-            openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
+            self.cancelToken = openAIRepository.sendChat(messages: messages, model: model, stream: stream) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success(let reply):
@@ -60,6 +61,7 @@ final class SendChatWithContextUseCase {
                 case .failure(let error):
                     completion(.failure(error))
                 }
+                self.cancelToken = nil
             }
             return
         }
@@ -78,7 +80,7 @@ final class SendChatWithContextUseCase {
         }
         visionMessages.append(VisionMessage(role: .user, content: contents))
 
-        openAIRepository.sendVision(messages: visionMessages, model: model, stream: stream) { [weak self] result in
+        self.cancelToken = openAIRepository.sendVision(messages: visionMessages, model: model, stream: stream) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let reply):
@@ -90,6 +92,7 @@ final class SendChatWithContextUseCase {
             case .failure(let error):
                 completion(.failure(error))
             }
+            self.cancelToken = nil
         }
     }
 
@@ -141,6 +144,11 @@ final class SendChatWithContextUseCase {
 
     func clearContext() {
         contextRepository.clear()
+    }
+
+    func cancel() {
+        cancelToken?.cancel()
+        cancelToken = nil
     }
 
     private func summarizeIfNeeded(model: OpenAIModel) {

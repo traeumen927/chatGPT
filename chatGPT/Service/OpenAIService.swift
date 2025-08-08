@@ -9,6 +9,12 @@ import Foundation
 import Alamofire
 import RxSwift
 
+final class CancelToken {
+    private let onCancel: () -> Void
+    init(_ onCancel: @escaping () -> Void) { self.onCancel = onCancel }
+    func cancel() { onCancel() }
+}
+
 final class OpenAIService: OpenAIServiceProtocol {
     private let session: Session
     private let apiKeyRepository: APIKeyRepository
@@ -19,15 +25,17 @@ final class OpenAIService: OpenAIServiceProtocol {
         self.session = session
     }
     
-    func request<T: Decodable>(_ endpoint: OpenAIEndpoint, completion: @escaping (Result<T, Error>) -> Void) {
+    @discardableResult
+    func request<T: Decodable>(_ endpoint: OpenAIEndpoint,
+                               completion: @escaping (Result<T, Error>) -> Void) -> CancelToken {
         guard let apiKey = apiKeyRepository.fetchKey() else {
             completion(.failure(OpenAIError.missingAPIKey))
-            return
+            return CancelToken { }
         }
-        
+
         guard let url = URL(string: baseURL + endpoint.path) else {
             completion(.failure(OpenAIError.invalidURL))
-            return
+            return CancelToken { }
         }
         
         var headers = endpoint.headers
@@ -61,6 +69,7 @@ final class OpenAIService: OpenAIServiceProtocol {
                     completion(.failure(error as Error))
                 }
             }
+        return CancelToken { request.cancel() }
     }
     
     func requestStream(_ endpoint: OpenAIEndpoint) -> Observable<String> {

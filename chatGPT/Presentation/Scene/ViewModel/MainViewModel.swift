@@ -36,6 +36,7 @@ final class MainViewModel {
     let conversationChanged = PublishRelay<Void>()
     private let streamingMessageRelay = PublishRelay<ChatMessage>()
     var streamingMessage: Observable<ChatMessage> { streamingMessageRelay.asObservable() }
+    let isProcessing = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Dependencies
     private let sendMessageUseCase: SendChatWithContextUseCase
@@ -51,6 +52,24 @@ final class MainViewModel {
     private let detectImageRequestUseCase: DetectImageRequestUseCase
     private let contextBuilder: UserContextBuilder
     private let disposeBag = DisposeBag()
+
+    private final class StreamContext {
+        var disposable: Disposable?
+        var fullText: String = ""
+        let prompt: String
+        let urls: [String]
+        let model: OpenAIModel
+        let isFirst: Bool
+        let assistantID: UUID
+        init(prompt: String, urls: [String], model: OpenAIModel, isFirst: Bool, assistantID: UUID) {
+            self.prompt = prompt
+            self.urls = urls
+            self.model = model
+            self.isFirst = isFirst
+            self.assistantID = assistantID
+        }
+    }
+    private var currentStream: StreamContext?
 
     private let userInfoRelay = BehaviorRelay<UserInfo>(value: UserInfo(attributes: [:]))
     
@@ -93,6 +112,7 @@ final class MainViewModel {
     }
     
     func send(prompt: String, attachments: [Attachment] = [], model: OpenAIModel, stream: Bool) {
+        isProcessing.accept(true)
         detectImageRequestUseCase.execute(prompt: prompt)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] isImage in
@@ -175,12 +195,12 @@ final class MainViewModel {
                 return nil
             }
             let profileMsg = self.contextBuilder.buildProfile(for: prompt)
-            sendMessageUseCase.execute(prompt: prompt,
-                                       model: model,
-                                       stream: false,
-                                       preference: nil,
-                                       profile: profileMsg,
-                                       images: imageData,
+           sendMessageUseCase.execute(prompt: prompt,
+                                      model: model,
+                                      stream: false,
+                                      preference: nil,
+                                      profile: profileMsg,
+                                      images: imageData,
                                        files: fileData) { [weak self] result in
                 guard let self = self else { return }
                 switch result {
@@ -205,13 +225,19 @@ final class MainViewModel {
                     let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                     self.appendMessage(ChatMessage(type: .error, text: message))
                 }
+                self.isProcessing.accept(false)
             }
             return
         }
 
         let assistantID = UUID()
         appendMessage(ChatMessage(id: assistantID, type: .assistant, text: ""))
-        var fullText = ""
+        let streamContext = StreamContext(prompt: prompt,
+                                          urls: urls,
+                                          model: model,
+                                          isFirst: isFirst,
+                                          assistantID: assistantID)
+        currentStream = streamContext
         let imageData = attachments.compactMap { item -> Data? in
             if case let .image(img) = item { return img.jpegData(compressionQuality: 0.8) }
             return nil
@@ -221,41 +247,47 @@ final class MainViewModel {
             return nil
         }
         let profileMsg = self.contextBuilder.buildProfile(for: prompt)
-        sendMessageUseCase.stream(prompt: prompt,
-                                  model: model,
-                                  preference: nil,
-                                  profile: profileMsg,
-                                  images: imageData,
-                                  files: fileData)
+        let disposable = sendMessageUseCase.stream(prompt: prompt,
+                                                  model: model,
+                                                  preference: nil,
+                                                  profile: profileMsg,
+                                                  images: imageData,
+                                                  files: fileData)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] chunk in
-                guard let self else { return }
-                fullText += chunk
-                self.updateMessage(id: assistantID, text: fullText, updateList: false)
+                guard let self, let ctx = self.currentStream else { return }
+                ctx.fullText += chunk
+                self.updateMessage(id: ctx.assistantID, text: ctx.fullText, updateList: false)
             }, onError: { [weak self] error in
-                let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
-                self?.updateMessage(id: assistantID, text: message, type: .error)
-            }, onCompleted: { [weak self] in
                 guard let self else { return }
-                self.updateMessage(id: assistantID, text: fullText)
-                self.sendMessageUseCase.finalize(prompt: prompt, reply: fullText, model: model)
-                if let id = self.conversationID, !isFirst {
+                let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
+                self.updateMessage(id: assistantID, text: message, type: .error)
+                self.currentStream = nil
+                self.isProcessing.accept(false)
+            }, onCompleted: { [weak self] in
+                guard let self, let ctx = self.currentStream else { return }
+                self.updateMessage(id: ctx.assistantID, text: ctx.fullText)
+                self.sendMessageUseCase.finalize(prompt: ctx.prompt, reply: ctx.fullText, model: ctx.model)
+                if let id = self.conversationID, !ctx.isFirst {
                     self.appendMessageUseCase.execute(conversationID: id,
                                                       role: .assistant,
-                                                      text: fullText,
+                                                      text: ctx.fullText,
                                                       urls: [])
-                    .subscribe()
-                    .disposed(by: self.disposeBag)
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
                 }
-                if isFirst {
-                    self.saveFirstConversation(question: prompt,
-                                               questionURLs: urls,
-                                               answer: fullText,
+                if ctx.isFirst {
+                    self.saveFirstConversation(question: ctx.prompt,
+                                               questionURLs: ctx.urls,
+                                               answer: ctx.fullText,
                                                answerURLs: [],
-                                               model: model)
+                                               model: ctx.model)
                 }
+                self.currentStream = nil
+                self.isProcessing.accept(false)
             })
-            .disposed(by: disposeBag)
+        streamContext.disposable = disposable
+        disposable.disposed(by: disposeBag)
     }
 
     private func saveFirstConversation(question: String,
@@ -307,6 +339,33 @@ final class MainViewModel {
         current[index] = newMsg
         if updateList { messages.accept(current) }
         streamingMessageRelay.accept(newMsg)
+    }
+
+    func cancelCurrent() {
+        if let ctx = currentStream {
+            ctx.disposable?.dispose()
+            updateMessage(id: ctx.assistantID, text: ctx.fullText)
+            sendMessageUseCase.finalize(prompt: ctx.prompt, reply: ctx.fullText, model: ctx.model)
+            if let id = conversationID, !ctx.isFirst {
+                appendMessageUseCase.execute(conversationID: id,
+                                             role: .assistant,
+                                             text: ctx.fullText,
+                                             urls: [])
+                    .subscribe()
+                    .disposed(by: disposeBag)
+            }
+            if ctx.isFirst {
+                saveFirstConversation(question: ctx.prompt,
+                                     questionURLs: ctx.urls,
+                                     answer: ctx.fullText,
+                                     answerURLs: [],
+                                     model: ctx.model)
+            }
+            currentStream = nil
+        } else {
+            sendMessageUseCase.cancel()
+        }
+        isProcessing.accept(false)
     }
     
     func startNewConversation() {
@@ -428,6 +487,7 @@ final class MainViewModel {
                 let message = (error as? OpenAIError)?.errorMessage ?? error.localizedDescription
                 self.appendMessage(ChatMessage(type: .error, text: message))
             }
+            self.isProcessing.accept(false)
         }
     }
 }

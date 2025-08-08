@@ -55,6 +55,7 @@ final class ChatComposerView: UIView, UITextViewDelegate {
     
     // MARK: 외부 전달용 클로져
     var onSendButtonTapped: ((String, [Attachment]) -> Void)?
+    var onStopButtonTapped: (() -> Void)?
     var onPlusButtonTapped: (() -> Void)?
 
     var plusButtonMenu: UIMenu? {
@@ -69,6 +70,13 @@ final class ChatComposerView: UIView, UITextViewDelegate {
         didSet {
             plusButton.isEnabled = plusButtonEnabled
             plusButton.tintColor = plusButtonEnabled ? ThemeColor.tintDark : .gray
+        }
+    }
+
+    var isSending: Bool = false {
+        didSet {
+            let name = isSending ? "pause.circle" : "arrow.up.circle"
+            sendButton.setImage(UIImage(systemName: name), for: .normal)
         }
     }
     
@@ -217,16 +225,19 @@ final class ChatComposerView: UIView, UITextViewDelegate {
             .disposed(by: disposeBag)
         
         self.sendButton.rx.tap
-            .withLatestFrom(textView.rx.text.orEmpty)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
-            .subscribe(onNext: { [weak self] text in
+            .subscribe(onNext: { [weak self] in
                 guard let self else { return }
-                self.onSendButtonTapped?(text, self.attachments.value)
-                self.textView.text = ""
-                self.attachments.accept([])
-                self.updatePlaceholderVisibility()
-                self.adjustTextViewHeight()
+                if self.isSending {
+                    self.onStopButtonTapped?()
+                } else {
+                    let text = self.textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !text.isEmpty else { return }
+                    self.onSendButtonTapped?(text, self.attachments.value)
+                    self.textView.text = ""
+                    self.attachments.accept([])
+                    self.updatePlaceholderVisibility()
+                    self.adjustTextViewHeight()
+                }
             })
             .disposed(by: disposeBag)
 
