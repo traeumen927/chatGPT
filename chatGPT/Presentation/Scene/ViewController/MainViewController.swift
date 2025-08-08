@@ -248,6 +248,9 @@ final class MainViewController: UIViewController {
                                     model: self.selectedModel,
                                     stream: self.streamEnabled)
         }
+        self.composerView.onStopButtonTapped = { [weak self] in
+            self?.viewModel.cancelCurrent()
+        }
         self.composerView.onPlusButtonTapped = { [weak self] in
             self?.handleAlbumOption()
         }
@@ -280,6 +283,14 @@ final class MainViewController: UIViewController {
                         }
                     }
                 }
+            })
+           .disposed(by: disposeBag)
+
+        viewModel.isProcessing
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] loading in
+                self?.composerView.isSending = loading
             })
             .disposed(by: disposeBag)
         

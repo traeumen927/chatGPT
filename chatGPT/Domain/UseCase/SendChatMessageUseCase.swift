@@ -15,6 +15,6 @@ final class SendChatMessageUseCase {
     }
 
     func execute(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
-        repository.sendChat(messages: messages, model: model, stream: stream, completion: completion)
+        _ = repository.sendChat(messages: messages, model: model, stream: stream, completion: completion)
     }
 }

@@ -16,8 +16,11 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
     }
     
     /// 채팅전송
-    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
-        service.request(.chat(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
+    func sendChat(messages: [Message],
+                  model: OpenAIModel,
+                  stream: Bool,
+                  completion: @escaping (Result<String, Error>) -> Void) -> CancelToken {
+        return service.request(.chat(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
                 let reply = decoded.choices.first?.message.content ?? ""
@@ -32,8 +35,11 @@ final class OpenAIRepositoryImpl: OpenAIRepository {
         service.requestStream(.chat(messages: messages, model: model, stream: true))
     }
 
-    func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {
-        service.request(.vision(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
+    func sendVision(messages: [VisionMessage],
+                    model: OpenAIModel,
+                    stream: Bool,
+                    completion: @escaping (Result<String, Error>) -> Void) -> CancelToken {
+        return service.request(.vision(messages: messages, model: model, stream: stream)) { (result: Result<OpenAIResponse, Error>) in
             switch result {
             case .success(let decoded):
                 let reply = decoded.choices.first?.message.content ?? ""

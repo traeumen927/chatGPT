@@ -15,9 +15,9 @@ final class StubInfoRepository: UserInfoRepository {
 final class StubOpenAIRepository: OpenAIRepository {
     var analysisResult: PreferenceAnalysisResult = .init(info: UserInfo(attributes: [:]))
     func fetchAvailableModels(completion: @escaping (Result<[OpenAIModel], Error>) -> Void) {}
-    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {}
+    func sendChat(messages: [Message], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) -> CancelToken { CancelToken { } }
     func sendChatStream(messages: [Message], model: OpenAIModel) -> Observable<String> { .empty() }
-    func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) {}
+    func sendVision(messages: [VisionMessage], model: OpenAIModel, stream: Bool, completion: @escaping (Result<String, Error>) -> Void) -> CancelToken { CancelToken { } }
     func sendVisionStream(messages: [VisionMessage], model: OpenAIModel) -> Observable<String> { .empty() }
     func generateImage(prompt: String, size: String, model: String, completion: @escaping (Result<[String], Error>) -> Void) {}
     func detectImageIntent(prompt: String) -> Single<Bool> { .just(false) }
