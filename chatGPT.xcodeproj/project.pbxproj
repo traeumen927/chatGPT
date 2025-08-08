@@ -400,10 +400,12 @@
 		F15F9E252E44B3010062BCDA /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				A1D564E2F8AC41B39D235947 /* LoginViewController.swift */,
-				F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */,
-				F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
-				e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
+                                F1DF3B172DF9B0E100D8445A /* APIKeyInputViewController.swift */,
+                                F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */,
+                                F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */,
+                                A1D564E2F8AC41B39D235947 /* LoginViewController.swift */,
+                                F1DF3B192DF9B0FC00D8445A /* MainViewController.swift */,
+                                e9d37b25c97b401d97ce1732 /* MenuViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -592,8 +594,6 @@
 			children = (
 				F15F9E252E44B3010062BCDA /* ViewController */,
 				F15F9E262E44B30E0062BCDA /* ViewModel */,
-				F1D52BC22E266CCF00239002 /* ImageViewerViewController.swift */,
-				F10E27FD2E37A6AA00F3821A /* DocumentViewerViewController.swift */,
 				F117E07C2E018AF400D1C95F /* Cells */,
 			);
 			path = Scene;
